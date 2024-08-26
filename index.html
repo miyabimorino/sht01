@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シューティングゲーム</title>
+  <style>
+    #game-field {
+      width: 480px;
+      height: 400px;
+      background-color: black;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      cursor: none;
+    }
+
+    .grid-cell {
+      width: 4px;
+      height: 4px;
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="game-field" @mousemove="movePlayer">
+      <div v-for="cell in player" class="grid-cell" :style="{
+      left: (cell.x * 4) + playerPosition.x + 'px', 
+      top: (cell.y * 4) + playerPosition.y + 'px', 
+      backgroundColor: getColor(cell.colorCode)
+    }"></div>
+
+      <div v-for="enemy in enemies">
+        <div v-for="cell in enemy01Cells" class="grid-cell" :style="{
+      left: (cell.x * 4) + enemy.position.x + 'px', 
+      top: (cell.y * 4) + enemy.position.y + 'px', 
+      backgroundColor: getColor(cell.colorCode)
+    }"></div>
+      </div>
+
+      <div v-for="enemy in enemies02">
+        <div v-for="cell in enemy02Cells" class="grid-cell" :style="{
+      left: (cell.x * 4) + enemy.position.x + 'px', 
+      top: (cell.y * 4) + enemy.position.y + 'px', 
+      backgroundColor: getColor(cell.colorCode)
+    }"></div>
+      </div>
+
+      <div v-for="shot in enemyShots">
+        <div v-for="cell in enemyShot" class="grid-cell" :style="{
+      left: (cell.x * 4) + shot.position.x + 'px', 
+      top: (cell.y * 4) + shot.position.y + 'px', 
+      backgroundColor: getColor(cell.colorCode)
+    }"></div>
+      </div>
+
+    </div>
+    <div id="hud">
+      <p>残機: {{ playerLives }}</p>
+      <p v-if="isGameOver">ゲームオーバー</p>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        player: [
+          { x: 7, y: 0, colorCode: 7 }, { x: 8, y: 0, colorCode: 7 },
+          { x: 7, y: 1, colorCode: 7 }, { x: 8, y: 1, colorCode: 7 },
+          { x: 6, y: 2, colorCode: 5 }, { x: 7, y: 2, colorCode: 2 }, { x: 8, y: 2, colorCode: 2 }, { x: 9, y: 2, colorCode: 5 },
+          { x: 0, y: 3, colorCode: 2 }, { x: 6, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 2 }, { x: 8, y: 3, colorCode: 2 }, { x: 9, y: 3, colorCode: 7 }, { x: 15, y: 3, colorCode: 2 },
+          { x: 0, y: 4, colorCode: 6 }, { x: 2, y: 4, colorCode: 4 }, { x: 3, y: 4, colorCode: 4 }, { x: 5, y: 4, colorCode: 7 }, { x: 6, y: 4, colorCode: 7 }, { x: 7, y: 4, colorCode: 2 }, { x: 8, y: 4, colorCode: 2 }, { x: 9, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 4 }, { x: 13, y: 4, colorCode: 4 }, { x: 15, y: 4, colorCode: 6 },
+          { x: 0, y: 5, colorCode: 6 }, { x: 2, y: 5, colorCode: 5 }, { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 0 }, { x: 5, y: 5, colorCode: 0 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 4 }, { x: 8, y: 5, colorCode: 4 }, { x: 9, y: 5, colorCode: 7 }, { x: 10, y: 5, colorCode: 0 }, { x: 11, y: 5, colorCode: 0 }, { x: 12, y: 5, colorCode: 5 }, { x: 13, y: 5, colorCode: 5 }, { x: 15, y: 5, colorCode: 6 },
+          { x: 0, y: 6, colorCode: 6 }, { x: 1, y: 6, colorCode: 6 }, { x: 2, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 5 }, { x: 4, y: 6, colorCode: 0 }, { x: 5, y: 6, colorCode: 0 }, { x: 6, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 7 }, { x: 10, y: 6, colorCode: 0 }, { x: 11, y: 6, colorCode: 0 }, { x: 12, y: 6, colorCode: 5 }, { x: 13, y: 6, colorCode: 5 }, { x: 14, y: 6, colorCode: 6 }, { x: 15, y: 6, colorCode: 6 },
+          { x: 0, y: 7, colorCode: 6 }, { x: 2, y: 7, colorCode: 6 }, { x: 3, y: 7, colorCode: 6 }, { x: 5, y: 7, colorCode: 7 }, { x: 6, y: 7, colorCode: 7 }, { x: 9, y: 7, colorCode: 7 }, { x: 10, y: 7, colorCode: 7 }, { x: 12, y: 7, colorCode: 6 }, { x: 13, y: 7, colorCode: 6 }, { x: 15, y: 7, colorCode: 6 }
+        ],
+        playerShot: [
+          { x: 3, y: 1, colorCode: 1 }, { x: 4, y: 1, colorCode: 1 },
+          { x: 3, y: 2, colorCode: 5 }, { x: 4, y: 2, colorCode: 5 },
+          { x: 3, y: 3, colorCode: 5 }, { x: 4, y: 3, colorCode: 5 },
+          { x: 3, y: 4, colorCode: 5 }, { x: 4, y: 4, colorCode: 5 },
+          { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 5 },
+          { x: 3, y: 6, colorCode: 1 }, { x: 4, y: 6, colorCode: 1 },
+        ],
+        enemy01Cells: [
+          { x: 2, y: 1, colorCode: 2 }, { x: 3, y: 1, colorCode: 2 }, { x: 4, y: 1, colorCode: 2 }, { x: 5, y: 1, colorCode: 2 },
+          { x: 1, y: 2, colorCode: 2 }, { x: 2, y: 2, colorCode: 0 }, { x: 3, y: 2, colorCode: 2 }, { x: 4, y: 2, colorCode: 2 }, { x: 5, y: 2, colorCode: 0 }, { x: 6, y: 2, colorCode: 2 },
+          { x: 1, y: 3, colorCode: 2 }, { x: 2, y: 3, colorCode: 2 }, { x: 3, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 2 }, { x: 6, y: 3, colorCode: 2 },
+          { x: 1, y: 4, colorCode: 2 }, { x: 2, y: 4, colorCode: 2 }, { x: 3, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 2 }, { x: 6, y: 4, colorCode: 2 },
+          { x: 1, y: 5, colorCode: 2 }, { x: 2, y: 5, colorCode: 0 }, { x: 3, y: 5, colorCode: 2 }, { x: 4, y: 5, colorCode: 2 }, { x: 5, y: 5, colorCode: 0 }, { x: 6, y: 5, colorCode: 2 },
+          { x: 2, y: 6, colorCode: 2 }, { x: 3, y: 6, colorCode: 2 }, { x: 4, y: 6, colorCode: 2 }, { x: 5, y: 6, colorCode: 2 },
+        ],
+        enemy02Cells: [
+          { x: 1, y: 1, colorCode: 3 }, { x: 2, y: 1, colorCode: 7 }, { x: 3, y: 1, colorCode: 7 }, { x: 4, y: 1, colorCode: 7 }, { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 3 },
+          { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 },
+          { x: 1, y: 3, colorCode: 4 }, { x: 2, y: 3, colorCode: 0 }, { x: 3, y: 3, colorCode: 2 }, { x: 4, y: 3, colorCode: 2 }, { x: 5, y: 3, colorCode: 0 }, { x: 6, y: 3, colorCode: 4 },
+          { x: 0, y: 4, colorCode: 4 }, { x: 1, y: 4, colorCode: 4 }, { x: 2, y: 4, colorCode: 4 }, { x: 3, y: 4, colorCode: 4 }, { x: 4, y: 4, colorCode: 4 }, { x: 5, y: 4, colorCode: 4 }, { x: 6, y: 4, colorCode: 4 }, { x: 7, y: 4, colorCode: 4 },
+          { x: 0, y: 5, colorCode: 4 }, { x: 1, y: 5, colorCode: 4 }, { x: 2, y: 5, colorCode: 4 }, { x: 3, y: 5, colorCode: 4 }, { x: 4, y: 5, colorCode: 4 }, { x: 5, y: 5, colorCode: 4 }, { x: 6, y: 5, colorCode: 4 }, { x: 7, y: 5, colorCode: 4 },
+          { x: 1, y: 6, colorCode: 6 }, { x: 2, y: 6, colorCode: 6 }, { x: 5, y: 6, colorCode: 6 }, { x: 6, y: 6, colorCode: 6 },
+        ],
+        enemyShot: [
+          { x: 3, y: 1, colorCode: 2 },
+          { x: 4, y: 2, colorCode: 2 },
+          { x: 3, y: 3, colorCode: 2 },
+          { x: 4, y: 4, colorCode: 2 },
+          { x: 3, y: 5, colorCode: 2 },
+          { x: 4, y: 6, colorCode: 2 },
+        ],
+        playerPosition: {
+          x: 0,
+          y: 360
+        },
+        enemies: [],
+        enemies02: [], // enemy02のためのリスト
+        maxEnemies: 10,
+        maxEnemies02: 8, // enemy02の最大数
+        enemyShots: [],
+        shotSpeed: 3, // Speed at which shots move
+        shotFrequency: 0.01, // Probability of enemy02 firing a shot
+        playerLives: 3, // プレイヤーの残機
+        isGameOver: false, // ゲームオーバー状態を管理
+      },
+      computed: {
+        playerHit() {
+          if (this.isGameOver) return false;
+
+          return this.enemyShots.some(shot => {
+            return this.player.some(cell => {
+              const cellX = cell.x * 4 + this.playerPosition.x;
+              const cellY = cell.y * 4 + this.playerPosition.y;
+              return Math.abs(cellX - shot.position.x) < 4 && Math.abs(cellY - shot.position.y) < 4;
+            });
+          });
+        }
+      },
+      watch: {
+        playerHit(hit) {
+          if (hit) {
+            this.reducePlayerLives();
+          }
+        }
+      },
+      methods: {
+        getColor(colorCode) {
+          switch (colorCode) {
+            case 0: return "black";
+            case 1: return "blue";
+            case 2: return "red";
+            case 3: return "purple";
+            case 4: return "lime";
+            case 5: return "aqua";
+            case 6: return "yellow";
+            case 7: return "white";
+            default: return "black";
+          }
+        },
+        movePlayer(event) {
+          const fieldRect = event.currentTarget.getBoundingClientRect();
+          this.playerPosition.x = event.clientX - fieldRect.left - 30;
+        },
+        moveEnemies() {
+          this.enemies.forEach((enemy, index) => {
+            enemy.position.x += enemy.direction * enemy.speed;
+            if (enemy.position.x < -32 || enemy.position.x > 480) {
+              this.enemies.splice(index, 1);
+            }
+          });
+        },
+        moveEnemies02() {
+          if (this.isGameOver) return;
+
+          this.enemies02.forEach((enemy, index) => {
+            enemy.position.x += enemy.direction * enemy.speed;
+
+            if (Math.random() < this.shotFrequency) {
+              this.fireEnemyShot(enemy.position.x, enemy.position.y);
+            }
+
+            if (enemy.position.x < -32 || enemy.position.x > 480) {
+              this.enemies02.splice(index, 1);
+            }
+          });
+
+          this.moveEnemyShots();
+        },
+        addEnemy() {
+          if (this.enemies.length < this.maxEnemies) {
+            const possibleYPositions = [48, 80, 144, 176, 240, 272];
+            const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
+            const rightToLeftPositions = [48, 112, 240];
+            const direction = rightToLeftPositions.includes(yPos) ? -1 : 1;
+            const xPos = direction === 1 ? -32 : 480;
+
+            this.enemies.push({
+              position: { x: xPos, y: yPos },
+              speed: 1 + Math.random() * 2,
+              direction: direction,
+            });
+          }
+        },
+        addEnemy02() {
+          if (this.enemies02.length < this.maxEnemies02) {
+            const possibleYPositions = [16, 112, 208];
+            const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
+            const direction = Math.random() < 0.5 ? -1 : 1;
+            const xPos = direction === 1 ? -32 : 480;
+
+            this.enemies02.push({
+              position: { x: xPos, y: yPos },
+              speed: 1 + Math.random() * 2,
+              direction: direction,
+            });
+          }
+        },
+        fireEnemyShot(x, y) {
+          this.enemyShots.push({
+            position: { x: x, y: y },
+            speed: this.shotSpeed,
+            x: 0,
+            y: 0,
+            colorCode: 2,
+          });
+        },
+        moveEnemyShots() {
+          if (this.isGameOver) return;
+
+          this.enemyShots.forEach((shot, index) => {
+            shot.position.y += shot.speed;
+            if (shot.position.y > 400) {
+              this.enemyShots.splice(index, 1);
+            }
+          });
+        },
+        reducePlayerLives() {
+          this.playerLives--;
+          if (this.playerLives <= 0) {
+            this.gameOver();
+          }
+        },
+        gameOver() {
+          this.isGameOver = true;
+          alert("ゲームオーバー");
+          // ゲームをリセットするか、終了する処理をここに追加
+        },
+      },
+
+      created() {
+        setInterval(this.addEnemy, 400);
+        setInterval(this.addEnemy02, 200);
+
+        setInterval(this.moveEnemies, 30);
+        setInterval(this.moveEnemies02, 25);
+      }
+    });
+  </script>
+</body>
+
+</html>
