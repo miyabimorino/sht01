@@ -26,7 +26,8 @@
 
 <body>
   <div id="app">
-    <div id="game-field" @mousemove="movePlayer">
+
+    <div id="game-field" @mousemove="movePlayer" @mousedown="firePlayerShot">
       <div v-for="cell in player" class="grid-cell" :style="{
       left: (cell.x * 4) + playerPosition.x + 'px', 
       top: (cell.y * 4) + playerPosition.y + 'px', 
@@ -57,7 +58,16 @@
     }"></div>
       </div>
 
+      <div v-for="shot in playerShots">
+        <div v-for="cell in playerShot" class="grid-cell" :style="{
+          left: (cell.x * 4) + shot.position.x + 'px', 
+          top: (cell.y * 4) + shot.position.y + 'px', 
+          backgroundColor: getColor(cell.colorCode)
+        }"></div>
+      </div>
+
     </div>
+
     <div id="hud">
       <p>残機: {{ playerLives }}</p>
       <p v-if="isGameOver">ゲームオーバー</p>
@@ -110,6 +120,16 @@
           { x: 3, y: 5, colorCode: 2 },
           { x: 4, y: 6, colorCode: 2 },
         ],
+        playerShot: [
+          { x: 3, y: 0, colorCode: 7 }, { x: 4, y: 0, colorCode: 7 },
+          { x: 3, y: 1, colorCode: 7 }, { x: 4, y: 1, colorCode: 7 },
+          { x: 2, y: 2, colorCode: 7 }, { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 },
+          { x: 2, y: 3, colorCode: 7 }, { x: 3, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 },
+          { x: 2, y: 4, colorCode: 7 }, { x: 3, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 7 },
+          { x: 2, y: 5, colorCode: 7 }, { x: 3, y: 5, colorCode: 7 }, { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 7 },
+          { x: 2, y: 6, colorCode: 7 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 7 }, { x: 5, y: 6, colorCode: 7 },
+          { x: 2, y: 7, colorCode: 7 }, { x: 5, y: 7, colorCode: 7 },
+        ],
         playerPosition: {
           x: 0,
           y: 360
@@ -123,7 +143,13 @@
         shotFrequency: 0.01, // Probability of enemy02 firing a shot
         playerLives: 3, // プレイヤーの残機
         isGameOver: false, // ゲームオーバー状態を管理
+
+
+
+        shootingInterval: null, // 連射を制御するためのインターバルID
+        playerShots: [], // プレイヤーが発射した弾を管理
       },
+
       computed: {
         playerHit() {
           if (this.isGameOver) return false;
@@ -161,6 +187,28 @@
         movePlayer(event) {
           const fieldRect = event.currentTarget.getBoundingClientRect();
           this.playerPosition.x = event.clientX - fieldRect.left - 30;
+        },
+
+
+        firePlayerShot() {
+          const shotPosition = {
+            x: this.playerPosition.x + 12, // プレイヤーの中心に合わせる
+            y: this.playerPosition.y - 8   // 弾がプレイヤーから発射される位置
+          };
+
+          // playerShot データを元に弾を生成
+          this.playerShots.push({
+            position: shotPosition,
+            speed: 4  // 弾の速度
+          });
+        },
+        movePlayerShots() {
+          this.playerShots.forEach((shot, index) => {
+            shot.position.y -= shot.speed; // 弾を上に移動
+            if (shot.position.y < 0) {
+              this.playerShots.splice(index, 1); // 画面外に出た弾を削除
+            }
+          });
         },
         moveEnemies() {
           this.enemies.forEach((enemy, index) => {
@@ -254,7 +302,9 @@
 
         setInterval(this.moveEnemies, 30);
         setInterval(this.moveEnemies02, 25);
+        setInterval(this.movePlayerShots, 20);
       }
+
     });
   </script>
 </body>
