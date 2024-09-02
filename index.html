@@ -136,8 +136,8 @@
         },
         enemies: [],
         enemies02: [], // enemy02のためのリスト
-        maxEnemies: 10,
-        maxEnemies02: 8, // enemy02の最大数
+        maxEnemies: 8,
+        maxEnemies02: 6, // enemy02の最大数
         enemyShots: [],
         shotSpeed: 3, // Speed at which shots move
         shotFrequency: 0.01, // Probability of enemy02 firing a shot
@@ -161,12 +161,47 @@
               return Math.abs(cellX - shot.position.x) < 4 && Math.abs(cellY - shot.position.y) < 4;
             });
           });
+        },
+        collisions() {
+          const collisions = [];
+
+          this.playerShots.forEach((shot) => {
+            this.enemies02.forEach((enemy, enemyIndex) => {
+              const isHit = this.enemy02Cells.some(cell => {
+                const enemyX = cell.x * 4 + enemy.position.x;
+                const enemyY = cell.y * 4 + enemy.position.y;
+                return Math.abs(shot.position.x - enemyX) < 4 && Math.abs(shot.position.y - enemyY) < 4;
+              });
+
+              if (isHit) {
+                collisions.push({ shot, enemyIndex });
+              }
+            });
+          });
+
+          return collisions;
         }
       },
       watch: {
         playerHit(hit) {
           if (hit) {
             this.reducePlayerLives();
+          }
+        },
+        collisions(collisions) {
+          if (collisions.length > 0) {
+            collisions.forEach(({ shot, enemyIndex }) => {
+              // プレイヤーの弾を削除
+              const shotIndex = this.playerShots.indexOf(shot);
+              if (shotIndex > -1) {
+                this.playerShots.splice(shotIndex, 1);
+              }
+
+              // 敵を削除
+              if (enemyIndex > -1) {
+                this.enemies02.splice(enemyIndex, 1);
+              }
+            });
           }
         }
       },
@@ -300,9 +335,9 @@
         setInterval(this.addEnemy, 400);
         setInterval(this.addEnemy02, 200);
 
-        setInterval(this.moveEnemies, 30);
-        setInterval(this.moveEnemies02, 25);
-        setInterval(this.movePlayerShots, 20);
+        setInterval(this.moveEnemies, 60);
+        setInterval(this.moveEnemies02, 40);
+        setInterval(this.movePlayerShots, 25);
       }
 
     });
