@@ -234,7 +234,7 @@
           // playerShot データを元に弾を生成
           this.playerShots.push({
             position: shotPosition,
-            speed: 4  // 弾の速度
+            speed: 6  // 弾の速度
           });
         },
         movePlayerShots() {
@@ -274,7 +274,7 @@
           if (this.enemies.length < this.maxEnemies) {
             const possibleYPositions = [48, 80, 144, 176, 240, 272];
             const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
-            const rightToLeftPositions = [48, 112, 240];
+            const rightToLeftPositions = [48, 144, 240];
             const direction = rightToLeftPositions.includes(yPos) ? -1 : 1;
             const xPos = direction === 1 ? -32 : 480;
 
@@ -335,9 +335,9 @@
         setInterval(this.addEnemy, 400);
         setInterval(this.addEnemy02, 200);
 
-        setInterval(this.moveEnemies, 60);
-        setInterval(this.moveEnemies02, 40);
-        setInterval(this.movePlayerShots, 25);
+        setInterval(this.moveEnemies, 40);
+        setInterval(this.moveEnemies02, 30);
+        setInterval(this.movePlayerShots, 20);
       }
 
     });
