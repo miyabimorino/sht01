@@ -34,23 +34,21 @@
       backgroundColor: getColor(cell.colorCode)
     }"></div>
 
-      <div v-for="enemy in enemies">
-        <div v-for="cell in enemy01Cells" class="grid-cell" :style="{
+      <div v-for="enemy in enemyList">
+        <div v-if="enemy.type == 1" v-for="cell in enemy01Cells" class="grid-cell" :style="{
+      left: (cell.x * 4) + enemy.position.x + 'px', 
+      top: (cell.y * 4) + enemy.position.y + 'px', 
+      backgroundColor: getColor(cell.colorCode)
+    }"></div>
+
+        <div v-if="enemy.type == 2" v-for="cell in enemy02Cells" class="grid-cell" :style="{
       left: (cell.x * 4) + enemy.position.x + 'px', 
       top: (cell.y * 4) + enemy.position.y + 'px', 
       backgroundColor: getColor(cell.colorCode)
     }"></div>
       </div>
 
-      <div v-for="enemy in enemies02">
-        <div v-for="cell in enemy02Cells" class="grid-cell" :style="{
-      left: (cell.x * 4) + enemy.position.x + 'px', 
-      top: (cell.y * 4) + enemy.position.y + 'px', 
-      backgroundColor: getColor(cell.colorCode)
-    }"></div>
-      </div>
-
-      <div v-for="shot in enemyShots">
+      <div v-for="shot in enemyShotList">
         <div v-for="cell in enemyShot" class="grid-cell" :style="{
       left: (cell.x * 4) + shot.position.x + 'px', 
       top: (cell.y * 4) + shot.position.y + 'px', 
@@ -134,27 +132,28 @@
           x: 0,
           y: 360
         },
-        enemies: [],
-        enemies02: [], // enemy02のためのリスト
-        maxEnemies: 8,
-        maxEnemies02: 6, // enemy02の最大数
-        enemyShots: [],
-        shotSpeed: 3, // Speed at which shots move
-        shotFrequency: 0.01, // Probability of enemy02 firing a shot
-        playerLives: 3, // プレイヤーの残機
-        isGameOver: false, // ゲームオーバー状態を管理
 
+        maxEnemy01: 8,
+        maxEnemy02: 6,
+        shotSpeed: 3,
+        shotFrequency: 0.01,
 
+        enemyList: [],
+        enemyShotList: [],
 
-        shootingInterval: null, // 連射を制御するためのインターバルID
-        playerShots: [], // プレイヤーが発射した弾を管理
+        isGameOver: false,
+        playerLives: 3,
+
+        playerShots: [],
+
+        stage: 1,
       },
 
       computed: {
         playerHit() {
           if (this.isGameOver) return false;
 
-          return this.enemyShots.some(shot => {
+          return this.enemyShotList.some(shot => {
             return this.player.some(cell => {
               const cellX = cell.x * 4 + this.playerPosition.x;
               const cellY = cell.y * 4 + this.playerPosition.y;
@@ -166,7 +165,7 @@
           const collisions = [];
 
           this.playerShots.forEach((shot) => {
-            this.enemies02.forEach((enemy, enemyIndex) => {
+            this.enemyList.forEach((enemy, enemyIndex) => {
               const isHit = this.enemy02Cells.some(cell => {
                 const enemyX = cell.x * 4 + enemy.position.x;
                 const enemyY = cell.y * 4 + enemy.position.y;
@@ -199,7 +198,7 @@
 
               // 敵を削除
               if (enemyIndex > -1) {
-                this.enemies02.splice(enemyIndex, 1);
+                this.enemyList.splice(enemyIndex, 1);
               }
             });
           }
@@ -224,7 +223,6 @@
           this.playerPosition.x = event.clientX - fieldRect.left - 30;
         },
 
-
         firePlayerShot() {
           const shotPosition = {
             x: this.playerPosition.x + 12, // プレイヤーの中心に合わせる
@@ -237,6 +235,7 @@
             speed: 6  // 弾の速度
           });
         },
+
         movePlayerShots() {
           this.playerShots.forEach((shot, index) => {
             shot.position.y -= shot.speed; // 弾を上に移動
@@ -245,62 +244,61 @@
             }
           });
         },
-        moveEnemies() {
-          this.enemies.forEach((enemy, index) => {
-            enemy.position.x += enemy.direction * enemy.speed;
-            if (enemy.position.x < -32 || enemy.position.x > 480) {
-              this.enemies.splice(index, 1);
-            }
-          });
+        moveEnemy01(enemy, index) {
+
+          enemy.position.x += enemy.direction * enemy.speed;
+          if (enemy.position.x < -32 || enemy.position.x > 480) {
+            this.enemyList.splice(index, 1);
+          }
+
         },
-        moveEnemies02() {
+        moveEnemy02(enemy, index) {
           if (this.isGameOver) return;
 
-          this.enemies02.forEach((enemy, index) => {
-            enemy.position.x += enemy.direction * enemy.speed;
+          enemy.position.x += enemy.direction * enemy.speed;
 
-            if (Math.random() < this.shotFrequency) {
-              this.fireEnemyShot(enemy.position.x, enemy.position.y);
-            }
+          if (Math.random() < this.shotFrequency) {
+            this.fireEnemyShot(enemy.position.x, enemy.position.y);
+          }
 
-            if (enemy.position.x < -32 || enemy.position.x > 480) {
-              this.enemies02.splice(index, 1);
-            }
-          });
+          if (enemy.position.x < -32 || enemy.position.x > 480) {
+            this.enemyList.splice(index, 1);
+          }
 
-          this.moveEnemyShots();
         },
-        addEnemy() {
-          if (this.enemies.length < this.maxEnemies) {
+        addEnemy01() {
+          if (this.enemyList.filter(enemy => enemy.type === 1).length < this.maxEnemy01) {
             const possibleYPositions = [48, 80, 144, 176, 240, 272];
             const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
             const rightToLeftPositions = [48, 144, 240];
             const direction = rightToLeftPositions.includes(yPos) ? -1 : 1;
             const xPos = direction === 1 ? -32 : 480;
 
-            this.enemies.push({
+            this.enemyList.push({
               position: { x: xPos, y: yPos },
               speed: 1 + Math.random() * 2,
               direction: direction,
+              type: 1,
             });
           }
         },
         addEnemy02() {
-          if (this.enemies02.length < this.maxEnemies02) {
+          if (this.enemyList.filter(enemy => enemy.type === 2).length < this.maxEnemy02) {
             const possibleYPositions = [16, 112, 208];
             const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
             const direction = Math.random() < 0.5 ? -1 : 1;
             const xPos = direction === 1 ? -32 : 480;
 
-            this.enemies02.push({
+            this.enemyList.push({
               position: { x: xPos, y: yPos },
               speed: 1 + Math.random() * 2,
               direction: direction,
+              type: 2,
             });
           }
         },
         fireEnemyShot(x, y) {
-          this.enemyShots.push({
+          this.enemyShotList.push({
             position: { x: x, y: y },
             speed: this.shotSpeed,
             x: 0,
@@ -308,13 +306,13 @@
             colorCode: 2,
           });
         },
-        moveEnemyShots() {
+        moveEnemyShotList() {
           if (this.isGameOver) return;
 
-          this.enemyShots.forEach((shot, index) => {
+          this.enemyShotList.forEach((shot, index) => {
             shot.position.y += shot.speed;
             if (shot.position.y > 400) {
-              this.enemyShots.splice(index, 1);
+              this.enemyShotList.splice(index, 1);
             }
           });
         },
@@ -329,14 +327,28 @@
           alert("ゲームオーバー");
           // ゲームをリセットするか、終了する処理をここに追加
         },
+        addEnemy() {
+          switch (this.stage) {
+            case 1:
+              this.addEnemy01();
+              this.addEnemy02();
+          }
+        },
+        moveEnemy() {
+          this.enemyList.forEach((enemy, index) => {
+            switch (this.stage) {
+              case 1:
+                this.moveEnemy01(enemy, index);
+                this.moveEnemy02(enemy, index);
+            }
+          });
+          this.moveEnemyShotList();
+        },
       },
-
       created() {
         setInterval(this.addEnemy, 400);
-        setInterval(this.addEnemy02, 200);
 
-        setInterval(this.moveEnemies, 40);
-        setInterval(this.moveEnemies02, 30);
+        setInterval(this.moveEnemy, 40);
         setInterval(this.movePlayerShots, 20);
       }
 
