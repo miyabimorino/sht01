@@ -28,48 +28,20 @@
   <div id="app">
 
     <div id="game-field" @mousemove="movePlayer" @mousedown="firePlayerShot">
-      <div v-for="cell in player" class="grid-cell" :style="{
-      left: (cell.x * 4) + playerPosition.x + 'px', 
-      top: (cell.y * 4) + playerPosition.y + 'px', 
-      backgroundColor: getColor(cell.colorCode)
-    }"></div>
-
-      <div v-for="enemy in enemyList">
-        <div v-if="enemy.type == 1" v-for="cell in enemy01Cells" class="grid-cell" :style="{
-      left: (cell.x * 4) + enemy.position.x + 'px', 
-      top: (cell.y * 4) + enemy.position.y + 'px', 
-      backgroundColor: getColor(cell.colorCode)
-    }"></div>
-
-        <div v-if="enemy.type == 2" v-for="cell in enemy02Cells" class="grid-cell" :style="{
-      left: (cell.x * 4) + enemy.position.x + 'px', 
-      top: (cell.y * 4) + enemy.position.y + 'px', 
-      backgroundColor: getColor(cell.colorCode)
-    }"></div>
+      <div v-for="sprite in spriteList">
+        <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
+              left: (cell.x * 4) + sprite.x + 'px', 
+              top: (cell.y * 4) + sprite.y + 'px', 
+              backgroundColor: getColor(cell.colorCode)
+          }"></div>
       </div>
-
-      <div v-for="shot in enemyShotList">
-        <div v-for="cell in enemyShot" class="grid-cell" :style="{
-      left: (cell.x * 4) + shot.position.x + 'px', 
-      top: (cell.y * 4) + shot.position.y + 'px', 
-      backgroundColor: getColor(cell.colorCode)
-    }"></div>
-      </div>
-
-      <div v-for="shot in playerShots">
-        <div v-for="cell in playerShot" class="grid-cell" :style="{
-          left: (cell.x * 4) + shot.position.x + 'px', 
-          top: (cell.y * 4) + shot.position.y + 'px', 
-          backgroundColor: getColor(cell.colorCode)
-        }"></div>
-      </div>
-
     </div>
 
     <div id="hud">
       <p>残機: {{ playerLives }}</p>
       <p v-if="isGameOver">ゲームオーバー</p>
     </div>
+
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
   <script>
@@ -85,14 +57,6 @@
           { x: 0, y: 5, colorCode: 6 }, { x: 2, y: 5, colorCode: 5 }, { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 0 }, { x: 5, y: 5, colorCode: 0 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 4 }, { x: 8, y: 5, colorCode: 4 }, { x: 9, y: 5, colorCode: 7 }, { x: 10, y: 5, colorCode: 0 }, { x: 11, y: 5, colorCode: 0 }, { x: 12, y: 5, colorCode: 5 }, { x: 13, y: 5, colorCode: 5 }, { x: 15, y: 5, colorCode: 6 },
           { x: 0, y: 6, colorCode: 6 }, { x: 1, y: 6, colorCode: 6 }, { x: 2, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 5 }, { x: 4, y: 6, colorCode: 0 }, { x: 5, y: 6, colorCode: 0 }, { x: 6, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 7 }, { x: 10, y: 6, colorCode: 0 }, { x: 11, y: 6, colorCode: 0 }, { x: 12, y: 6, colorCode: 5 }, { x: 13, y: 6, colorCode: 5 }, { x: 14, y: 6, colorCode: 6 }, { x: 15, y: 6, colorCode: 6 },
           { x: 0, y: 7, colorCode: 6 }, { x: 2, y: 7, colorCode: 6 }, { x: 3, y: 7, colorCode: 6 }, { x: 5, y: 7, colorCode: 7 }, { x: 6, y: 7, colorCode: 7 }, { x: 9, y: 7, colorCode: 7 }, { x: 10, y: 7, colorCode: 7 }, { x: 12, y: 7, colorCode: 6 }, { x: 13, y: 7, colorCode: 6 }, { x: 15, y: 7, colorCode: 6 }
-        ],
-        playerShot: [
-          { x: 3, y: 1, colorCode: 1 }, { x: 4, y: 1, colorCode: 1 },
-          { x: 3, y: 2, colorCode: 5 }, { x: 4, y: 2, colorCode: 5 },
-          { x: 3, y: 3, colorCode: 5 }, { x: 4, y: 3, colorCode: 5 },
-          { x: 3, y: 4, colorCode: 5 }, { x: 4, y: 4, colorCode: 5 },
-          { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 5 },
-          { x: 3, y: 6, colorCode: 1 }, { x: 4, y: 6, colorCode: 1 },
         ],
         enemy01Cells: [
           { x: 2, y: 1, colorCode: 2 }, { x: 3, y: 1, colorCode: 2 }, { x: 4, y: 1, colorCode: 2 }, { x: 5, y: 1, colorCode: 2 },
@@ -128,6 +92,9 @@
           { x: 2, y: 6, colorCode: 7 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 7 }, { x: 5, y: 6, colorCode: 7 },
           { x: 2, y: 7, colorCode: 7 }, { x: 5, y: 7, colorCode: 7 },
         ],
+        spriteMap: new Map(),
+
+        spriteList: [],
         playerPosition: {
           x: 0,
           y: 360
@@ -147,6 +114,7 @@
         playerShots: [],
 
         stage: 1,
+        timer: 0,
       },
 
       computed: {
@@ -196,7 +164,6 @@
                 this.playerShots.splice(shotIndex, 1);
               }
 
-              // 敵を削除
               if (enemyIndex > -1) {
                 this.enemyList.splice(enemyIndex, 1);
               }
@@ -242,15 +209,45 @@
             if (shot.position.y < 0) {
               this.playerShots.splice(index, 1); // 画面外に出た弾を削除
             }
+            else {
+              this.spriteList.push(
+                {
+                  x: shot.position.x,
+                  y: shot.position.y,
+                  sprite: 'playerShot'
+                }
+              );
+            }
           });
         },
+        moveEnemy() {
+          this.enemyList.forEach((enemy, index) => {
+            switch (this.stage) {
+              case 1:
+                if (enemy.type === 1) {
+                  this.moveEnemy01(enemy, index);
+                }
+                if (enemy.type === 2) {
+                  this.moveEnemy02(enemy, index);
+                }
+            }
+          });
+          this.moveEnemyShotList();
+        },
         moveEnemy01(enemy, index) {
-
           enemy.position.x += enemy.direction * enemy.speed;
           if (enemy.position.x < -32 || enemy.position.x > 480) {
             this.enemyList.splice(index, 1);
           }
-
+          else {
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: 'enemy01Cells'
+              }
+            );
+          }
         },
         moveEnemy02(enemy, index) {
           if (this.isGameOver) return;
@@ -263,6 +260,15 @@
 
           if (enemy.position.x < -32 || enemy.position.x > 480) {
             this.enemyList.splice(index, 1);
+          }
+          else {
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: 'enemy02Cells'
+              }
+            );
           }
 
         },
@@ -314,6 +320,15 @@
             if (shot.position.y > 400) {
               this.enemyShotList.splice(index, 1);
             }
+            else {
+              this.spriteList.push(
+                {
+                  x: shot.position.x,
+                  y: shot.position.y,
+                  sprite: 'enemyShot'
+                }
+              );
+            }
           });
         },
         reducePlayerLives() {
@@ -334,24 +349,36 @@
               this.addEnemy02();
           }
         },
-        moveEnemy() {
-          this.enemyList.forEach((enemy, index) => {
-            switch (this.stage) {
-              case 1:
-                this.moveEnemy01(enemy, index);
-                this.moveEnemy02(enemy, index);
+        gameMain() {
+          this.spriteList = [];
+
+          this.spriteList.push(
+            {
+              x: this.playerPosition.x,
+              y: this.playerPosition.y,
+              sprite: 'player'
             }
-          });
-          this.moveEnemyShotList();
+          );
+
+          this.timer++;
+          this.timer = this.timer & 1;
+
+          if (this.timer === 0) {
+            this.addEnemy();
+          }
+          this.moveEnemy();
+          this.movePlayerShots()
         },
       },
       created() {
-        setInterval(this.addEnemy, 400);
+        this.spriteMap.set('player', this.player);
+        this.spriteMap.set('playerShot', this.playerShot);
+        this.spriteMap.set('enemy01Cells', this.enemy01Cells);
+        this.spriteMap.set('enemy02Cells', this.enemy02Cells);
+        this.spriteMap.set('enemyShot', this.enemyShot);
 
-        setInterval(this.moveEnemy, 40);
-        setInterval(this.movePlayerShots, 20);
+        setInterval(this.gameMain, 25);
       }
-
     });
   </script>
 </body>
