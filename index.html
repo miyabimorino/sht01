@@ -3,45 +3,45 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>シューティングゲーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=">
   <style>
     #game-field {
+      position: relative;
       width: 640px;
       height: 400px;
+      margin: auto;
       background-color: black;
-      position: relative;
       overflow: hidden;
-      margin: 0 auto;
       cursor: none;
+      image-rendering: pixelated;
+      transform: translateZ(0);
     }
 
     .grid-cell {
+      position: absolute;
       width: 4px;
       height: 4px;
-      position: absolute;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transform: translateZ(0);
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 </head>
 
 <body>
   <div id="app">
-
     <div id="game-field" @mousemove="movePlayer" @mousedown="createPlayerShot">
       <div v-for="sprite in spriteList">
         <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
-              left: (cell.x * 4) + sprite.x + 'px', 
-              top: (cell.y * 4) + sprite.y + 'px', 
+              left: cell.x * 4 + Math.round(sprite.x / 1) + 'px', 
+              top:  cell.y * 4 + Math.round(sprite.y / 1) + 'px', 
               backgroundColor: getColor(cell.colorCode)
           }"></div>
       </div>
     </div>
-
-    <div id="hud">
-      <p>残機: {{ playerLeft }}</p>
-      <p v-if="isGameOver">ゲームオーバー</p>
-    </div>
-
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
   <script>
@@ -148,7 +148,72 @@
           { x: 2, y: 6, colorCode: 1 }, { x: 3, y: 6, colorCode: 5 }, { x: 4, y: 6, colorCode: 5 }, { x: 5, y: 6, colorCode: 1 },
           { x: 2, y: 7, colorCode: 1 }, { x: 3, y: 7, colorCode: 5 }, { x: 4, y: 7, colorCode: 5 }, { x: 5, y: 7, colorCode: 1 },
         ],
-
+        bang01: [
+          { x: 3, y: 3, colorCode: 1 }, { x: 4, y: 3, colorCode: 1 },
+          { x: 3, y: 4, colorCode: 1 }, { x: 4, y: 4, colorCode: 1 },
+        ],
+        bang02: [
+          { x: 3, y: 2, colorCode: 2 }, { x: 4, y: 2, colorCode: 2 },
+          { x: 2, y: 3, colorCode: 2 }, { x: 3, y: 3, colorCode: 2 }, { x: 4, y: 3, colorCode: 2 }, { x: 5, y: 3, colorCode: 2 },
+          { x: 2, y: 4, colorCode: 2 }, { x: 3, y: 4, colorCode: 2 }, { x: 4, y: 4, colorCode: 2 }, { x: 5, y: 4, colorCode: 2 },
+          { x: 3, y: 5, colorCode: 2 }, { x: 4, y: 5, colorCode: 2 },
+        ],
+        bang03: [
+          { x: 2, y: 1, colorCode: 3 }, { x: 3, y: 1, colorCode: 3 }, { x: 4, y: 1, colorCode: 3 }, { x: 5, y: 1, colorCode: 3 },
+          { x: 1, y: 2, colorCode: 3 }, { x: 2, y: 2, colorCode: 3 }, { x: 3, y: 2, colorCode: 3 }, { x: 4, y: 2, colorCode: 3 }, { x: 5, y: 2, colorCode: 3 }, { x: 6, y: 2, colorCode: 3 },
+          { x: 1, y: 3, colorCode: 3 }, { x: 2, y: 3, colorCode: 3 }, { x: 3, y: 3, colorCode: 3 }, { x: 4, y: 3, colorCode: 3 }, { x: 5, y: 3, colorCode: 3 }, { x: 6, y: 3, colorCode: 3 },
+          { x: 1, y: 4, colorCode: 3 }, { x: 2, y: 4, colorCode: 3 }, { x: 3, y: 4, colorCode: 3 }, { x: 4, y: 4, colorCode: 3 }, { x: 5, y: 4, colorCode: 3 }, { x: 6, y: 4, colorCode: 3 },
+          { x: 1, y: 5, colorCode: 3 }, { x: 2, y: 5, colorCode: 3 }, { x: 3, y: 5, colorCode: 3 }, { x: 4, y: 5, colorCode: 3 }, { x: 5, y: 5, colorCode: 3 }, { x: 6, y: 5, colorCode: 3 },
+          { x: 2, y: 6, colorCode: 3 }, { x: 3, y: 6, colorCode: 3 }, { x: 4, y: 6, colorCode: 3 }, { x: 5, y: 6, colorCode: 3 },
+        ],
+        bang04: [
+          { x: 2, y: 0, colorCode: 4 }, { x: 3, y: 0, colorCode: 4 }, { x: 4, y: 0, colorCode: 4 }, { x: 5, y: 0, colorCode: 4 },
+          { x: 1, y: 1, colorCode: 4 }, { x: 2, y: 1, colorCode: 4 }, { x: 3, y: 1, colorCode: 4 }, { x: 4, y: 1, colorCode: 4 }, { x: 5, y: 1, colorCode: 4 }, { x: 6, y: 1, colorCode: 4 },
+          { x: 0, y: 2, colorCode: 4 }, { x: 1, y: 2, colorCode: 4 }, { x: 2, y: 2, colorCode: 4 }, { x: 3, y: 2, colorCode: 4 }, { x: 4, y: 2, colorCode: 4 }, { x: 5, y: 2, colorCode: 4 }, { x: 6, y: 2, colorCode: 4 }, { x: 7, y: 2, colorCode: 4 },
+          { x: 0, y: 3, colorCode: 4 }, { x: 1, y: 3, colorCode: 4 }, { x: 2, y: 3, colorCode: 4 }, { x: 3, y: 3, colorCode: 4 }, { x: 4, y: 3, colorCode: 4 }, { x: 5, y: 3, colorCode: 4 }, { x: 6, y: 3, colorCode: 4 }, { x: 7, y: 3, colorCode: 4 },
+          { x: 0, y: 4, colorCode: 4 }, { x: 1, y: 4, colorCode: 4 }, { x: 2, y: 4, colorCode: 4 }, { x: 3, y: 4, colorCode: 4 }, { x: 4, y: 4, colorCode: 4 }, { x: 5, y: 4, colorCode: 4 }, { x: 6, y: 4, colorCode: 4 }, { x: 7, y: 4, colorCode: 4 },
+          { x: 0, y: 5, colorCode: 4 }, { x: 1, y: 5, colorCode: 4 }, { x: 2, y: 5, colorCode: 4 }, { x: 3, y: 5, colorCode: 4 }, { x: 4, y: 5, colorCode: 4 }, { x: 5, y: 5, colorCode: 4 }, { x: 6, y: 5, colorCode: 4 }, { x: 7, y: 5, colorCode: 4 },
+          { x: 1, y: 6, colorCode: 4 }, { x: 2, y: 6, colorCode: 4 }, { x: 3, y: 6, colorCode: 4 }, { x: 4, y: 6, colorCode: 4 }, { x: 5, y: 6, colorCode: 4 }, { x: 6, y: 6, colorCode: 4 },
+          { x: 2, y: 7, colorCode: 4 }, { x: 3, y: 7, colorCode: 4 }, { x: 4, y: 7, colorCode: 4 }, { x: 5, y: 7, colorCode: 4 },
+        ],
+        bang05: [
+          { x: 2, y: 0, colorCode: 5 }, { x: 3, y: 0, colorCode: 5 }, { x: 4, y: 0, colorCode: 5 }, { x: 5, y: 0, colorCode: 5 },
+          { x: 1, y: 1, colorCode: 5 }, { x: 2, y: 1, colorCode: 5 }, { x: 3, y: 1, colorCode: 5 }, { x: 4, y: 1, colorCode: 5 }, { x: 5, y: 1, colorCode: 5 }, { x: 6, y: 1, colorCode: 5 },
+          { x: 0, y: 2, colorCode: 5 }, { x: 1, y: 2, colorCode: 5 }, { x: 2, y: 2, colorCode: 5 }, { x: 3, y: 2, colorCode: 5 }, { x: 4, y: 2, colorCode: 5 }, { x: 5, y: 2, colorCode: 5 }, { x: 6, y: 2, colorCode: 5 }, { x: 7, y: 2, colorCode: 5 },
+          { x: 0, y: 3, colorCode: 5 }, { x: 1, y: 3, colorCode: 5 }, { x: 2, y: 3, colorCode: 5 }, { x: 5, y: 3, colorCode: 5 }, { x: 6, y: 3, colorCode: 5 }, { x: 7, y: 3, colorCode: 5 },
+          { x: 0, y: 4, colorCode: 5 }, { x: 1, y: 4, colorCode: 5 }, { x: 2, y: 4, colorCode: 5 }, { x: 5, y: 4, colorCode: 5 }, { x: 6, y: 4, colorCode: 5 }, { x: 7, y: 4, colorCode: 5 },
+          { x: 0, y: 5, colorCode: 5 }, { x: 1, y: 5, colorCode: 5 }, { x: 2, y: 5, colorCode: 5 }, { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 5 }, { x: 5, y: 5, colorCode: 5 }, { x: 6, y: 5, colorCode: 5 }, { x: 7, y: 5, colorCode: 5 },
+          { x: 1, y: 6, colorCode: 5 }, { x: 2, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 5 }, { x: 4, y: 6, colorCode: 5 }, { x: 5, y: 6, colorCode: 5 }, { x: 6, y: 6, colorCode: 5 },
+          { x: 2, y: 7, colorCode: 5 }, { x: 3, y: 7, colorCode: 5 }, { x: 4, y: 7, colorCode: 5 }, { x: 5, y: 7, colorCode: 5 },
+        ],
+        bang06: [
+          { x: 2, y: 0, colorCode: 6 }, { x: 3, y: 0, colorCode: 6 }, { x: 4, y: 0, colorCode: 6 }, { x: 5, y: 0, colorCode: 6 },
+          { x: 1, y: 1, colorCode: 6 }, { x: 2, y: 1, colorCode: 6 }, { x: 3, y: 1, colorCode: 6 }, { x: 4, y: 1, colorCode: 6 }, { x: 5, y: 1, colorCode: 6 }, { x: 6, y: 1, colorCode: 6 },
+          { x: 0, y: 2, colorCode: 6 }, { x: 1, y: 2, colorCode: 6 }, { x: 2, y: 2, colorCode: 6 }, { x: 5, y: 2, colorCode: 6 }, { x: 6, y: 2, colorCode: 6 }, { x: 7, y: 2, colorCode: 6 },
+          { x: 0, y: 3, colorCode: 6 }, { x: 1, y: 3, colorCode: 6 }, { x: 6, y: 3, colorCode: 6 }, { x: 7, y: 3, colorCode: 6 },
+          { x: 0, y: 4, colorCode: 6 }, { x: 1, y: 4, colorCode: 6 }, { x: 6, y: 4, colorCode: 6 }, { x: 7, y: 4, colorCode: 6 },
+          { x: 0, y: 5, colorCode: 6 }, { x: 1, y: 5, colorCode: 6 }, { x: 2, y: 5, colorCode: 6 }, { x: 5, y: 5, colorCode: 6 }, { x: 6, y: 5, colorCode: 6 }, { x: 7, y: 5, colorCode: 6 },
+          { x: 1, y: 6, colorCode: 6 }, { x: 2, y: 6, colorCode: 6 }, { x: 3, y: 6, colorCode: 6 }, { x: 4, y: 6, colorCode: 6 }, { x: 5, y: 6, colorCode: 6 }, { x: 6, y: 6, colorCode: 6 },
+          { x: 2, y: 7, colorCode: 6 }, { x: 3, y: 7, colorCode: 6 }, { x: 4, y: 7, colorCode: 6 }, { x: 5, y: 7, colorCode: 6 },
+        ],
+        bang07: [
+          { x: 2, y: 0, colorCode: 7 }, { x: 3, y: 0, colorCode: 7 }, { x: 4, y: 0, colorCode: 7 }, { x: 5, y: 0, colorCode: 7 },
+          { x: 1, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 }, { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 7, y: 4, colorCode: 7 },
+          { x: 0, y: 5, colorCode: 7 }, { x: 1, y: 5, colorCode: 7 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 7 },
+          { x: 1, y: 6, colorCode: 7 }, { x: 2, y: 6, colorCode: 7 }, { x: 5, y: 6, colorCode: 7 }, { x: 6, y: 6, colorCode: 7 },
+          { x: 2, y: 7, colorCode: 7 }, { x: 3, y: 7, colorCode: 7 }, { x: 4, y: 7, colorCode: 7 }, { x: 5, y: 7, colorCode: 7 },
+        ],
+        bang08: [
+          { x: 2, y: 0, colorCode: 7 }, { x: 5, y: 0, colorCode: 7 },
+          { x: 1, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 },
+          { x: 0, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 7 },
+          { x: 1, y: 6, colorCode: 7 }, { x: 6, y: 6, colorCode: 7 },
+          { x: 2, y: 7, colorCode: 7 }, { x: 5, y: 7, colorCode: 7 },
+        ],
         spriteMap: new Map(),
         spriteList: [],
         playerPosition: {
@@ -218,6 +283,9 @@
               }
 
               if (enemyIndex > -1) {
+                for (i = 0; i < 3; i++) {
+                  this.createBang(this.enemyList[enemyIndex].position.x, this.enemyList[enemyIndex].position.y);
+                }
                 this.enemyList.splice(enemyIndex, 1);
               }
             });
@@ -225,6 +293,40 @@
         }
       },
       methods: {
+        createBang(xPos, yPos) {
+          this.enemyList.push({
+            position: { x: xPos, y: yPos },
+            speed: 1 + Math.random() * 2,
+            direction: Math.random() * 180 + 180,
+            type: 99,
+            animeCount: 0,
+            animePtn: 0,
+          });
+        },
+        moveBang(enemy, index) {
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+
+          enemy.animeCount++;
+          enemy.animeCount &= 1;
+          if (enemy.animeCount === 0) {
+            enemy.animePtn++;
+          }
+          if (enemy.animePtn === 8) {
+            this.enemyList.splice(index, 1);
+          } else {
+            let spritePtnList = [
+              'bang01', 'bang02', 'bang03', 'bang04', 'bang05', 'bang06', 'bang07', 'bang08',
+            ];
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: spritePtnList[enemy.animePtn]
+              }
+            );
+          }
+        },
         getColor(colorCode) {
           switch (colorCode) {
             case 0: return "black";
@@ -242,6 +344,11 @@
           const fieldRect = event.currentTarget.getBoundingClientRect();
           this.playerPosition.x = event.clientX - fieldRect.left - 64;
         },
+        touchMovePlayer(event) {
+          const touch = event.touches[0];
+          const fieldRect = event.currentTarget.getBoundingClientRect();
+          this.playerPosition.x = touch.clientX - fieldRect.left - 64;
+        },
         createPlayerShot() {
           const shotPosition = {
             x: this.playerPosition.x + 12,
@@ -251,7 +358,7 @@
           this.playerShotList.push({
             position: shotPosition,
             animePtn: 0,
-            animeCnt: 0,
+            animeCount: 0,
             speed: 6
           });
         },
@@ -263,14 +370,14 @@
             }
             else {
               if (shot.animePtn !== 3) {
-                shot.animeCnt++;
-                shot.animeCnt &= 7;
-                if (shot.animeCnt === 0) {
+                shot.animeCount++;
+                shot.animeCount &= 7;
+                if (shot.animeCount === 0) {
                   shot.animePtn++;
                 }
               }
-              
-              let spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02','playerShot01' ];
+
+              let spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02', 'playerShot01'];
               this.spriteList.push(
                 {
                   x: shot.position.x,
@@ -290,6 +397,9 @@
                 }
                 if (enemy.type === 2) {
                   this.moveEnemy02(enemy, index);
+                }
+                if (enemy.type === 99) {
+                  this.moveBang(enemy, index);
                 }
             }
           });
@@ -465,16 +575,21 @@
         this.spriteMap.set('playerShot02', this.playerShot02);
         this.spriteMap.set('playerShot03', this.playerShot03);
         this.spriteMap.set('playerShot04', this.playerShot04);
-
         this.spriteMap.set('enemy01LeftACells', this.enemy01LeftACells);
         this.spriteMap.set('enemy01LeftBCells', this.enemy01LeftBCells);
         this.spriteMap.set('enemy01RightACells', this.enemy01RightACells);
         this.spriteMap.set('enemy01RightBCells', this.enemy01RightBCells);
-
         this.spriteMap.set('enemy02ACells', this.enemy02ACells);
         this.spriteMap.set('enemy02BCells', this.enemy02BCells);
-
         this.spriteMap.set('enemyShot', this.enemyShot);
+        this.spriteMap.set('bang01', this.bang01);
+        this.spriteMap.set('bang02', this.bang02);
+        this.spriteMap.set('bang03', this.bang03);
+        this.spriteMap.set('bang04', this.bang04);
+        this.spriteMap.set('bang05', this.bang05);
+        this.spriteMap.set('bang06', this.bang05);
+        this.spriteMap.set('bang07', this.bang06);
+        this.spriteMap.set('bang08', this.bang08);
 
         setInterval(this.gameMain, 25);
       }
