@@ -17,6 +17,17 @@
       image-rendering: pixelated;
     }
 
+    #game-text {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      color: white;
+      font-size: 16px;
+      font-family: monospace;
+      z-index: 10;
+      pointer-events: none;
+    }
+
     .grid-cell {
       position: absolute;
       box-sizing: border-box;
@@ -37,15 +48,32 @@
 
 <body>
   <div id="app">
-    <div id="game-field" @mousemove="movePlayer" @mousedown="createPlayerShot">
+    <div id="game-field" @mousemove="movePlayer" @mousedown="handleClick">
       <div v-for="sprite in spriteList">
         <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
-            left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px', 
-            top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px', 
-            backgroundColor: getColor(cell.colorCode),
-            width: `${gridCellSize}px`,
-            height: `${gridCellSize}px`
-          }">
+             left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
+             top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px',
+             backgroundColor: getColor(cell.colorCode),
+             width: `${gridCellSize}px`,
+             height: `${gridCellSize}px`
+           }">
+        </div>
+      </div>
+
+      <div id="game-text">
+        <div v-if="gameStatus === 'title'">
+          <p style="font-size:20px;">シューティングゲーム</p>
+          <p>クリックでスタート</p>
+        </div>
+
+        <div v-if="gameStatus === 'play'">
+          <p>スコア: {{ score }}</p>
+          <p>残機: {{ playerLeft }}</p>
+        </div>
+
+        <div v-if="gameStatus === 'gameover'">
+          <p style="color:red; font-size:20px;">GAME OVER</p>
+          <p>クリックでリトライ</p>
         </div>
       </div>
     </div>
@@ -236,7 +264,7 @@
         enemyShotList: [],
         playerShotList: [],
 
-        isGameOver: false,
+        score: 0,
         playerLeft: 3,
 
         stage: 1,
@@ -246,6 +274,8 @@
 
         currentWidth: 0,
         currentHeight: 0,
+
+        gameStatus: "title"
       },
       methods: {
         isColliding(rectA, rectB) {
@@ -256,8 +286,6 @@
             rectA.top > rectB.top + rectB.height
           );
         },
-
-        // entity から矩形ボックスを計算
         getBoundingBox(entity) {
           return {
             left: entity.position.x + (entity.rect?.left || 0),
@@ -277,6 +305,17 @@
             hitCheck: false,
           });
         },
+        createMiniBang(xPos, yPos) {
+          this.enemyList.push({
+            position: { x: xPos, y: yPos },
+            speed: Math.random() * 0.5,
+            direction: Math.random() * 180 + 90,
+            type: 99,
+            animeCount: 0,
+            animePtn: 0,
+            hitCheck: false,
+          });
+        },
         moveBang(enemy, index) {
           enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
           enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
@@ -287,6 +326,30 @@
             enemy.animePtn++;
           }
           if (enemy.animePtn === 8) {
+            this.enemyList.splice(index, 1);
+          } else {
+            let spritePtnList = [
+              'bang01', 'bang02', 'bang03', 'bang04', 'bang05', 'bang06', 'bang07', 'bang08',
+            ];
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: spritePtnList[enemy.animePtn]
+              }
+            );
+          }
+        },
+        moveMiniBang(enemy, index) {
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+
+          enemy.animeCount++;
+          enemy.animeCount &= 1;
+          if (enemy.animeCount === 0) {
+            enemy.animePtn++;
+          }
+          if (enemy.animePtn === 4) {
             this.enemyList.splice(index, 1);
           } else {
             let spritePtnList = [
@@ -334,7 +397,7 @@
             position: shotPosition,
             animePtn: 0,
             animeCount: 0,
-            speed: 1,
+            speed: 2,
             rect: {
               left: 4,
               top: 2,
@@ -373,16 +436,12 @@
           this.enemyList.forEach((enemy, index) => {
             switch (this.stage) {
               case 1:
-                if (enemy.type === 1) {
-                  this.moveEnemy01(enemy, index);
-                }
-                if (enemy.type === 2) {
-                  this.moveEnemy02(enemy, index);
-                }
-                if (enemy.type === 99) {
-                  this.moveBang(enemy, index);
-                }
+                if (enemy.type === 1) this.moveEnemy01(enemy, index);
+                if (enemy.type === 2) this.moveEnemy02(enemy, index);
             }
+            if (enemy.type === 98) this.moveMiniBang(enemy, index);
+            if (enemy.type === 99) this.moveBang(enemy, index);
+
           });
           this.moveEnemyShot();
         },
@@ -484,7 +543,8 @@
                 top: 0,
                 height: 4,
                 width: 12
-              }
+              },
+              score: 0
             });
           }
         },
@@ -509,7 +569,8 @@
                 top: 0,
                 height: 8,
                 width: 12
-              }
+              },
+              score: 50
             });
           }
         },
@@ -553,27 +614,49 @@
             this.gameOver();
           }
         },
+        handleClick() {
+          if (this.gameStatus === "title") {
+            this.startGame();
+          } else if (this.gameStatus === "gameover") {
+            this.startGame();
+          } else if (this.gameStatus === "play") {
+            this.createPlayerShot();
+          }
+        },
+        startGame() {
+          this.score = 0;
+          this.playerLeft = 3;
+          this.enemyList = [];
+          this.enemyShotList = [];
+          this.playerShotList = [];
+          this.gameStatus = "play";
+        },
+        reducePlayerLives() {
+          this.playerLeft--;
+          if (this.playerLeft <= 0) {
+            this.gameOver();
+          }
+        },
         gameOver() {
-          this.isGameOver = true;
-          alert("ゲームオーバー")
+          this.gameStatus = "gameover";
         },
         gameMain() {
           this.spriteList = [];
 
-          this.spriteList.push(
-            {
+          if (this.gameStatus === "play") {
+            // プレイヤー描画
+            this.spriteList.push({
               x: this.playerPosition.x,
               y: this.playerPosition.y,
               sprite: 'player'
-            }
-          );
+            });
 
-          this.createEnemy();
-          this.moveEnemy();
-          this.movePlayerShots()
-
-          this.checkPlayerHit();
-          this.checkCollisions();
+            this.createEnemy();
+            this.moveEnemy();
+            this.movePlayerShots();
+            this.checkPlayerHit();
+            this.checkCollisions();
+          }
         },
         checkPlayerHit() {
           if (this.isGameOver) return;
@@ -600,12 +683,14 @@
 
               const enemyBox = this.getBoundingBox(enemy);
               if (this.isColliding(shotBox, enemyBox)) {
+                this.createMiniBang(enemy.position.x, enemy.position.y);
                 this.playerShotList.splice(shotIndex, 1);
                 enemy.power--;
                 if (enemy.power === 0) {
-                  for (i = 0; i < 3; i++) {
+                  for (let i = 0; i < 3; i++) {
                     this.createBang(enemy.position.x, enemy.position.y);
                   }
+                  this.score += enemy.score;
                   this.enemyList.splice(enemyIndex, 1);
                 }
               }
