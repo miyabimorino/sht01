@@ -259,6 +259,7 @@
         maxEnemy02: 5,
         shotSpeed: 1,
         shotFrequency: 0.01,
+        shotQueue: [],
 
         enemyList: [],
         enemyShotList: [],
@@ -274,6 +275,9 @@
 
         currentWidth: 0,
         currentHeight: 0,
+
+        invincibleTimer: 0,
+        isPlayerVisible: true,
 
         gameStatus: "title"
       },
@@ -389,7 +393,7 @@
         },
         createPlayerShot() {
           const shotPosition = {
-            x: this.playerPosition.x + 12,
+            x: this.playerPosition.x + 4,
             y: this.playerPosition.y - 8
           };
 
@@ -434,11 +438,8 @@
         },
         moveEnemy() {
           this.enemyList.forEach((enemy, index) => {
-            switch (this.stage) {
-              case 1:
-                if (enemy.type === 1) this.moveEnemy01(enemy, index);
-                if (enemy.type === 2) this.moveEnemy02(enemy, index);
-            }
+            if (enemy.type === 1) this.moveEnemy01(enemy, index);
+            if (enemy.type === 2) this.moveEnemy02(enemy, index);
             if (enemy.type === 98) this.moveMiniBang(enemy, index);
             if (enemy.type === 99) this.moveBang(enemy, index);
 
@@ -608,19 +609,18 @@
             }
           });
         },
-        reducePlayerLives() {
-          this.playerLeft--;
-          if (this.playerLeft <= 0) {
-            this.gameOver();
-          }
-        },
         handleClick() {
           if (this.gameStatus === "title") {
             this.startGame();
           } else if (this.gameStatus === "gameover") {
             this.startGame();
           } else if (this.gameStatus === "play") {
-            this.createPlayerShot();
+            if (this.shotQueue.length > 0) return;
+            for (let i = 0; i < 3; i++) {
+              this.shotQueue.push({
+                delay: i * 8
+              });
+            }
           }
         },
         startGame() {
@@ -644,12 +644,30 @@
           this.spriteList = [];
 
           if (this.gameStatus === "play") {
-            // プレイヤー描画
-            this.spriteList.push({
-              x: this.playerPosition.x,
-              y: this.playerPosition.y,
-              sprite: 'player'
-            });
+            if (this.invincibleTimer > 0) {
+              this.invincibleTimer--;
+
+              this.isPlayerVisible = (this.invincibleTimer % 4 < 2);
+            } else {
+              this.isPlayerVisible = true;
+            }
+
+            if (this.isPlayerVisible) {
+              this.spriteList.push({
+                x: this.playerPosition.x,
+                y: this.playerPosition.y,
+                sprite: 'player'
+              });
+            }
+
+            for (let i = this.shotQueue.length - 1; i >= 0; i--) {
+              if (this.shotQueue[i].delay <= 0) {
+                this.createPlayerShot();
+                this.shotQueue.splice(i, 1);
+              } else {
+                this.shotQueue[i].delay--;
+              }
+            }
 
             this.createEnemy();
             this.moveEnemy();
@@ -660,6 +678,7 @@
         },
         checkPlayerHit() {
           if (this.isGameOver) return;
+          if (this.invincibleTimer > 0) return; 
 
           const playerBox = this.getBoundingBox({
             position: this.playerPosition,
@@ -670,7 +689,12 @@
             const shotBox = this.getBoundingBox(shot);
             if (this.isColliding(playerBox, shotBox)) {
               this.enemyShotList.splice(index, 1);
+              for (let i = 0; i < 4; i++) {
+                this.createBang(this.playerPosition.x + 6, this.playerPosition.y);
+              }
               this.reducePlayerLives();
+              this.invincibleTimer = 100;
+              this.isPlayerVisible = true;
             }
           });
         },
