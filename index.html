@@ -279,6 +279,9 @@
         invincibleTimer: 0,
         isPlayerVisible: true,
 
+        attackAngles: [8, -8, 16, -16, 24, -24, 32, -32, 4, -4],
+        attackAngleIndex: 0,
+
         gameStatus: "title"
       },
       methods: {
@@ -485,7 +488,7 @@
           enemy.position.x += enemy.direction * enemy.speed;
 
           if (Math.random() < this.shotFrequency) {
-            this.createEnemyShot(enemy.position.x, enemy.position.y);
+            this.createEnemyShot(enemy);
           }
 
           if (enemy.position.x < -32 || enemy.position.x > 160) {
@@ -575,39 +578,46 @@
             });
           }
         },
-        createEnemyShot(x, y) {
+        createEnemyShot(enemy) {
+          const baseAngle = 90 * Math.PI / 180;
+
+          const offsetDeg = this.attackAngles[this.attackAngleIndex];
+          this.attackAngleIndex = (this.attackAngleIndex + 1) % this.attackAngles.length;
+
+          const angle = baseAngle + offsetDeg * Math.PI / 180;
+
+          const speed = 1;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed;
+
           this.enemyShotList.push({
-            position: { x: x, y: y },
-            speed: this.shotSpeed,
-            x: 0,
-            y: 0,
+            position: { x: enemy.position.x, y: enemy.position.y },
+            vx: vx,
+            vy: vy,
             rect: {
               left: 4,
               top: 2,
               height: 2,
               width: 2
-            }
-
+            },
           });
         },
         moveEnemyShot() {
-          if (this.isGameOver) return;
+          for (let i = this.enemyShotList.length - 1; i >= 0; i--) {
+            const shot = this.enemyShotList[i];
+            shot.position.x += shot.vx;
+            shot.position.y += shot.vy;
 
-          this.enemyShotList.forEach((shot, index) => {
-            shot.position.y += shot.speed;
-            if (shot.position.y > 100) {
-              this.enemyShotList.splice(index, 1);
+            this.spriteList.push({
+              x: shot.position.x,
+              y: shot.position.y,
+              sprite: 'enemyShot'
+            });
+
+            if (shot.x > 160 || shot.y > 100) {
+              this.enemyShotList.splice(i, 1);
             }
-            else {
-              this.spriteList.push(
-                {
-                  x: shot.position.x,
-                  y: shot.position.y,
-                  sprite: 'enemyShot'
-                }
-              );
-            }
-          });
+          }
         },
         handleClick() {
           if (this.gameStatus === "title") {
@@ -630,6 +640,9 @@
           this.enemyShotList = [];
           this.playerShotList = [];
           this.gameStatus = "play";
+          this.invincibleTimer = 0;
+          this.isPlayerVisible = true;
+          this.attackAngleIndex = 0;
         },
         reducePlayerLives() {
           this.playerLeft--;
@@ -678,7 +691,7 @@
         },
         checkPlayerHit() {
           if (this.isGameOver) return;
-          if (this.invincibleTimer > 0) return; 
+          if (this.invincibleTimer > 0) return;
 
           const playerBox = this.getBoundingBox({
             position: this.playerPosition,
