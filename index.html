@@ -48,7 +48,8 @@
 
 <body>
   <div id="app">
-    <div id="game-field" @mousemove="movePlayer" @mousedown="handleClick">
+    <div id="game-field" @mousemove="movePlayer" @click="handleClick" @touchstart="handleTouchStart($event)"
+      @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
       <div v-for="sprite in spriteList">
         <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
              left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
@@ -142,40 +143,29 @@
           { x: 2, y: 6, colorCode: 6 }, { x: 3, y: 6, colorCode: 6 }, { x: 4, y: 6, colorCode: 6 }, { x: 8, y: 6, colorCode: 6 }, { x: 9, y: 6, colorCode: 6 }, { x: 10, y: 6, colorCode: 6 },
         ],
         enemy03ACells: [
-          { x: 1, y: 0, colorCode: 1 }, { x: 2, y: 0, colorCode: 4 }, { x: 5, y: 0, colorCode: 4 }, { x: 6, y: 0, colorCode: 1 },
-          { x: 1, y: 1, colorCode: 1 }, { x: 2, y: 1, colorCode: 1 }, { x: 3, y: 1, colorCode: 4 }, { x: 4, y: 1, colorCode: 4 }, { x: 5, y: 1, colorCode: 1 }, { x: 6, y: 1, colorCode: 1 },
-          { x: 1, y: 2, colorCode: 1 }, { x: 3, y: 2, colorCode: 1 }, { x: 4, y: 2, colorCode: 1 }, { x: 6, y: 2, colorCode: 1 },
-          { x: 1, y: 3, colorCode: 1 }, { x: 2, y: 3, colorCode: 4 }, { x: 5, y: 3, colorCode: 4 }, { x: 6, y: 3, colorCode: 1 },
-          { x: 1, y: 4, colorCode: 1 }, { x: 2, y: 4, colorCode: 1 }, { x: 3, y: 4, colorCode: 4 }, { x: 4, y: 4, colorCode: 4 }, { x: 5, y: 4, colorCode: 1 }, { x: 6, y: 4, colorCode: 1 },
-          { x: 1, y: 5, colorCode: 1 }, { x: 3, y: 5, colorCode: 1 }, { x: 4, y: 5, colorCode: 1 }, { x: 6, y: 5, colorCode: 1 },
-          { x: 1, y: 6, colorCode: 1 }, { x: 2, y: 6, colorCode: 4 }, { x: 5, y: 6, colorCode: 4 }, { x: 6, y: 6, colorCode: 1 },
-          { x: 1, y: 7, colorCode: 1 }, { x: 3, y: 7, colorCode: 1 }, { x: 4, y: 7, colorCode: 1 }, { x: 6, y: 7, colorCode: 1 },
-          { x: 1, y: 8, colorCode: 1 }, { x: 2, y: 8, colorCode: 1 }, { x: 3, y: 8, colorCode: 1 }, { x: 4, y: 8, colorCode: 1 }, { x: 5, y: 8, colorCode: 1 }, { x: 6, y: 8, colorCode: 1 },
-          { x: 1, y: 9, colorCode: 1 }, { x: 2, y: 9, colorCode: 1 }, { x: 3, y: 9, colorCode: 4 }, { x: 4, y: 9, colorCode: 4 }, { x: 5, y: 9, colorCode: 1 }, { x: 6, y: 9, colorCode: 1 },
-          { x: 1, y: 10, colorCode: 1 }, { x: 2, y: 10, colorCode: 1 }, { x: 3, y: 10, colorCode: 1 }, { x: 4, y: 10, colorCode: 1 }, { x: 5, y: 10, colorCode: 1 }, { x: 6, y: 10, colorCode: 1 },
+          { x: 2, y: 5, colorCode: 4 }, { x: 5, y: 5, colorCode: 4 },
+          { x: 2, y: 7, colorCode: 1 }, { x: 5, y: 7, colorCode: 1 },
+          { x: 3, y: 8, colorCode: 1 }, { x: 4, y: 8, colorCode: 1 },
+          { x: 2, y: 9, colorCode: 4 }, { x: 5, y: 9, colorCode: 4 },
+          { x: 2, y: 10, colorCode: 1 }, { x: 3, y: 10, colorCode: 4 }, { x: 4, y: 10, colorCode: 4 }, { x: 5, y: 10, colorCode: 1 },
           { x: 1, y: 11, colorCode: 1 }, { x: 2, y: 11, colorCode: 1 }, { x: 3, y: 11, colorCode: 1 }, { x: 4, y: 11, colorCode: 1 }, { x: 5, y: 11, colorCode: 1 }, { x: 6, y: 11, colorCode: 1 },
           { x: 1, y: 12, colorCode: 1 }, { x: 2, y: 12, colorCode: 7 }, { x: 3, y: 12, colorCode: 1 }, { x: 4, y: 12, colorCode: 1 }, { x: 5, y: 12, colorCode: 1 }, { x: 6, y: 12, colorCode: 1 },
           { x: 1, y: 13, colorCode: 1 }, { x: 2, y: 13, colorCode: 1 }, { x: 3, y: 13, colorCode: 5 }, { x: 4, y: 13, colorCode: 5 }, { x: 5, y: 13, colorCode: 1 }, { x: 6, y: 13, colorCode: 1 },
-          { x: 2, y: 14, colorCode: 1 }, { x: 3, y: 14, colorCode: 1 }, { x: 4, y: 14, colorCode: 1 }, { x: 5, y: 14, colorCode: 1 },
-          { x: 3, y: 15, colorCode: 1 }, { x: 4, y: 15, colorCode: 1 },
+          { x: 1, y: 14, colorCode: 1 }, { x: 2, y: 14, colorCode: 1 }, { x: 3, y: 14, colorCode: 1 }, { x: 4, y: 14, colorCode: 1 }, { x: 5, y: 14, colorCode: 1 }, { x: 6, y: 14, colorCode: 1 },
+          { x: 2, y: 15, colorCode: 1 }, { x: 3, y: 15, colorCode: 1 }, { x: 4, y: 15, colorCode: 1 }, { x: 5, y: 15, colorCode: 1 },
         ],
         enemy03BCells: [
-          { x: 1, y: 0, colorCode: 1 }, { x: 6, y: 0, colorCode: 1 },
-          { x: 1, y: 1, colorCode: 1 }, { x: 6, y: 1, colorCode: 1 },
-          { x: 1, y: 2, colorCode: 1 }, { x: 2, y: 2, colorCode: 4 }, { x: 5, y: 2, colorCode: 4 }, { x: 6, y: 2, colorCode: 1 },
-          { x: 1, y: 3, colorCode: 1 }, { x: 2, y: 3, colorCode: 1 }, { x: 3, y: 3, colorCode: 4 }, { x: 4, y: 3, colorCode: 4 }, { x: 5, y: 3, colorCode: 1 }, { x: 6, y: 3, colorCode: 1 },
-          { x: 1, y: 4, colorCode: 1 }, { x: 3, y: 4, colorCode: 1 }, { x: 4, y: 4, colorCode: 1 }, { x: 6, y: 4, colorCode: 1 },
-          { x: 1, y: 5, colorCode: 1 }, { x: 2, y: 5, colorCode: 4 }, { x: 5, y: 5, colorCode: 4 }, { x: 6, y: 5, colorCode: 1 },
-          { x: 1, y: 6, colorCode: 1 }, { x: 2, y: 6, colorCode: 1 }, { x: 3, y: 6, colorCode: 4 }, { x: 4, y: 6, colorCode: 4 }, { x: 5, y: 6, colorCode: 1 }, { x: 6, y: 6, colorCode: 1 },
-          { x: 1, y: 7, colorCode: 1 }, { x: 3, y: 7, colorCode: 1 }, { x: 4, y: 7, colorCode: 1 }, { x: 6, y: 7, colorCode: 1 },
-          { x: 1, y: 8, colorCode: 1 }, { x: 2, y: 8, colorCode: 4 }, { x: 5, y: 8, colorCode: 4 }, { x: 6, y: 8, colorCode: 1 },
-          { x: 1, y: 9, colorCode: 1 }, { x: 2, y: 9, colorCode: 1 }, { x: 3, y: 9, colorCode: 4 }, { x: 4, y: 9, colorCode: 4 }, { x: 5, y: 9, colorCode: 1 }, { x: 6, y: 9, colorCode: 1 },
-          { x: 1, y: 10, colorCode: 1 }, { x: 2, y: 10, colorCode: 1 }, { x: 3, y: 10, colorCode: 1 }, { x: 4, y: 10, colorCode: 1 }, { x: 5, y: 10, colorCode: 1 }, { x: 6, y: 10, colorCode: 1 },
+          { x: 2, y: 4, colorCode: 4 }, { x: 5, y: 4, colorCode: 4 },
+          { x: 2, y: 6, colorCode: 1 }, { x: 5, y: 6, colorCode: 1 },
+          { x: 3, y: 7, colorCode: 1 }, { x: 4, y: 7, colorCode: 1 },
+          { x: 2, y: 8, colorCode: 4 }, { x: 5, y: 8, colorCode: 4 },
+          { x: 3, y: 9, colorCode: 4 }, { x: 4, y: 9, colorCode: 4 },
+          { x: 2, y: 10, colorCode: 1 }, { x: 3, y: 10, colorCode: 1 }, { x: 4, y: 10, colorCode: 1 }, { x: 5, y: 10, colorCode: 1 },
           { x: 1, y: 11, colorCode: 1 }, { x: 2, y: 11, colorCode: 1 }, { x: 3, y: 11, colorCode: 1 }, { x: 4, y: 11, colorCode: 1 }, { x: 5, y: 11, colorCode: 1 }, { x: 6, y: 11, colorCode: 1 },
           { x: 1, y: 12, colorCode: 1 }, { x: 2, y: 12, colorCode: 7 }, { x: 3, y: 12, colorCode: 1 }, { x: 4, y: 12, colorCode: 1 }, { x: 5, y: 12, colorCode: 1 }, { x: 6, y: 12, colorCode: 1 },
           { x: 1, y: 13, colorCode: 1 }, { x: 2, y: 13, colorCode: 1 }, { x: 3, y: 13, colorCode: 5 }, { x: 4, y: 13, colorCode: 5 }, { x: 5, y: 13, colorCode: 1 }, { x: 6, y: 13, colorCode: 1 },
-          { x: 2, y: 14, colorCode: 1 }, { x: 3, y: 14, colorCode: 1 }, { x: 4, y: 14, colorCode: 1 }, { x: 5, y: 14, colorCode: 1 },
-          { x: 3, y: 15, colorCode: 1 }, { x: 4, y: 15, colorCode: 1 },
+          { x: 1, y: 14, colorCode: 1 }, { x: 2, y: 14, colorCode: 1 }, { x: 3, y: 14, colorCode: 1 }, { x: 4, y: 14, colorCode: 1 }, { x: 5, y: 14, colorCode: 1 }, { x: 6, y: 14, colorCode: 1 },
+          { x: 2, y: 15, colorCode: 1 }, { x: 3, y: 15, colorCode: 1 }, { x: 4, y: 15, colorCode: 1 }, { x: 5, y: 15, colorCode: 1 },
         ],
         enemy04ACells: [
           { x: 0, y: 0, colorCode: 2 }, { x: 1, y: 0, colorCode: 2 }, { x: 10, y: 0, colorCode: 2 }, { x: 11, y: 0, colorCode: 2 },
@@ -304,6 +294,9 @@
           { x: 1, y: 6, colorCode: 7 }, { x: 6, y: 6, colorCode: 7 },
           { x: 2, y: 7, colorCode: 7 }, { x: 5, y: 7, colorCode: 7 },
         ],
+        star: [
+          { x: 0, y: 0, colorCode: 7 },
+        ],
         spriteMap: new Map(),
         spriteList: [],
         playerPosition: {
@@ -313,8 +306,8 @@
 
         maxEnemy01: 8,
         maxEnemy02: 6,
-        maxEnemy03: 6,
-        maxEnemy04: 8,
+        maxEnemy03: 5,
+        maxEnemy04: 3,
 
         shotSpeed: 1,
         shotFrequency: 0.01,
@@ -349,9 +342,49 @@
         enemy04Count: 0,
         enemy04MaxCount: 20,
 
-        gameStatus: "title"
+        playerMoveX: 0,
+
+        touchStartX: 0,
+        touchStartY: 0,
+        touchStartTime: 0,
+        playerStartX: 0,
+
+        stars: [],
+
+        gameStatus: "title",
       },
       methods: {
+        handleTouchStart(e) {
+          const t = e.touches[0];
+          this.touchStartX = t.clientX;
+          this.touchStartY = t.clientY;
+          this.playerStartX = this.playerPosition.x;
+          this.touchStartTime = Date.now();
+        },
+        setTouchPosition(e) {
+          const t = e.touches[0];
+          const dx = t.clientX - this.touchStartX;
+          const gx = Math.round(dx / this.gridCellSize);
+
+          this.playerPosition.x = this.playerStartX + gx;
+
+          if (this.playerPosition.x < 0) {
+            this.playerPosition.x = 0;
+          }
+          if (this.playerPosition.x > 144) {
+            this.playerPosition.x = 144;
+          }
+        },
+        handleTouchEnd(e) {
+          const t = e.changedTouches[0];
+          const dt = Date.now() - this.touchStartTime;
+          const dx = Math.abs(t.clientX - this.touchStartX);
+          const dy = Math.abs(t.clientY - this.touchStartY);
+
+          if (dt < 300 && dx < 10 && dy < 10) {
+            this.handleClick();
+          }
+        },
         isColliding(rectA, rectB) {
           return !(
             rectA.left + rectA.width < rectB.left ||
@@ -451,15 +484,14 @@
             default: return "black";
           }
         },
-        movePlayer(event) {
-          const fieldRect = event.currentTarget.getBoundingClientRect();
-          this.playerPosition.x = (event.clientX - fieldRect.left) / 4 - 16;
+        movePlayer(e) {
+          const playerPrevX = this.playerPosition.x;
+
+          const fieldRect = e.currentTarget.getBoundingClientRect();
+          this.playerPosition.x = (e.clientX - fieldRect.left) / 4 - 16;
           if (this.playerPosition.x < 0) { this.playerPosition.x = 0; }
-        },
-        touchMovePlayer(event) {
-          const touch = event.touches[0];
-          const fieldRect = event.currentTarget.getBoundingClientRect();
-          this.playerPosition.x = touch.clientX - fieldRect.left - 64;
+
+          this.playerMoveX = this.playerPosition.x - playerPrevX;
         },
         createPlayerShot() {
           const shotPosition = {
@@ -511,6 +543,7 @@
             if (enemy.type === 1) { this.moveEnemy01(enemy, index); }
             if (enemy.type === 2) { this.moveEnemy02(enemy, index); }
             if (enemy.type === 3) { this.moveEnemy03(enemy, index); }
+            if (enemy.type === 4) { this.moveEnemy04(enemy, index); }
             if (enemy.type === 98) { this.moveMiniBang(enemy, index); }
             if (enemy.type === 99) { this.moveBang(enemy, index); }
           });
@@ -550,8 +583,6 @@
           }
         },
         moveEnemy02(enemy, index) {
-          if (this.isGameOver) return;
-
           enemy.position.x += enemy.direction * enemy.speed;
 
           if (Math.random() < this.shotFrequency) {
@@ -609,6 +640,39 @@
             );
           }
         },
+        moveEnemy04(enemy, index) {
+          enemy.position.y += enemy.direction * enemy.speed;
+          enemy.frameCount++;
+
+          const amplitude = 30;
+          const omega = 2 * Math.PI / enemy.period;
+          enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount);
+
+          if (enemy.position.y > 100) {
+            this.enemyList.splice(index, 1);
+          }
+          else {
+            enemy.animeCount++;
+            enemy.animeCount &= 7;
+
+            if (enemy.animeCount === 0) {
+              enemy.animePtn++;
+              enemy.animePtn &= 1;
+            }
+
+            let ptn = '';
+            if (enemy.animePtn === 0) { ptn = 'enemy04ACells'; }
+            else { ptn = 'enemy04BCells'; }
+
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: ptn
+              }
+            );
+          }
+        },
         createEnemy() {
           this.timer++;
           this.timer = this.timer & 15;
@@ -627,7 +691,8 @@
               break;
             case 2:
               if (this.enemy04Count < this.enemy04MaxCount) {
-                if ((this.timer & 3)  === 0) { this.createEnemy03(); }
+                if ((this.timer & 1) === 0) { this.createEnemy03(); }
+                if ((this.timer & 3) === 0) { this.createEnemy04(); }
               }
               break;
           }
@@ -688,12 +753,12 @@
         },
         createEnemy03() {
           if (this.enemyList.filter(enemy => enemy.type === 3).length < this.maxEnemy03) {
-            const xPos = Math.floor(Math.random() * 19) * 16 + 2;
+            const xPos = Math.floor(Math.random() * 19) * 8 + 2;
             const yPos = -16;
 
             this.enemyList.push({
               position: { x: xPos, y: yPos },
-              speed: 4 + Math.random(),
+              speed: 2 + Math.random(),
               direction: 1,
               type: 3,
               animeCount: 0,
@@ -702,11 +767,39 @@
               hitCheck: true,
               rect: {
                 left: 2,
-                top: 2,
-                height: 12,
+                top: 6,
+                height: 10,
                 width: 6
               },
               score: 0
+            });
+          }
+        },
+        createEnemy04() {
+          if (this.enemyList.filter(enemy => enemy.type === 4).length < this.maxEnemy04) {
+            const xPos = Math.floor(Math.random() * 10) * 16 + 4;
+            const yPos = -16;
+
+            this.enemyList.push({
+              position: { x: xPos, y: yPos },
+              speed: 0.1 + Math.random(),
+              direction: 1,
+              type: 4,
+              animeCount: 0,
+              animePtn: 0,
+              power: 2,
+              hitCheck: true,
+              rect: {
+                left: 0,
+                top: 0,
+                height: 8,
+                width: 12
+              },
+              score: 100,
+              baseX: xPos,
+              frameCount: 0,
+              power: 3,
+              period: Math.floor(Math.random() * 3) * 10 + 40,
             });
           }
         },
@@ -780,6 +873,15 @@
           this.stage = 1;
           this.enemy04Count = 0;
           this.enemy04MaxCount = 5;
+
+          this.stars = [];
+          for (let i = 0; i < 30; i++) {
+            this.stars.push({
+              x: Math.random() * 160,
+              y: Math.random() * 80,
+              speed: Math.random()
+            });
+          }
         },
         reducePlayerLives() {
           this.playerLeft--;
@@ -794,6 +896,14 @@
           this.spriteList = [];
 
           if (this.gameStatus === "play") {
+            this.stars.forEach(star => {
+              this.spriteList.push({
+                x: star.x,
+                y: star.y,
+                sprite: 'star'
+              });
+            });
+            this.updateStars();
             if (this.invincibleTimer > 0) {
               this.invincibleTimer--;
               this.isPlayerVisible = (this.invincibleTimer % 4 < 2);
@@ -825,7 +935,6 @@
           }
         },
         checkPlayerHit() {
-          if (this.isGameOver) return;
           if (this.invincibleTimer > 0) return;
 
           const playerBox = this.getBoundingBox({
@@ -893,7 +1002,25 @@
 
           this.gridCellSize = (this.currentWidth / baseWidth) * 4;
           this.gridCellSize = Math.round(this.gridCellSize);
-        }
+        },
+        updateStars() {
+          if (this.stage === 1) {
+            this.stars.forEach(star => {
+              star.x -= this.playerMoveX * star.speed;
+              if (star.x < 0) star.x += 160;
+              if (star.x > 160) star.x -= 160;
+            });
+            this.playerMoveX = 0;
+          } else if (this.stage === 2) {
+            this.stars.forEach(star => {
+              star.y += 1 * star.speed;
+              if (star.y > 100) {
+                star.y = 0;
+                star.x = Math.random() * 160;
+              }
+            });
+          }
+        },
       },
       created() {
         this.spriteMap.set('player', this.player);
@@ -920,12 +1047,13 @@
         this.spriteMap.set('bang06', this.bang06);
         this.spriteMap.set('bang07', this.bang07);
         this.spriteMap.set('bang08', this.bang08);
+        this.spriteMap.set('star', this.star);
 
         window.addEventListener('resize', this.setGridCellSize);
         this.setGridCellSize();
 
         setInterval(this.gameMain, 25);
-      }
+      },
     });
   </script>
 </body>
