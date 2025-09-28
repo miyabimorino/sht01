@@ -6,6 +6,16 @@
   <title>シューティングゲーム</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    #touch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      touch-action: none;
+    }
+
     #game-field {
       position: relative;
       width: 640px;
@@ -48,16 +58,18 @@
 
 <body>
   <div id="app">
-    <div id="game-field" @mousemove="movePlayer" @click="handleClick" @touchstart="handleTouchStart($event)"
-      @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
-      <div v-for="sprite in spriteList">
-        <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
+    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
+      @touchend.prevent="handleTouchEnd($event)">
+      <div id="game-field" @mousemove="movePlayer" @click="handleClick">
+        <div v-for="sprite in spriteList">
+          <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
              left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
              top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px',
              backgroundColor: getColor(cell.colorCode),
              width: `${gridCellSize}px`,
              height: `${gridCellSize}px`
            }">
+          </div>
         </div>
       </div>
 
@@ -168,23 +180,23 @@
           { x: 2, y: 15, colorCode: 1 }, { x: 3, y: 15, colorCode: 1 }, { x: 4, y: 15, colorCode: 1 }, { x: 5, y: 15, colorCode: 1 },
         ],
         enemy04ACells: [
-          { x: 0, y: 0, colorCode: 2 }, { x: 1, y: 0, colorCode: 2 }, { x: 10, y: 0, colorCode: 2 }, { x: 11, y: 0, colorCode: 2 },
-          { x: 0, y: 1, colorCode: 2 }, { x: 1, y: 1, colorCode: 2 }, { x: 3, y: 1, colorCode: 3 }, { x: 4, y: 1, colorCode: 3 }, { x: 7, y: 1, colorCode: 3 }, { x: 8, y: 1, colorCode: 3 }, { x: 10, y: 1, colorCode: 2 }, { x: 11, y: 1, colorCode: 2 },
-          { x: 0, y: 2, colorCode: 2 }, { x: 1, y: 2, colorCode: 2 }, { x: 2, y: 2, colorCode: 2 }, { x: 3, y: 2, colorCode: 3 }, { x: 4, y: 2, colorCode: 3 }, { x: 5, y: 2, colorCode: 2 }, { x: 6, y: 2, colorCode: 2 }, { x: 7, y: 2, colorCode: 3 }, { x: 8, y: 2, colorCode: 3 }, { x: 9, y: 2, colorCode: 2 }, { x: 10, y: 2, colorCode: 2 }, { x: 11, y: 2, colorCode: 2 },
-          { x: 1, y: 3, colorCode: 2 }, { x: 2, y: 3, colorCode: 2 }, { x: 3, y: 3, colorCode: 2 }, { x: 4, y: 3, colorCode: 2 }, { x: 5, y: 3, colorCode: 2 }, { x: 6, y: 3, colorCode: 2 }, { x: 7, y: 3, colorCode: 2 }, { x: 8, y: 3, colorCode: 2 }, { x: 9, y: 3, colorCode: 2 }, { x: 10, y: 3, colorCode: 2 },
-          { x: 3, y: 4, colorCode: 2 }, { x: 4, y: 4, colorCode: 2 }, { x: 5, y: 4, colorCode: 2 }, { x: 6, y: 4, colorCode: 2 }, { x: 7, y: 4, colorCode: 2 }, { x: 8, y: 4, colorCode: 2 },
-          { x: 1, y: 5, colorCode: 2 }, { x: 2, y: 5, colorCode: 2 }, { x: 3, y: 5, colorCode: 4 }, { x: 4, y: 5, colorCode: 4 }, { x: 5, y: 5, colorCode: 2 }, { x: 6, y: 5, colorCode: 2 }, { x: 7, y: 5, colorCode: 4 }, { x: 8, y: 5, colorCode: 4 }, { x: 9, y: 5, colorCode: 2 }, { x: 10, y: 5, colorCode: 2 },
-          { x: 0, y: 6, colorCode: 2 }, { x: 1, y: 6, colorCode: 2 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 4 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 4 }, { x: 10, y: 6, colorCode: 2 }, { x: 11, y: 6, colorCode: 2 },
-          { x: 0, y: 7, colorCode: 2 }, { x: 1, y: 7, colorCode: 2 }, { x: 10, y: 7, colorCode: 2 }, { x: 11, y: 7, colorCode: 2 },
+          { x: 0, y: 0, colorCode: 5 }, { x: 1, y: 0, colorCode: 5 }, { x: 10, y: 0, colorCode: 5 }, { x: 11, y: 0, colorCode: 5 },
+          { x: 0, y: 1, colorCode: 5 }, { x: 1, y: 1, colorCode: 5 }, { x: 3, y: 1, colorCode: 3 }, { x: 4, y: 1, colorCode: 3 }, { x: 7, y: 1, colorCode: 3 }, { x: 8, y: 1, colorCode: 3 }, { x: 10, y: 1, colorCode: 5 }, { x: 11, y: 1, colorCode: 5 },
+          { x: 0, y: 2, colorCode: 5 }, { x: 1, y: 2, colorCode: 5 }, { x: 2, y: 2, colorCode: 5 }, { x: 3, y: 2, colorCode: 3 }, { x: 4, y: 2, colorCode: 3 }, { x: 5, y: 2, colorCode: 5 }, { x: 6, y: 2, colorCode: 5 }, { x: 7, y: 2, colorCode: 3 }, { x: 8, y: 2, colorCode: 3 }, { x: 9, y: 2, colorCode: 5 }, { x: 10, y: 2, colorCode: 5 }, { x: 11, y: 2, colorCode: 5 },
+          { x: 1, y: 3, colorCode: 5 }, { x: 2, y: 3, colorCode: 5 }, { x: 3, y: 3, colorCode: 5 }, { x: 4, y: 3, colorCode: 5 }, { x: 5, y: 3, colorCode: 5 }, { x: 6, y: 3, colorCode: 5 }, { x: 7, y: 3, colorCode: 5 }, { x: 8, y: 3, colorCode: 5 }, { x: 9, y: 3, colorCode: 5 }, { x: 10, y: 3, colorCode: 5 },
+          { x: 3, y: 4, colorCode: 5 }, { x: 4, y: 4, colorCode: 5 }, { x: 5, y: 4, colorCode: 5 }, { x: 6, y: 4, colorCode: 5 }, { x: 7, y: 4, colorCode: 5 }, { x: 8, y: 4, colorCode: 5 },
+          { x: 1, y: 5, colorCode: 5 }, { x: 2, y: 5, colorCode: 5 }, { x: 3, y: 5, colorCode: 7 }, { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 5 }, { x: 6, y: 5, colorCode: 5 }, { x: 7, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 7 }, { x: 9, y: 5, colorCode: 5 }, { x: 10, y: 5, colorCode: 5 },
+          { x: 0, y: 6, colorCode: 5 }, { x: 1, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 10, y: 6, colorCode: 5 }, { x: 11, y: 6, colorCode: 5 },
+          { x: 0, y: 7, colorCode: 5 }, { x: 1, y: 7, colorCode: 5 }, { x: 10, y: 7, colorCode: 5 }, { x: 11, y: 7, colorCode: 5 },
         ],
         enemy04BCells: [
-          { x: 0, y: 1, colorCode: 2 }, { x: 1, y: 1, colorCode: 2 }, { x: 3, y: 1, colorCode: 3 }, { x: 4, y: 1, colorCode: 3 }, { x: 7, y: 1, colorCode: 3 }, { x: 8, y: 1, colorCode: 3 }, { x: 10, y: 1, colorCode: 2 }, { x: 11, y: 1, colorCode: 2 },
-          { x: 0, y: 2, colorCode: 2 }, { x: 1, y: 2, colorCode: 2 }, { x: 3, y: 2, colorCode: 3 }, { x: 4, y: 2, colorCode: 3 }, { x: 5, y: 2, colorCode: 2 }, { x: 6, y: 2, colorCode: 2 }, { x: 7, y: 2, colorCode: 3 }, { x: 8, y: 2, colorCode: 3 }, { x: 10, y: 2, colorCode: 2 }, { x: 11, y: 2, colorCode: 2 },
-          { x: 0, y: 3, colorCode: 2 }, { x: 1, y: 3, colorCode: 2 }, { x: 2, y: 3, colorCode: 2 }, { x: 3, y: 3, colorCode: 2 }, { x: 4, y: 3, colorCode: 2 }, { x: 5, y: 3, colorCode: 2 }, { x: 6, y: 3, colorCode: 2 }, { x: 7, y: 3, colorCode: 2 }, { x: 8, y: 3, colorCode: 2 }, { x: 9, y: 3, colorCode: 2 }, { x: 10, y: 3, colorCode: 2 }, { x: 11, y: 3, colorCode: 2 },
-          { x: 1, y: 4, colorCode: 2 }, { x: 3, y: 4, colorCode: 2 }, { x: 4, y: 4, colorCode: 2 }, { x: 5, y: 4, colorCode: 2 }, { x: 6, y: 4, colorCode: 2 }, { x: 7, y: 4, colorCode: 2 }, { x: 8, y: 4, colorCode: 2 }, { x: 10, y: 4, colorCode: 2 },
-          { x: 2, y: 5, colorCode: 2 }, { x: 3, y: 5, colorCode: 5 }, { x: 4, y: 5, colorCode: 5 }, { x: 5, y: 5, colorCode: 2 }, { x: 6, y: 5, colorCode: 2 }, { x: 7, y: 5, colorCode: 5 }, { x: 8, y: 5, colorCode: 5 }, { x: 9, y: 5, colorCode: 2 },
-          { x: 1, y: 6, colorCode: 2 }, { x: 2, y: 6, colorCode: 2 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 5 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 5 }, { x: 9, y: 6, colorCode: 2 }, { x: 10, y: 6, colorCode: 2 },
-          { x: 1, y: 7, colorCode: 2 }, { x: 2, y: 7, colorCode: 2 }, { x: 9, y: 7, colorCode: 2 }, { x: 10, y: 7, colorCode: 2 },
+          { x: 1, y: 1, colorCode: 5 }, { x: 2, y: 1, colorCode: 5 }, { x: 9, y: 1, colorCode: 5 }, { x: 10, y: 1, colorCode: 5 },
+          { x: 1, y: 2, colorCode: 5 }, { x: 2, y: 2, colorCode: 5 }, { x: 4, y: 2, colorCode: 3 }, { x: 5, y: 2, colorCode: 3 }, { x: 6, y: 2, colorCode: 3 }, { x: 7, y: 2, colorCode: 3 }, { x: 9, y: 2, colorCode: 5 }, { x: 10, y: 2, colorCode: 5 },
+          { x: 1, y: 3, colorCode: 5 }, { x: 2, y: 3, colorCode: 5 }, { x: 3, y: 3, colorCode: 5 }, { x: 4, y: 3, colorCode: 3 }, { x: 5, y: 3, colorCode: 3 }, { x: 6, y: 3, colorCode: 3 }, { x: 7, y: 3, colorCode: 3 }, { x: 8, y: 3, colorCode: 5 }, { x: 9, y: 3, colorCode: 5 }, { x: 10, y: 3, colorCode: 5 },
+          { x: 3, y: 4, colorCode: 5 }, { x: 4, y: 4, colorCode: 5 }, { x: 5, y: 4, colorCode: 5 }, { x: 6, y: 4, colorCode: 5 }, { x: 7, y: 4, colorCode: 5 }, { x: 8, y: 4, colorCode: 5 }, { x: 9, y: 4, colorCode: 5 },
+          { x: 1, y: 5, colorCode: 5 }, { x: 2, y: 5, colorCode: 5 }, { x: 3, y: 5, colorCode: 7 }, { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 5 }, { x: 6, y: 5, colorCode: 5 }, { x: 7, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 7 }, { x: 9, y: 5, colorCode: 5 }, { x: 10, y: 5, colorCode: 5 },
+          { x: 1, y: 6, colorCode: 5 }, { x: 2, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 5 }, { x: 10, y: 6, colorCode: 5 },
+          { x: 1, y: 7, colorCode: 5 }, { x: 2, y: 7, colorCode: 5 }, { x: 9, y: 7, colorCode: 5 }, { x: 10, y: 7, colorCode: 5 },
         ],
         enemyShot: [
           { x: 3, y: 1, colorCode: 2 },
@@ -366,7 +378,9 @@
           const dx = t.clientX - this.touchStartX;
           const gx = Math.round(dx / this.gridCellSize);
 
+          const playerPrevX = this.playerPosition.x;
           this.playerPosition.x = this.playerStartX + gx;
+          this.playerMoveX = this.playerPosition.x - playerPrevX;
 
           if (this.playerPosition.x < 0) {
             this.playerPosition.x = 0;
@@ -758,7 +772,7 @@
 
             this.enemyList.push({
               position: { x: xPos, y: yPos },
-              speed: 2 + Math.random(),
+              speed: 0.75 + Math.random(),
               direction: 1,
               type: 3,
               animeCount: 0,
@@ -799,7 +813,7 @@
               baseX: xPos,
               frameCount: 0,
               power: 3,
-              period: Math.floor(Math.random() * 3) * 10 + 40,
+              period: Math.floor(Math.random() * 2) * 5 + 30,
             });
           }
         },
