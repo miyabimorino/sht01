@@ -91,6 +91,7 @@
           <div v-if="gameStatus === 'play'">
             <p>スコア: {{ score }}</p>
             <p>残機: {{ playerLeft }}</p>
+            <p>残機: {{ this.deltaTime}}</p>
           </div>
 
           <div v-if="gameStatus === 'gameover'">
@@ -712,7 +713,7 @@
 
           const amplitude = 30;
           const omega = 1 * Math.PI / enemy.period;
-          enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount);
+          enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount) * this.deltaTime;
 
           if (enemy.position.y > 100) {
             this.enemyList.splice(index, 1);
@@ -1007,8 +1008,7 @@
             });
           }
 
-          this.lastTime = performance.now();
-          requestAnimationFrame((timestamp) => this.gameMain(timestamp));
+          requestAnimationFrame(this.gameMain);
         },
         reducePlayerLives() {
           this.playerLeft--;
@@ -1026,10 +1026,9 @@
 
             const elapsed = timestamp - this.lastTime;
 
-            if (elapsed >= 1000 / this.fps) {
-              this.deltaTime = elapsed / (1000 / this.fps);
-              this.lastTime = timestamp;
-            }
+            this.deltaTime = elapsed / (1000 / this.fps);
+            this.lastTime = timestamp;
+
             this.stars.forEach(star => {
               this.spriteList.push({
                 x: star.x,
@@ -1067,7 +1066,7 @@
             this.checkPlayerHit();
             this.checkCollisions();
 
-            requestAnimationFrame((timestamp) => this.gameMain(timestamp));
+            requestAnimationFrame(this.gameMain);
           }
         },
         checkPlayerHit() {
