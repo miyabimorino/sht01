@@ -91,7 +91,6 @@
           <div v-if="gameStatus === 'play'">
             <p>スコア: {{ score }}</p>
             <p>残機: {{ playerLeft }}</p>
-            <p>残機: {{ this.deltaTime}}</p>
           </div>
 
           <div v-if="gameStatus === 'gameover'">
@@ -410,10 +409,6 @@
 
         stars: [],
 
-        lastTime: 0,
-        deltaTime: 0,
-        fps: 60,
-        running: false,
 
         gameStatus: "title",
       },
@@ -490,8 +485,8 @@
           });
         },
         moveBang(enemy, index, dt) {
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
 
           enemy.animeCount++;
           enemy.animeCount &= 1;
@@ -514,8 +509,8 @@
           }
         },
         moveMiniBang(enemy, index, dt) {
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
 
           enemy.animeCount++;
           enemy.animeCount &= 1;
@@ -617,7 +612,7 @@
           this.moveEnemyShot();
         },
         moveEnemy01(enemy, index) {
-          enemy.position.x += enemy.direction * enemy.speed * this.deltaTime;
+          enemy.position.x += enemy.direction * enemy.speed;
           if (enemy.position.x < -16 || enemy.position.x > 160) {
             this.enemyList.splice(index, 1);
           }
@@ -650,7 +645,7 @@
           }
         },
         moveEnemy02(enemy, index) {
-          enemy.position.x += enemy.direction * enemy.speed * this.deltaTime;
+          enemy.position.x += enemy.direction * enemy.speed;
 
           if (Math.random() < this.shotFrequency) {
             this.createEnemyShot(enemy);
@@ -681,7 +676,7 @@
           }
         },
         moveEnemy03(enemy, index) {
-          enemy.position.y += enemy.direction * enemy.speed * this.deltaTime;
+          enemy.position.y += enemy.direction * enemy.speed;
           if (enemy.position.y > 100) {
             this.enemyList.splice(index, 1);
           }
@@ -708,12 +703,12 @@
           }
         },
         moveEnemy04(enemy, index) {
-          enemy.position.y += enemy.direction * enemy.speed * this.deltaTime;
+          enemy.position.y += enemy.direction * enemy.speed;
           enemy.frameCount++;
 
           const amplitude = 30;
-          const omega = 1 * Math.PI / enemy.period;
-          enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount) * this.deltaTime;
+          const omega = 2 * Math.PI / enemy.period;
+          enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount);
 
           if (enemy.position.y > 100) {
             this.enemyList.splice(index, 1);
@@ -741,8 +736,8 @@
           }
         },
         moveEnemy05(enemy, index) {
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed * this.deltaTime);
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
 
           if (enemy.position.y > 100 || enemy.position.y < -16 || enemy.position.x > 160) {
             this.enemyList.splice(index, 1);
@@ -786,7 +781,7 @@
             case 3:
               if (this.enemy06Count < this.enemy06MaxCount) {
                 if ((this.timer & 1) === 0) { this.createEnemy05(); }
-                //if ((this.timer & 3) === 0) { this.createEnemy04(); }
+                //if ((this.timer & 3) === 0) { this.createEnemy06(); }
               }
               break;
           }
@@ -895,6 +890,7 @@
               power: 3,
               period: Math.floor(Math.random() * 2) * 5 + 30,
             });
+            this.enemy04Count++;
           }
         },
         createEnemy05() {
@@ -950,7 +946,7 @@
             },
           });
         },
-        moveEnemyShot(dt) {
+        moveEnemyShot() {
           for (let i = this.enemyShotList.length - 1; i >= 0; i--) {
             const shot = this.enemyShotList[i];
             shot.position.x += shot.vx;
@@ -1007,8 +1003,6 @@
               speed: Math.random()
             });
           }
-
-          requestAnimationFrame(this.gameMain);
         },
         reducePlayerLives() {
           this.playerLeft--;
@@ -1019,16 +1013,10 @@
         gameOver() {
           this.gameStatus = "gameover";
         },
-        gameMain(timestamp) {
+        gameMain() {
           this.spriteList = [];
 
           if (this.gameStatus === "play") {
-
-            const elapsed = timestamp - this.lastTime;
-
-            this.deltaTime = elapsed / (1000 / this.fps);
-            this.lastTime = timestamp;
-
             this.stars.forEach(star => {
               this.spriteList.push({
                 x: star.x,
@@ -1065,8 +1053,6 @@
             this.movePlayerShots();
             this.checkPlayerHit();
             this.checkCollisions();
-
-            requestAnimationFrame(this.gameMain);
           }
         },
         checkPlayerHit() {
@@ -1128,7 +1114,7 @@
             });
           });
         },
-        setGridCellSize(dt) {
+        setGridCellSize() {
           const gameField = document.getElementById('game-field');
           const gameFieldRect = gameField.getBoundingClientRect();
           const baseWidth = 640;
@@ -1138,10 +1124,10 @@
           this.gridCellSize = (this.currentWidth / baseWidth) * 4;
           this.gridCellSize = Math.round(this.gridCellSize);
         },
-        updateStars(dt) {
+        updateStars() {
           if (this.stage === 1) {
             this.stars.forEach(star => {
-              star.x -= this.playerMoveX * star.speed * this.deltaTime;
+              star.x -= this.playerMoveX * star.speed;
               if (star.x < 0) star.x += 160;
               if (star.x > 160) star.x -= 160;
             });
@@ -1189,7 +1175,7 @@
         window.addEventListener('resize', this.setGridCellSize);
         this.setGridCellSize();
 
-        //setInterval(this.gameMain, 25);
+        setInterval(this.gameMain, 25);
       },
     });
   </script>
