@@ -462,26 +462,67 @@
             height: entity.rect?.height || 8
           };
         },
-        createBang(xPos, yPos) {
-          this.enemyList.push({
-            position: { x: xPos, y: yPos },
-            speed: Math.random() * 1,
-            direction: Math.random() * 180 + 180,
-            type: 99,
-            animeCount: 0,
-            animePtn: 0,
-            hitCheck: false,
-          });
+        getColor(colorCode) {
+          switch (colorCode) {
+            case 0: return "black";
+            case 1: return "blue";
+            case 2: return "red";
+            case 3: return "purple";
+            case 4: return "lime";
+            case 5: return "aqua";
+            case 6: return "yellow";
+            case 7: return "white";
+            default: return "black";
+          }
         },
-        createMiniBang(xPos, yPos) {
-          this.enemyList.push({
-            position: { x: xPos, y: yPos },
-            speed: Math.random() * 0.5,
-            direction: Math.random() * 180 + 90,
-            type: 99,
-            animeCount: 0,
-            animePtn: 0,
-            hitCheck: false,
+        movePlayer(e) {
+          const playerPrevX = this.playerPosition.x;
+
+          const fieldRect = e.currentTarget.getBoundingClientRect();
+          this.playerPosition.x = (e.clientX - fieldRect.left) / 4 - 16;
+          if (this.playerPosition.x < 0) { this.playerPosition.x = 0; }
+
+          this.playerMoveX = this.playerPosition.x - playerPrevX;
+        },
+        handleClick() {
+          if (this.gameStatus === "title") {
+            this.startGame();
+          } else if (this.gameStatus === "gameover") {
+            this.startGame();
+          } else if (this.gameStatus === "play") {
+            if (this.shotQueue.length > 0) return;
+            for (let i = 0; i < 3; i++) {
+              this.shotQueue.push({
+                delay: i * 8
+              });
+            }
+          }
+        },
+
+        movePlayerShots() {
+          this.playerShotList.forEach((shot, index) => {
+            shot.position.y -= shot.speed;
+            if (shot.position.y < -8) {
+              this.playerShotList.splice(index, 1);
+            }
+            else {
+              if (shot.animePtn !== 3) {
+                shot.animeCount++;
+                shot.animeCount &= 7;
+                if (shot.animeCount === 0) {
+                  shot.animePtn++;
+                }
+              }
+
+              let spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02', 'playerShot01'];
+              this.spriteList.push(
+                {
+                  x: shot.position.x,
+                  y: shot.position.y,
+                  sprite: spritePtnList[shot.animePtn]
+                }
+              );
+            }
           });
         },
         moveBang(enemy, index, dt) {
@@ -531,73 +572,6 @@
               }
             );
           }
-        },
-        getColor(colorCode) {
-          switch (colorCode) {
-            case 0: return "black";
-            case 1: return "blue";
-            case 2: return "red";
-            case 3: return "purple";
-            case 4: return "lime";
-            case 5: return "aqua";
-            case 6: return "yellow";
-            case 7: return "white";
-            default: return "black";
-          }
-        },
-        movePlayer(e) {
-          const playerPrevX = this.playerPosition.x;
-
-          const fieldRect = e.currentTarget.getBoundingClientRect();
-          this.playerPosition.x = (e.clientX - fieldRect.left) / 4 - 16;
-          if (this.playerPosition.x < 0) { this.playerPosition.x = 0; }
-
-          this.playerMoveX = this.playerPosition.x - playerPrevX;
-        },
-        createPlayerShot() {
-          const shotPosition = {
-            x: this.playerPosition.x + 4,
-            y: this.playerPosition.y - 8
-          };
-
-          this.playerShotList.push({
-            position: shotPosition,
-            animePtn: 0,
-            animeCount: 0,
-            speed: 2,
-            rect: {
-              left: 3,
-              top: 2,
-              height: 4,
-              width: 6
-            }
-          });
-        },
-        movePlayerShots() {
-          this.playerShotList.forEach((shot, index) => {
-            shot.position.y -= shot.speed;
-            if (shot.position.y < -8) {
-              this.playerShotList.splice(index, 1);
-            }
-            else {
-              if (shot.animePtn !== 3) {
-                shot.animeCount++;
-                shot.animeCount &= 7;
-                if (shot.animeCount === 0) {
-                  shot.animePtn++;
-                }
-              }
-
-              let spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02', 'playerShot01'];
-              this.spriteList.push(
-                {
-                  x: shot.position.x,
-                  y: shot.position.y,
-                  sprite: spritePtnList[shot.animePtn]
-                }
-              );
-            }
-          });
         },
         moveEnemy() {
           this.enemyList.forEach((enemy, index) => {
@@ -751,6 +725,65 @@
             }
           );
         },
+        moveEnemyShot() {
+          for (let i = this.enemyShotList.length - 1; i >= 0; i--) {
+            const shot = this.enemyShotList[i];
+            shot.position.x += shot.vx;
+            shot.position.y += shot.vy;
+
+            this.spriteList.push({
+              x: shot.position.x,
+              y: shot.position.y,
+              sprite: 'enemyShot'
+            });
+
+            if (shot.x > 160 || shot.y > 100) {
+              this.enemyShotList.splice(i, 1);
+            }
+          }
+        },
+
+        createPlayerShot() {
+          const shotPosition = {
+            x: this.playerPosition.x + 4,
+            y: this.playerPosition.y - 8
+          };
+
+          this.playerShotList.push({
+            position: shotPosition,
+            animePtn: 0,
+            animeCount: 0,
+            speed: 2,
+            rect: {
+              left: 3,
+              top: 2,
+              height: 4,
+              width: 6
+            }
+          });
+        },
+        createBang(xPos, yPos) {
+          this.enemyList.push({
+            position: { x: xPos, y: yPos },
+            speed: Math.random() * 1,
+            direction: Math.random() * 180 + 180,
+            type: 99,
+            animeCount: 0,
+            animePtn: 0,
+            hitCheck: false,
+          });
+        },
+        createMiniBang(xPos, yPos) {
+          this.enemyList.push({
+            position: { x: xPos, y: yPos },
+            speed: Math.random() * 0.5,
+            direction: Math.random() * 180 + 90,
+            type: 99,
+            animeCount: 0,
+            animePtn: 0,
+            hitCheck: false,
+          });
+        },
         createEnemy() {
           this.timer++;
           this.timer = this.timer & 15;
@@ -871,7 +904,7 @@
 
             this.enemyList.push({
               position: { x: xPos, y: yPos },
-              speed: 0.1 + Math.random(),
+              speed: 0.25 + Math.random() * 2,
               direction: 1,
               type: 4,
               animeCount: 0,
@@ -946,35 +979,11 @@
             },
           });
         },
-        moveEnemyShot() {
-          for (let i = this.enemyShotList.length - 1; i >= 0; i--) {
-            const shot = this.enemyShotList[i];
-            shot.position.x += shot.vx;
-            shot.position.y += shot.vy;
 
-            this.spriteList.push({
-              x: shot.position.x,
-              y: shot.position.y,
-              sprite: 'enemyShot'
-            });
-
-            if (shot.x > 160 || shot.y > 100) {
-              this.enemyShotList.splice(i, 1);
-            }
-          }
-        },
-        handleClick() {
-          if (this.gameStatus === "title") {
-            this.startGame();
-          } else if (this.gameStatus === "gameover") {
-            this.startGame();
-          } else if (this.gameStatus === "play") {
-            if (this.shotQueue.length > 0) return;
-            for (let i = 0; i < 3; i++) {
-              this.shotQueue.push({
-                delay: i * 8
-              });
-            }
+        reducePlayerLives() {
+          this.playerLeft--;
+          if (this.playerLeft <= 0) {
+            this.gameOver();
           }
         },
         startGame() {
@@ -1003,15 +1012,6 @@
               speed: Math.random()
             });
           }
-        },
-        reducePlayerLives() {
-          this.playerLeft--;
-          if (this.playerLeft <= 0) {
-            this.gameOver();
-          }
-        },
-        gameOver() {
-          this.gameStatus = "gameover";
         },
         gameMain() {
           this.spriteList = [];
@@ -1055,6 +1055,10 @@
             this.checkCollisions();
           }
         },
+        gameOver() {
+          this.gameStatus = "gameover";
+        },
+
         checkPlayerHit() {
           if (this.invincibleTimer > 0) return;
 
