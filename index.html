@@ -704,7 +704,7 @@
         },
         moveEnemy04(enemy, index) {
           enemy.position.y += enemy.direction * enemy.speed;
-          enemy.frameCount++;
+          enemy.frameCount += 0.5;
 
           const amplitude = 30;
           const omega = 2 * Math.PI / enemy.period;
