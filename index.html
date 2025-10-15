@@ -934,9 +934,11 @@
             }
 
             const setSpeed = 0.25 + Math.random();
-            for (i = 0; i < 5; i++) {
-              const xAdd = Math.cos(Math.random() * 20 * 18 * Math.PI / 180) * 5;
-              const yAdd = Math.sin(Math.random() * 20 * 18 * Math.PI / 180) * 5;
+            let direc = Math.random() * 20 * 18;
+            for (i = 0; i < 4; i++) {
+              const xAdd = Math.cos(direc * Math.PI / 180) * 4;
+              const yAdd = Math.sin(direc * Math.PI / 180) * 4;
+              direc += Math.random() * 6 * 40;
 
               this.enemyList.push({
                 position: { x: xPos + xAdd, y: yPos + yAdd },
