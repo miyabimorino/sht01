@@ -359,7 +359,7 @@
         maxEnemy03: 5,
         maxEnemy04: 3,
         maxEnemy05: 15,
-        maxEnemy06: 3,
+        maxEnemy06: 6,
 
         enemy02Count: 0,
         enemy02MaxCount: 20,
@@ -575,6 +575,7 @@
             if (enemy.type === 3) { this.moveEnemy03(enemy, index); }
             if (enemy.type === 4) { this.moveEnemy04(enemy, index); }
             if (enemy.type === 5) { this.moveEnemy05(enemy, index); }
+            if (enemy.type === 6) { this.moveEnemy06(enemy, index); }
             if (enemy.type === 98) { this.moveMiniBang(enemy, index); }
             if (enemy.type === 99) { this.moveBang(enemy, index); }
           });
@@ -720,6 +721,22 @@
             }
           );
         },
+        moveEnemy06(enemy, index) {
+          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+
+          if (enemy.position.y > 100) {
+            this.enemyList.splice(index, 1);
+          }
+
+          this.spriteList.push(
+            {
+              x: enemy.position.x,
+              y: enemy.position.y,
+              sprite: 'enemy06Cells'
+            }
+          );
+        },
         moveEnemyShot() {
           for (let i = this.enemyShotList.length - 1; i >= 0; i--) {
             const shot = this.enemyShotList[i];
@@ -808,8 +825,8 @@
               break;
             case 3:
               if (this.enemy06Count < this.enemy06MaxCount) {
-                if ((this.timer & 1) === 0) { this.createEnemy05(); }
-                //if ((this.timer & 3) === 0) { this.createEnemy06(); }
+                if ((this.timer & 7) === 0) { this.createEnemy05(); }
+                if ((this.timer & 3) === 0) { this.createEnemy06(); }
               }
               break;
           }
@@ -959,6 +976,38 @@
                 power: 3
               });
             }
+          }
+        },
+        createEnemy06() {
+          if (this.enemyList.filter(enemy => enemy.type === 5).length < this.maxEnemy05) {
+            const xPos = Math.floor(Math.random() * 10) * 16 + 4;
+            const yPos = -16;
+
+            let direction = 90;
+            if (xPos < 80) {
+              direction = Math.random() * 15 * 3 + 45;
+            } else {
+              direction = Math.random() * 15 * 3 + 90;
+            }
+
+            this.enemyList.push({
+              position: { x: xPos, y: yPos },
+              speed: 0.25 + Math.random(),
+              direction: direction,
+              type: 6,
+              animeCount: 0,
+              animePtn: 0,
+              power: 3,
+              hitCheck: true,
+              rect: {
+                left: 0,
+                top: 0,
+                height: 14,
+                width: 14
+              },
+              score: 200,
+              power: 3
+            });
           }
         },
         createEnemyShot(enemy) {
