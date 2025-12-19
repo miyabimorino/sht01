@@ -81,9 +81,18 @@
            }">
             </div>
           </div>
+          <div v-for="sprite in spriteTopList">
+            <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
+             left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
+             top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px',
+             backgroundColor: getColor(cell.colorCode),
+             width: `${gridCellSize}px`,
+             height: `${gridCellSize}px`
+           }">
+            </div>
+          </div>
         </div>
         <div id="game-text">
-
           <div v-if="gameStatus === 'play'">
             <p>スコア: {{ score }}</p>
             <p>残機: {{ playerLeft }}</p>
@@ -213,8 +222,8 @@
           { x: 2, y: 6, colorCode: 5 }, { x: 3, y: 6, colorCode: 5 }, { x: 4, y: 6, colorCode: 1 }, { x: 5, y: 6, colorCode: 1 }, { x: 6, y: 6, colorCode: 1 }, { x: 7, y: 6, colorCode: 5 }, { x: 8, y: 6, colorCode: 5 }, { x: 9, y: 6, colorCode: 5 }, { x: 10, y: 6, colorCode: 5 }, { x: 11, y: 6, colorCode: 5 }, { x: 12, y: 6, colorCode: 5 }, { x: 13, y: 6, colorCode: 5 },
           { x: 1, y: 7, colorCode: 5 }, { x: 2, y: 7, colorCode: 5 }, { x: 3, y: 7, colorCode: 1 }, { x: 4, y: 7, colorCode: 1 }, { x: 5, y: 7, colorCode: 1 }, { x: 6, y: 7, colorCode: 5 }, { x: 7, y: 7, colorCode: 5 }, { x: 8, y: 7, colorCode: 1 }, { x: 9, y: 7, colorCode: 1 }, { x: 10, y: 7, colorCode: 1 }, { x: 11, y: 7, colorCode: 5 }, { x: 12, y: 7, colorCode: 1 }, { x: 13, y: 7, colorCode: 5 },
           { x: 2, y: 8, colorCode: 5 }, { x: 3, y: 8, colorCode: 1 }, { x: 4, y: 8, colorCode: 1 }, { x: 5, y: 8, colorCode: 1 }, { x: 6, y: 8, colorCode: 1 }, { x: 7, y: 8, colorCode: 1 }, { x: 8, y: 8, colorCode: 0 }, { x: 9, y: 8, colorCode: 0 }, { x: 10, y: 8, colorCode: 0 }, { x: 11, y: 8, colorCode: 1 }, { x: 12, y: 8, colorCode: 1 },
-          { x: 3, y: 9, colorCode: 9 }, { x: 4, y: 9, colorCode: 1 }, { x: 5, y: 9, colorCode: 1 }, { x: 6, y: 9, colorCode: 1 }, { x: 7, y: 9, colorCode: 0 }, { x: 8, y: 9, colorCode: 0 }, { x: 9, y: 9, colorCode: 0 }, { x: 10, y: 9, colorCode: 1 }, { x: 11, y: 9, colorCode: 0 },
-          { x: 3, y: 10, colorCode: 1 }, { x: 4, y: 10, colorCode: 9 }, { x: 5, y: 10, colorCode: 1 }, { x: 6, y: 10, colorCode: 1 }, { x: 7, y: 10, colorCode: 1 }, { x: 8, y: 10, colorCode: 0 }, { x: 9, y: 10, colorCode: 1 }, { x: 10, y: 10, colorCode: 0 }, { x: 11, y: 10, colorCode: 1 },
+          { x: 3, y: 9, colorCode: 0 }, { x: 4, y: 9, colorCode: 1 }, { x: 5, y: 9, colorCode: 1 }, { x: 6, y: 9, colorCode: 1 }, { x: 7, y: 9, colorCode: 0 }, { x: 8, y: 9, colorCode: 0 }, { x: 9, y: 9, colorCode: 0 }, { x: 10, y: 9, colorCode: 1 }, { x: 11, y: 9, colorCode: 0 },
+          { x: 3, y: 10, colorCode: 1 }, { x: 4, y: 10, colorCode: 0 }, { x: 5, y: 10, colorCode: 1 }, { x: 6, y: 10, colorCode: 1 }, { x: 7, y: 10, colorCode: 1 }, { x: 8, y: 10, colorCode: 0 }, { x: 9, y: 10, colorCode: 1 }, { x: 10, y: 10, colorCode: 0 }, { x: 11, y: 10, colorCode: 1 },
           { x: 4, y: 11, colorCode: 1 }, { x: 5, y: 11, colorCode: 0 }, { x: 6, y: 11, colorCode: 0 }, { x: 7, y: 11, colorCode: 0 }, { x: 8, y: 11, colorCode: 0 }, { x: 9, y: 11, colorCode: 0 }, { x: 10, y: 11, colorCode: 1 },
           { x: 6, y: 12, colorCode: 0 }, { x: 7, y: 12, colorCode: 1 }, { x: 8, y: 12, colorCode: 1 },
         ],
@@ -234,6 +243,44 @@
           { x: 6, y: 13, colorCode: 2 }, { x: 9, y: 13, colorCode: 2 },
           { x: 6, y: 14, colorCode: 2 }, { x: 9, y: 14, colorCode: 2 },
         ],
+        enemy07ACells: [
+          { x: 6, y: 0, colorCode: 7 }, { x: 7, y: 0, colorCode: 7 }, { x: 8, y: 0, colorCode: 7 }, { x: 9, y: 0, colorCode: 7 }, { x: 10, y: 0, colorCode: 7 }, { x: 11, y: 0, colorCode: 7 }, { x: 12, y: 0, colorCode: 7 }, { x: 13, y: 0, colorCode: 7 }, { x: 14, y: 0, colorCode: 5 }, { x: 15, y: 0, colorCode: 5 }, { x: 16, y: 0, colorCode: 1 }, { x: 17, y: 0, colorCode: 1 },
+          { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 7 }, { x: 7, y: 1, colorCode: 7 }, { x: 8, y: 1, colorCode: 7 }, { x: 9, y: 1, colorCode: 7 }, { x: 10, y: 1, colorCode: 7 }, { x: 11, y: 1, colorCode: 7 }, { x: 12, y: 1, colorCode: 7 }, { x: 13, y: 1, colorCode: 7 }, { x: 14, y: 1, colorCode: 5 }, { x: 15, y: 1, colorCode: 5 }, { x: 16, y: 1, colorCode: 1 }, { x: 17, y: 1, colorCode: 1 }, { x: 18, y: 1, colorCode: 1 },
+          { x: 4, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 }, { x: 8, y: 2, colorCode: 7 }, { x: 9, y: 2, colorCode: 7 }, { x: 10, y: 2, colorCode: 7 }, { x: 11, y: 2, colorCode: 7 }, { x: 12, y: 2, colorCode: 7 }, { x: 13, y: 2, colorCode: 7 }, { x: 14, y: 2, colorCode: 5 }, { x: 15, y: 2, colorCode: 5 }, { x: 16, y: 2, colorCode: 1 }, { x: 17, y: 2, colorCode: 1 }, { x: 18, y: 2, colorCode: 1 }, { x: 19, y: 2, colorCode: 1 },
+          { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 6, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 7 }, { x: 8, y: 3, colorCode: 7 }, { x: 9, y: 3, colorCode: 7 }, { x: 10, y: 3, colorCode: 7 }, { x: 11, y: 3, colorCode: 7 }, { x: 12, y: 3, colorCode: 7 }, { x: 13, y: 3, colorCode: 5 }, { x: 14, y: 3, colorCode: 5 }, { x: 15, y: 3, colorCode: 1 }, { x: 16, y: 3, colorCode: 1 }, { x: 17, y: 3, colorCode: 1 }, { x: 18, y: 3, colorCode: 1 }, { x: 19, y: 3, colorCode: 1 },
+          { x: 3, y: 4, colorCode: 0 }, { x: 4, y: 4, colorCode: 0 }, { x: 5, y: 4, colorCode: 0 }, { x: 6, y: 4, colorCode: 0 }, { x: 7, y: 4, colorCode: 0 }, { x: 8, y: 4, colorCode: 7 }, { x: 9, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 11, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 7 }, { x: 13, y: 4, colorCode: 5 }, { x: 14, y: 4, colorCode: 5 }, { x: 15, y: 4, colorCode: 1 }, { x: 16, y: 4, colorCode: 0 }, { x: 17, y: 4, colorCode: 0 }, { x: 18, y: 4, colorCode: 0 }, { x: 19, y: 4, colorCode: 0 }, { x: 20, y: 4, colorCode: 0 },
+          { x: 2, y: 5, colorCode: 0 }, { x: 3, y: 5, colorCode: 7 }, { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 7 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 0 }, { x: 9, y: 5, colorCode: 7 }, { x: 10, y: 5, colorCode: 7 }, { x: 11, y: 5, colorCode: 7 }, { x: 12, y: 5, colorCode: 7 }, { x: 13, y: 5, colorCode: 5 }, { x: 14, y: 5, colorCode: 1 }, { x: 15, y: 5, colorCode: 0 }, { x: 16, y: 5, colorCode: 7 }, { x: 17, y: 5, colorCode: 7 }, { x: 18, y: 5, colorCode: 7 }, { x: 19, y: 5, colorCode: 7 }, { x: 20, y: 5, colorCode: 7 }, { x: 21, y: 5, colorCode: 0 },
+          { x: 2, y: 6, colorCode: 7 }, { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 7 }, { x: 5, y: 6, colorCode: 7 }, { x: 6, y: 6, colorCode: 5 }, { x: 7, y: 6, colorCode: 5 }, { x: 8, y: 6, colorCode: 5 }, { x: 9, y: 6, colorCode: 0 }, { x: 10, y: 6, colorCode: 7 }, { x: 11, y: 6, colorCode: 7 }, { x: 12, y: 6, colorCode: 7 }, { x: 13, y: 6, colorCode: 5 }, { x: 14, y: 6, colorCode: 0 }, { x: 15, y: 6, colorCode: 7 }, { x: 16, y: 6, colorCode: 7 }, { x: 17, y: 6, colorCode: 7 }, { x: 18, y: 6, colorCode: 7 }, { x: 19, y: 6, colorCode: 5 }, { x: 20, y: 6, colorCode: 5 }, { x: 21, y: 6, colorCode: 5 },
+          { x: 2, y: 7, colorCode: 7 }, { x: 3, y: 7, colorCode: 7 }, { x: 4, y: 7, colorCode: 2 }, { x: 5, y: 7, colorCode: 2 }, { x: 6, y: 7, colorCode: 2 }, { x: 7, y: 7, colorCode: 5 }, { x: 8, y: 7, colorCode: 5 }, { x: 9, y: 7, colorCode: 0 }, { x: 10, y: 7, colorCode: 7 }, { x: 11, y: 7, colorCode: 7 }, { x: 12, y: 7, colorCode: 7 }, { x: 13, y: 7, colorCode: 5 }, { x: 14, y: 7, colorCode: 0 }, { x: 15, y: 7, colorCode: 7 }, { x: 16, y: 7, colorCode: 7 }, { x: 17, y: 7, colorCode: 2 }, { x: 18, y: 7, colorCode: 2 }, { x: 19, y: 7, colorCode: 2 }, { x: 20, y: 7, colorCode: 5 }, { x: 21, y: 7, colorCode: 5 },
+          { x: 2, y: 8, colorCode: 0 }, { x: 3, y: 8, colorCode: 2 }, { x: 4, y: 8, colorCode: 2 }, { x: 5, y: 8, colorCode: 3 }, { x: 6, y: 8, colorCode: 3 }, { x: 7, y: 8, colorCode: 2 }, { x: 8, y: 8, colorCode: 0 }, { x: 9, y: 8, colorCode: 0 }, { x: 10, y: 8, colorCode: 7 }, { x: 11, y: 8, colorCode: 7 }, { x: 12, y: 8, colorCode: 7 }, { x: 13, y: 8, colorCode: 5 }, { x: 14, y: 8, colorCode: 0 }, { x: 15, y: 8, colorCode: 0 }, { x: 16, y: 8, colorCode: 2 }, { x: 17, y: 8, colorCode: 3 }, { x: 18, y: 8, colorCode: 3 }, { x: 19, y: 8, colorCode: 3 }, { x: 20, y: 8, colorCode: 2 }, { x: 21, y: 8, colorCode: 0 },
+          { x: 2, y: 9, colorCode: 7 }, { x: 3, y: 9, colorCode: 7 }, { x: 4, y: 9, colorCode: 2 }, { x: 5, y: 9, colorCode: 2 }, { x: 6, y: 9, colorCode: 2 }, { x: 7, y: 9, colorCode: 5 }, { x: 8, y: 9, colorCode: 5 }, { x: 9, y: 9, colorCode: 0 }, { x: 10, y: 9, colorCode: 7 }, { x: 11, y: 9, colorCode: 7 }, { x: 12, y: 9, colorCode: 7 }, { x: 13, y: 9, colorCode: 5 }, { x: 14, y: 9, colorCode: 0 }, { x: 15, y: 9, colorCode: 7 }, { x: 16, y: 9, colorCode: 7 }, { x: 17, y: 9, colorCode: 2 }, { x: 18, y: 9, colorCode: 2 }, { x: 19, y: 9, colorCode: 2 }, { x: 20, y: 9, colorCode: 5 }, { x: 21, y: 9, colorCode: 5 },
+          { x: 2, y: 10, colorCode: 7 }, { x: 3, y: 10, colorCode: 7 }, { x: 4, y: 10, colorCode: 7 }, { x: 5, y: 10, colorCode: 7 }, { x: 6, y: 10, colorCode: 5 }, { x: 7, y: 10, colorCode: 5 }, { x: 8, y: 10, colorCode: 5 }, { x: 9, y: 10, colorCode: 0 }, { x: 10, y: 10, colorCode: 7 }, { x: 11, y: 10, colorCode: 7 }, { x: 12, y: 10, colorCode: 7 }, { x: 13, y: 10, colorCode: 5 }, { x: 14, y: 10, colorCode: 0 }, { x: 15, y: 10, colorCode: 7 }, { x: 16, y: 10, colorCode: 7 }, { x: 17, y: 10, colorCode: 7 }, { x: 18, y: 10, colorCode: 7 }, { x: 19, y: 10, colorCode: 5 }, { x: 20, y: 10, colorCode: 5 }, { x: 21, y: 10, colorCode: 5 },
+          { x: 0, y: 11, colorCode: 7 }, { x: 1, y: 11, colorCode: 7 }, { x: 2, y: 11, colorCode: 1 }, { x: 3, y: 11, colorCode: 7 }, { x: 4, y: 11, colorCode: 7 }, { x: 5, y: 11, colorCode: 7 }, { x: 6, y: 11, colorCode: 5 }, { x: 7, y: 11, colorCode: 5 }, { x: 8, y: 11, colorCode: 0 }, { x: 9, y: 11, colorCode: 1 }, { x: 10, y: 11, colorCode: 7 }, { x: 11, y: 11, colorCode: 5 }, { x: 12, y: 11, colorCode: 5 }, { x: 13, y: 11, colorCode: 5 }, { x: 14, y: 11, colorCode: 1 }, { x: 15, y: 11, colorCode: 0 }, { x: 16, y: 11, colorCode: 7 }, { x: 17, y: 11, colorCode: 7 }, { x: 18, y: 11, colorCode: 7 }, { x: 19, y: 11, colorCode: 5 }, { x: 20, y: 11, colorCode: 5 }, { x: 21, y: 11, colorCode: 1 }, { x: 22, y: 11, colorCode: 5 }, { x: 23, y: 11, colorCode: 5 },
+          { x: 0, y: 12, colorCode: 7 }, { x: 1, y: 12, colorCode: 7 }, { x: 2, y: 12, colorCode: 1 }, { x: 3, y: 12, colorCode: 1 }, { x: 4, y: 12, colorCode: 0 }, { x: 5, y: 12, colorCode: 0 }, { x: 6, y: 12, colorCode: 0 }, { x: 7, y: 12, colorCode: 0 }, { x: 8, y: 12, colorCode: 1 }, { x: 9, y: 12, colorCode: 1 }, { x: 10, y: 12, colorCode: 1 }, { x: 11, y: 12, colorCode: 5 }, { x: 12, y: 12, colorCode: 5 }, { x: 13, y: 12, colorCode: 1 }, { x: 14, y: 12, colorCode: 1 }, { x: 15, y: 12, colorCode: 1 }, { x: 16, y: 12, colorCode: 0 }, { x: 17, y: 12, colorCode: 0 }, { x: 18, y: 12, colorCode: 0 }, { x: 19, y: 12, colorCode: 0 }, { x: 20, y: 12, colorCode: 1 }, { x: 21, y: 12, colorCode: 1 }, { x: 22, y: 12, colorCode: 5 }, { x: 23, y: 12, colorCode: 5 },
+          { x: 0, y: 13, colorCode: 7 }, { x: 1, y: 13, colorCode: 7 }, { x: 2, y: 13, colorCode: 7 }, { x: 3, y: 13, colorCode: 1 }, { x: 4, y: 13, colorCode: 1 }, { x: 5, y: 13, colorCode: 1 }, { x: 6, y: 13, colorCode: 1 }, { x: 7, y: 13, colorCode: 1 }, { x: 8, y: 13, colorCode: 1 }, { x: 9, y: 13, colorCode: 7 }, { x: 10, y: 13, colorCode: 7 }, { x: 11, y: 13, colorCode: 1 }, { x: 12, y: 13, colorCode: 1 }, { x: 13, y: 13, colorCode: 1 }, { x: 14, y: 13, colorCode: 1 }, { x: 15, y: 13, colorCode: 1 }, { x: 16, y: 13, colorCode: 1 }, { x: 17, y: 13, colorCode: 1 }, { x: 18, y: 13, colorCode: 1 }, { x: 19, y: 13, colorCode: 1 }, { x: 20, y: 13, colorCode: 1 }, { x: 21, y: 13, colorCode: 5 }, { x: 22, y: 13, colorCode: 5 }, { x: 23, y: 13, colorCode: 5 },
+          { x: 0, y: 14, colorCode: 0 }, { x: 1, y: 14, colorCode: 0 }, { x: 2, y: 14, colorCode: 0 }, { x: 3, y: 14, colorCode: 0 }, { x: 4, y: 14, colorCode: 7 }, { x: 5, y: 14, colorCode: 7 }, { x: 6, y: 14, colorCode: 5 }, { x: 7, y: 14, colorCode: 5 }, { x: 8, y: 14, colorCode: 5 }, { x: 9, y: 14, colorCode: 7 }, { x: 10, y: 14, colorCode: 7 }, { x: 11, y: 14, colorCode: 7 }, { x: 12, y: 14, colorCode: 7 }, { x: 13, y: 14, colorCode: 7 }, { x: 14, y: 14, colorCode: 7 }, { x: 15, y: 14, colorCode: 1 }, { x: 16, y: 14, colorCode: 5 }, { x: 17, y: 14, colorCode: 5 }, { x: 18, y: 14, colorCode: 5 }, { x: 19, y: 14, colorCode: 5 }, { x: 20, y: 14, colorCode: 0 }, { x: 21, y: 14, colorCode: 0 }, { x: 22, y: 14, colorCode: 0 }, { x: 23, y: 14, colorCode: 0 },
+          { x: 0, y: 15, colorCode: 7 }, { x: 1, y: 15, colorCode: 7 }, { x: 2, y: 15, colorCode: 7 }, { x: 3, y: 15, colorCode: 5 }, { x: 4, y: 15, colorCode: 7 }, { x: 5, y: 15, colorCode: 7 }, { x: 6, y: 15, colorCode: 5 }, { x: 7, y: 15, colorCode: 5 }, { x: 8, y: 15, colorCode: 5 }, { x: 9, y: 15, colorCode: 7 }, { x: 10, y: 15, colorCode: 7 }, { x: 11, y: 15, colorCode: 7 }, { x: 12, y: 15, colorCode: 7 }, { x: 13, y: 15, colorCode: 7 }, { x: 14, y: 15, colorCode: 7 }, { x: 15, y: 15, colorCode: 7 }, { x: 16, y: 15, colorCode: 5 }, { x: 17, y: 15, colorCode: 5 }, { x: 18, y: 15, colorCode: 1 }, { x: 19, y: 15, colorCode: 1 }, { x: 20, y: 15, colorCode: 4 }, { x: 21, y: 15, colorCode: 6 }, { x: 22, y: 15, colorCode: 6 }, { x: 23, y: 15, colorCode: 6 },
+          { x: 0, y: 16, colorCode: 5 }, { x: 1, y: 16, colorCode: 5 }, { x: 2, y: 16, colorCode: 5 }, { x: 3, y: 16, colorCode: 5 }, { x: 4, y: 16, colorCode: 2 }, { x: 5, y: 16, colorCode: 7 }, { x: 6, y: 16, colorCode: 7 }, { x: 7, y: 16, colorCode: 5 }, { x: 8, y: 16, colorCode: 5 }, { x: 9, y: 16, colorCode: 5 }, { x: 10, y: 16, colorCode: 2 }, { x: 11, y: 16, colorCode: 2 }, { x: 12, y: 16, colorCode: 2 }, { x: 13, y: 16, colorCode: 2 }, { x: 14, y: 16, colorCode: 7 }, { x: 15, y: 16, colorCode: 7 }, { x: 16, y: 16, colorCode: 7 }, { x: 17, y: 16, colorCode: 5 }, { x: 18, y: 16, colorCode: 1 }, { x: 19, y: 16, colorCode: 1 }, { x: 20, y: 16, colorCode: 4 }, { x: 21, y: 16, colorCode: 4 }, { x: 22, y: 16, colorCode: 4 }, { x: 23, y: 16, colorCode: 4 },
+          { x: 2, y: 17, colorCode: 5 }, { x: 3, y: 17, colorCode: 5 }, { x: 4, y: 17, colorCode: 2 }, { x: 5, y: 17, colorCode: 2 }, { x: 6, y: 17, colorCode: 7 }, { x: 7, y: 17, colorCode: 5 }, { x: 8, y: 17, colorCode: 2 }, { x: 9, y: 17, colorCode: 2 }, { x: 10, y: 17, colorCode: 2 }, { x: 11, y: 17, colorCode: 2 }, { x: 12, y: 17, colorCode: 2 }, { x: 13, y: 17, colorCode: 2 }, { x: 14, y: 17, colorCode: 2 }, { x: 15, y: 17, colorCode: 2 }, { x: 16, y: 17, colorCode: 7 }, { x: 17, y: 17, colorCode: 5 }, { x: 18, y: 17, colorCode: 1 }, { x: 19, y: 17, colorCode: 2 }, { x: 20, y: 17, colorCode: 4 }, { x: 21, y: 17, colorCode: 4 },
+          { x: 4, y: 18, colorCode: 2 }, { x: 5, y: 18, colorCode: 2 }, { x: 6, y: 18, colorCode: 2 }, { x: 7, y: 18, colorCode: 2 }, { x: 8, y: 18, colorCode: 2 }, { x: 9, y: 18, colorCode: 2 }, { x: 10, y: 18, colorCode: 2 }, { x: 11, y: 18, colorCode: 2 }, { x: 12, y: 18, colorCode: 2 }, { x: 13, y: 18, colorCode: 2 }, { x: 14, y: 18, colorCode: 2 }, { x: 15, y: 18, colorCode: 2 }, { x: 16, y: 18, colorCode: 2 }, { x: 17, y: 18, colorCode: 2 }, { x: 18, y: 18, colorCode: 2 }, { x: 19, y: 18, colorCode: 2 },
+          { x: 4, y: 19, colorCode: 2 }, { x: 5, y: 19, colorCode: 2 }, { x: 6, y: 19, colorCode: 2 }, { x: 7, y: 19, colorCode: 2 }, { x: 8, y: 19, colorCode: 2 }, { x: 9, y: 19, colorCode: 2 }, { x: 10, y: 19, colorCode: 2 }, { x: 11, y: 19, colorCode: 2 }, { x: 12, y: 19, colorCode: 2 }, { x: 13, y: 19, colorCode: 2 }, { x: 14, y: 19, colorCode: 2 }, { x: 15, y: 19, colorCode: 2 }, { x: 16, y: 19, colorCode: 2 }, { x: 17, y: 19, colorCode: 2 }, { x: 18, y: 19, colorCode: 2 }, { x: 19, y: 19, colorCode: 2 },
+          { x: 4, y: 20, colorCode: 2 }, { x: 5, y: 20, colorCode: 2 }, { x: 6, y: 20, colorCode: 2 }, { x: 7, y: 20, colorCode: 2 }, { x: 8, y: 20, colorCode: 2 }, { x: 9, y: 20, colorCode: 2 }, { x: 10, y: 20, colorCode: 2 }, { x: 11, y: 20, colorCode: 2 }, { x: 12, y: 20, colorCode: 2 }, { x: 13, y: 20, colorCode: 2 }, { x: 14, y: 20, colorCode: 2 }, { x: 15, y: 20, colorCode: 2 }, { x: 16, y: 20, colorCode: 2 }, { x: 17, y: 20, colorCode: 2 }, { x: 18, y: 20, colorCode: 2 }, { x: 19, y: 20, colorCode: 2 },
+          { x: 5, y: 21, colorCode: 2 }, { x: 6, y: 21, colorCode: 2 }, { x: 7, y: 21, colorCode: 2 }, { x: 8, y: 21, colorCode: 2 }, { x: 9, y: 21, colorCode: 2 }, { x: 10, y: 21, colorCode: 2 }, { x: 11, y: 21, colorCode: 2 }, { x: 12, y: 21, colorCode: 2 }, { x: 13, y: 21, colorCode: 2 }, { x: 14, y: 21, colorCode: 2 }, { x: 15, y: 21, colorCode: 2 }, { x: 16, y: 21, colorCode: 2 }, { x: 17, y: 21, colorCode: 2 }, { x: 18, y: 21, colorCode: 2 },
+          { x: 6, y: 22, colorCode: 2 }, { x: 7, y: 22, colorCode: 2 }, { x: 8, y: 22, colorCode: 2 }, { x: 9, y: 22, colorCode: 2 }, { x: 10, y: 22, colorCode: 2 }, { x: 11, y: 22, colorCode: 2 }, { x: 12, y: 22, colorCode: 2 }, { x: 13, y: 22, colorCode: 2 }, { x: 14, y: 22, colorCode: 2 }, { x: 15, y: 22, colorCode: 2 }, { x: 16, y: 22, colorCode: 2 }, { x: 17, y: 22, colorCode: 2 },
+        ],
+        enemy07BCells: [
+          { x: 4, y: 0, colorCode: 0 }, { x: 5, y: 0, colorCode: 0 }, { x: 6, y: 0, colorCode: 2 }, { x: 7, y: 0, colorCode: 2 }, { x: 8, y: 0, colorCode: 2 }, { x: 9, y: 0, colorCode: 2 }, { x: 10, y: 0, colorCode: 2 }, { x: 11, y: 0, colorCode: 2 }, { x: 12, y: 0, colorCode: 2 }, { x: 13, y: 0, colorCode: 2 }, { x: 14, y: 0, colorCode: 2 }, { x: 15, y: 0, colorCode: 2 }, { x: 16, y: 0, colorCode: 2 }, { x: 17, y: 0, colorCode: 2 }, { x: 18, y: 0, colorCode: 0 }, { x: 19, y: 0, colorCode: 0 },
+          { x: 3, y: 1, colorCode: 0 }, { x: 4, y: 1, colorCode: 0 }, { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 2 }, { x: 7, y: 1, colorCode: 2 }, { x: 8, y: 1, colorCode: 2 }, { x: 9, y: 1, colorCode: 2 }, { x: 10, y: 1, colorCode: 2 }, { x: 11, y: 1, colorCode: 2 }, { x: 12, y: 1, colorCode: 2 }, { x: 13, y: 1, colorCode: 2 }, { x: 14, y: 1, colorCode: 2 }, { x: 15, y: 1, colorCode: 2 }, { x: 16, y: 1, colorCode: 2 }, { x: 17, y: 1, colorCode: 2 }, { x: 18, y: 1, colorCode: 5 }, { x: 19, y: 1, colorCode: 0 }, { x: 20, y: 1, colorCode: 0 },
+          { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 2 }, { x: 7, y: 2, colorCode: 2 }, { x: 8, y: 2, colorCode: 2 }, { x: 9, y: 2, colorCode: 2 }, { x: 10, y: 2, colorCode: 2 }, { x: 11, y: 2, colorCode: 2 }, { x: 12, y: 2, colorCode: 2 }, { x: 13, y: 2, colorCode: 2 }, { x: 14, y: 2, colorCode: 2 }, { x: 15, y: 2, colorCode: 2 }, { x: 16, y: 2, colorCode: 2 }, { x: 17, y: 2, colorCode: 2 }, { x: 18, y: 2, colorCode: 5 }, { x: 19, y: 2, colorCode: 5 }, { x: 20, y: 2, colorCode: 5 },
+          { x: 3, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 6, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 2 }, { x: 8, y: 3, colorCode: 2 }, { x: 9, y: 3, colorCode: 2 }, { x: 10, y: 3, colorCode: 2 }, { x: 11, y: 3, colorCode: 2 }, { x: 12, y: 3, colorCode: 2 }, { x: 13, y: 3, colorCode: 2 }, { x: 14, y: 3, colorCode: 2 }, { x: 15, y: 3, colorCode: 2 }, { x: 16, y: 3, colorCode: 2 }, { x: 17, y: 3, colorCode: 7 }, { x: 18, y: 3, colorCode: 5 }, { x: 19, y: 3, colorCode: 5 }, { x: 20, y: 3, colorCode: 5 },
+          { x: 3, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 7 }, { x: 6, y: 4, colorCode: 7 }, { x: 7, y: 4, colorCode: 7 }, { x: 8, y: 4, colorCode: 7 }, { x: 9, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 11, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 7 }, { x: 13, y: 4, colorCode: 7 }, { x: 14, y: 4, colorCode: 7 }, { x: 15, y: 4, colorCode: 7 }, { x: 16, y: 4, colorCode: 7 }, { x: 17, y: 4, colorCode: 7 }, { x: 18, y: 4, colorCode: 5 }, { x: 19, y: 4, colorCode: 5 }, { x: 20, y: 4, colorCode: 5 },
+          { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 7 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 7 }, { x: 9, y: 5, colorCode: 7 }, { x: 10, y: 5, colorCode: 7 }, { x: 11, y: 5, colorCode: 7 }, { x: 12, y: 5, colorCode: 7 }, { x: 13, y: 5, colorCode: 7 }, { x: 14, y: 5, colorCode: 7 }, { x: 15, y: 5, colorCode: 7 }, { x: 16, y: 5, colorCode: 7 }, { x: 17, y: 5, colorCode: 5 }, { x: 18, y: 5, colorCode: 5 }, { x: 19, y: 5, colorCode: 5 },
+          { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 1 }, { x: 5, y: 6, colorCode: 0 }, { x: 6, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 0 }, { x: 10, y: 6, colorCode: 0 }, { x: 11, y: 6, colorCode: 0 }, { x: 12, y: 6, colorCode: 0 }, { x: 13, y: 6, colorCode: 0 }, { x: 14, y: 6, colorCode: 0 }, { x: 15, y: 6, colorCode: 7 }, { x: 16, y: 6, colorCode: 7 }, { x: 17, y: 6, colorCode: 5 }, { x: 18, y: 6, colorCode: 0 }, { x: 19, y: 6, colorCode: 1 },
+          { x: 2, y: 7, colorCode: 7 }, { x: 3, y: 7, colorCode: 7 }, { x: 4, y: 7, colorCode: 1 }, { x: 5, y: 7, colorCode: 5 }, { x: 6, y: 7, colorCode: 0 }, { x: 7, y: 7, colorCode: 7 }, { x: 8, y: 7, colorCode: 7 }, { x: 9, y: 7, colorCode: 0 }, { x: 10, y: 7, colorCode: 7 }, { x: 11, y: 7, colorCode: 7 }, { x: 12, y: 7, colorCode: 7 }, { x: 13, y: 7, colorCode: 5 }, { x: 14, y: 7, colorCode: 0 }, { x: 15, y: 7, colorCode: 7 }, { x: 16, y: 7, colorCode: 7 }, { x: 17, y: 7, colorCode: 0 }, { x: 18, y: 7, colorCode: 7 }, { x: 19, y: 7, colorCode: 1 }, { x: 20, y: 7, colorCode: 5 },
+          { x: 2, y: 8, colorCode: 7 }, { x: 3, y: 8, colorCode: 5 }, { x: 4, y: 8, colorCode: 5 }, { x: 5, y: 8, colorCode: 5 }, { x: 9, y: 8, colorCode: 7 }, { x: 10, y: 8, colorCode: 7 }, { x: 11, y: 8, colorCode: 7 }, { x: 12, y: 8, colorCode: 5 }, { x: 13, y: 8, colorCode: 5 }, { x: 14, y: 8, colorCode: 5 }, { x: 17, y: 8, colorCode: 7 }, { x: 18, y: 8, colorCode: 7 }, { x: 19, y: 8, colorCode: 5 }, { x: 20, y: 8, colorCode: 5 },
+          { x: 2, y: 9, colorCode: 7 }, { x: 3, y: 9, colorCode: 5 }, { x: 4, y: 9, colorCode: 5 }, { x: 9, y: 9, colorCode: 7 }, { x: 10, y: 9, colorCode: 7 }, { x: 11, y: 9, colorCode: 7 }, { x: 12, y: 9, colorCode: 5 }, { x: 13, y: 9, colorCode: 5 }, { x: 14, y: 9, colorCode: 5 }, { x: 18, y: 9, colorCode: 7 }, { x: 19, y: 9, colorCode: 5 }, { x: 20, y: 9, colorCode: 5 },
+          { x: 10, y: 10, colorCode: 7 }, { x: 11, y: 10, colorCode: 5 }, { x: 12, y: 10, colorCode: 5 }, { x: 13, y: 10, colorCode: 5 },
+        ],
         enemyShot: [
           { x: 3, y: 1, colorCode: 2 },
           { x: 4, y: 2, colorCode: 2 },
@@ -242,7 +289,7 @@
           { x: 3, y: 5, colorCode: 2 },
           { x: 4, y: 6, colorCode: 2 },
         ],
-        enemyShotB1: [
+        enemyShotB01: [
           { x: 3, y: 1, colorCode: 2 }, { x: 4, y: 1, colorCode: 2 },
           { x: 3, y: 2, colorCode: 6 }, { x: 4, y: 2, colorCode: 6 },
           { x: 2, y: 3, colorCode: 6 }, { x: 3, y: 3, colorCode: 6 }, { x: 4, y: 3, colorCode: 6 }, { x: 5, y: 3, colorCode: 6 },
@@ -250,7 +297,7 @@
           { x: 3, y: 5, colorCode: 6 }, { x: 4, y: 5, colorCode: 6 },
           { x: 3, y: 6, colorCode: 2 }, { x: 4, y: 6, colorCode: 2 },
         ],
-        enemyShotB2: [
+        enemyShotB02: [
           { x: 5, y: 1, colorCode: 2 },
           { x: 3, y: 2, colorCode: 6 }, { x: 4, y: 2, colorCode: 6 }, { x: 6, y: 2, colorCode: 2 },
           { x: 2, y: 3, colorCode: 6 }, { x: 3, y: 3, colorCode: 6 }, { x: 4, y: 3, colorCode: 6 }, { x: 5, y: 3, colorCode: 6 },
@@ -258,13 +305,13 @@
           { x: 1, y: 5, colorCode: 2 }, { x: 3, y: 5, colorCode: 6 }, { x: 4, y: 5, colorCode: 6 },
           { x: 2, y: 6, colorCode: 2 },
         ],
-        enemyShotB3: [
+        enemyShotB03: [
           { x: 3, y: 2, colorCode: 6 }, { x: 4, y: 2, colorCode: 6 },
           { x: 1, y: 3, colorCode: 2 }, { x: 2, y: 3, colorCode: 6 }, { x: 3, y: 3, colorCode: 6 }, { x: 4, y: 3, colorCode: 6 }, { x: 5, y: 3, colorCode: 6 }, { x: 6, y: 3, colorCode: 2 },
           { x: 1, y: 4, colorCode: 2 }, { x: 2, y: 4, colorCode: 6 }, { x: 3, y: 4, colorCode: 6 }, { x: 4, y: 4, colorCode: 6 }, { x: 5, y: 4, colorCode: 6 }, { x: 6, y: 4, colorCode: 2 },
           { x: 3, y: 5, colorCode: 6 }, { x: 4, y: 5, colorCode: 6 },
         ],
-        enemyShotB4: [
+        enemyShotB04: [
           { x: 2, y: 1, colorCode: 2 },
           { x: 1, y: 2, colorCode: 2 }, { x: 3, y: 2, colorCode: 6 }, { x: 4, y: 2, colorCode: 6 },
           { x: 2, y: 3, colorCode: 6 }, { x: 3, y: 3, colorCode: 6 }, { x: 4, y: 3, colorCode: 6 }, { x: 5, y: 3, colorCode: 6 },
@@ -429,6 +476,7 @@
 
         spriteMap: new Map(),
         spriteList: [],
+        spriteTopList: [],
         playerPosition: {
           x: 0,
           y: 90
@@ -437,9 +485,10 @@
         maxEnemy01: 8,
         maxEnemy02: 6,
         maxEnemy03: 5,
-        maxEnemy04: 3,
+        maxEnemy04: 4,
         maxEnemy05: 15,
-        maxEnemy06: 6,
+        maxEnemy06: 3,
+        maxEnemy07: 1,
 
         enemy02Count: 0,
         enemy02MaxCount: 20,
@@ -447,6 +496,8 @@
         enemy04MaxCount: 20,
         enemy06Count: 0,
         enemy06MaxCount: 20,
+        enemy07Count: 0,
+        enemy07MaxCount: 1,
 
         shotSpeed: 1,
         shotFrequency: 0.01,
@@ -485,6 +536,8 @@
         titleX: 160,
 
         gameStatus: "title",
+        nextStageWaitCount: 0,
+        lapCount: 0,
       },
       methods: {
         handleTouchStart(e) {
@@ -581,7 +634,9 @@
           this.playerMoveX = this.playerPosition.x - playerPrevX;
         },
         movePlayerShots() {
-          this.playerShotList.forEach((shot, index) => {
+          for (let index = this.playerShotList.length - 1; index >= 0; index--) {
+            let shot = this.playerShotList[index];
+
             shot.position.y -= shot.speed;
             if (shot.position.y < -8) {
               this.playerShotList.splice(index, 1);
@@ -596,7 +651,7 @@
               }
 
               const spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02', 'playerShot01'];
-              this.spriteList.push(
+              this.spriteTopList.push(
                 {
                   x: shot.position.x,
                   y: shot.position.y,
@@ -604,7 +659,7 @@
                 }
               );
             }
-          });
+          }
         },
         moveBang(enemy, index, dt) {
           enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
@@ -631,17 +686,20 @@
           }
         },
         moveEnemy() {
-          this.enemyList.forEach((enemy, index) => {
+          for (let index = this.enemyList.length - 1; index >= 0; index--) {
+            let enemy = this.enemyList[index];
+
             if (enemy.type === 1) { this.moveEnemy01(enemy, index); }
-            if (enemy.type === 2) { this.moveEnemy02(enemy, index); }
-            if (enemy.type === 3) { this.moveEnemy03(enemy, index); }
-            if (enemy.type === 4) { this.moveEnemy04(enemy, index); }
-            if (enemy.type === 5) { this.moveEnemy05(enemy, index); }
-            if (enemy.type === 6) { this.moveEnemy06(enemy, index); }
-            if (enemy.type === 10) { this.moveEnemyShot(enemy, index); }
-            if (enemy.type === 11) { this.moveEnemyShot(enemy, index); }
-            if (enemy.type === 99) { this.moveBang(enemy, index); }
-          });
+            else if (enemy.type === 2) { this.moveEnemy02(enemy, index); }
+            else if (enemy.type === 3) { this.moveEnemy03(enemy, index); }
+            else if (enemy.type === 4) { this.moveEnemy04(enemy, index); }
+            else if (enemy.type === 5) { this.moveEnemy05(enemy, index); }
+            else if (enemy.type === 6) { this.moveEnemy06(enemy, index); }
+            else if (enemy.type === 7) { this.moveEnemy07(enemy, index); }
+            else if (enemy.type === 10) { this.moveEnemyShot(enemy, index); }
+            else if (enemy.type === 11) { this.moveEnemyShot(enemy, index); }
+            else if (enemy.type === 99) { this.moveBang(enemy, index); }
+          };
         },
         moveEnemy01(enemy, index) {
           enemy.position.x += enemy.direction * enemy.speed;
@@ -680,7 +738,7 @@
           enemy.position.x += enemy.direction * enemy.speed;
 
           if (Math.random() < this.shotFrequency) {
-            this.createEnemyShot(enemy, 10);
+            this.createEnemyShot(enemy, 10, 4, 4);
           }
 
           if (enemy.position.x < -32 || enemy.position.x > 160) {
@@ -800,7 +858,7 @@
           enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * speed);
 
           if (Math.random() < this.shotFrequency) {
-            this.createEnemyShot(enemy, 11);
+            this.createEnemyShot(enemy, 11, 6, 10);
           }
 
           if (enemy.position.x < 0 || enemy.position.x > 160 || enemy.position.y > 100 || enemy.position.y < -16) {
@@ -814,6 +872,53 @@
                 sprite: 'enemy06Cells'
               }
             );
+          }
+        },
+        moveEnemy07(enemy, index) {
+
+          const directionTable = [
+            90, 90, 90,
+            120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60, 90,
+            60, 30, 0, 330, 300, 270, 240, 210, 180, 150, 120,
+            120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60, 90,
+            60, 30, 0, 330, 300, 270, 240, 210, 180, 150, 120,
+            120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60, 90,
+            60, 30, 0, 330, 300, 270, 240, 210, 180, 150, 120,
+            90, 90,
+            270, 270, 270, 270];
+          let kuti_cnt = 18;
+
+          enemy.moveCount++;
+
+          if (enemy.moveCount > 13 && enemy.moveCount < 18) {
+            kuti_cnt += (enemy.moveCount - 13) * 1.8
+          } else if (enemy.moveCount == 18) {
+            enemy.direction = directionTable[enemy.directionIndex];
+            enemy.directionIndex++;
+            enemy.moveCount = 0;
+            this.createEnemyShot(enemy, 11, 10, 10);
+          } else {
+            enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
+            enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+          }
+
+          if (enemy.position.y < -32) {
+            this.enemyList.splice(index, 1);
+          } else {
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                sprite: 'enemy07ACells'
+              }
+            );
+            this.spriteList.push(
+              {
+                x: enemy.position.x,
+                y: enemy.position.y + kuti_cnt,
+                sprite: 'enemy07BCells'
+              }
+            );            
           }
         },
         moveEnemyShot(enemy, index) {
@@ -830,13 +935,13 @@
               if (enemy.animePtn === 4) { enemy.animePtn = 0; }
             }
             const spritePtnList = [
-              'enemyShotB1', 'enemyShotB2', 'enemyShotB3', 'enemyShotB4'
+              'enemyShotB01', 'enemyShotB02', 'enemyShotB03', 'enemyShotB04'
             ];
 
             let ptn = 'enemyShot';
             if (enemy.type === 11) { ptn = spritePtnList[enemy.animePtn]; }
 
-            this.spriteList.push({
+            this.spriteTopList.push({
               x: enemy.position.x,
               y: enemy.position.y,
               sprite: ptn
@@ -871,10 +976,17 @@
             type: 99,
             animeCount: 0,
             animePtn: 0,
-            hitCheck: false,
+            isHitCheck: false,
+            isCollidingWithPlayer: false,
           });
         },
+
         createEnemy() {
+          if (this.nextStageWaitCount > 0) {
+            this.nextStageWaitCount--;
+            return;
+          }
+
           this.timer++;
           this.timer = this.timer & 15;
 
@@ -885,8 +997,8 @@
                 if ((this.timer & 7) === 0) { this.createEnemy02(); }
               }
               else {
-                if (this.enemyList.filter(e => e.type === 1 || e.type === 2).length === 0) {
-                  this.stage = 2;
+                if (this.enemyList.filter(e => e.type === 2).length === 0) {
+                  this.setNextStage();
                 }
               }
               break;
@@ -896,8 +1008,8 @@
                 if ((this.timer & 3) === 0) { this.createEnemy04(); }
               }
               else {
-                if (this.enemyList.filter(e => e.type === 3 || e.type === 4).length === 0) {
-                  this.stage = 3;
+                if (this.enemyList.filter(e => e.type === 4).length === 0) {
+                  this.setNextStage();
                 }
               }
               break;
@@ -906,7 +1018,24 @@
                 if ((this.timer & 7) === 0) { this.createEnemy05(); }
                 if ((this.timer & 3) === 0) { this.createEnemy06(); }
               }
+              else {
+                if (this.enemyList.filter(e => e.type === 6).length === 0) {
+                  this.setNextStage();
+                }
+              }
               break;
+            case 4:
+              if (this.enemy07Count < this.enemy07MaxCount) {
+                this.createEnemy07();
+              }
+              else {
+                if (this.enemyList.filter(e => e.type === 7).length === 0) {
+                  this.setNextStage();
+                  this.enemyInit();
+                }
+              }
+              break;
+
           }
         },
         createEnemy01() {
@@ -925,7 +1054,8 @@
               animeCount: 0,
               animePtn: 0,
               power: -1,
-              hitCheck: true,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
               rect: {
                 left: 2,
                 top: 0,
@@ -950,7 +1080,8 @@
               type: 2,
               animeCount: 0,
               animePtn: 0,
-              hitCheck: true,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
               power: 2,
               rect: {
                 left: 2,
@@ -976,7 +1107,9 @@
               animeCount: 0,
               animePtn: 0,
               power: -1,
-              hitCheck: true,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
+
               rect: {
                 left: 2,
                 top: 6,
@@ -1000,7 +1133,9 @@
               animeCount: 0,
               animePtn: 0,
               power: 2,
-              hitCheck: true,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
+
               rect: {
                 left: 3,
                 top: 0,
@@ -1010,7 +1145,6 @@
               score: 100,
               baseX: xPos,
               frameCount: 0,
-              power: 3,
               period: Math.floor(Math.random() * 2) * 5 + 30,
             });
             this.enemy04Count++;
@@ -1043,7 +1177,8 @@
                 animeCount: 0,
                 animePtn: 0,
                 power: 3,
-                hitCheck: true,
+                isHitCheck: true,
+                isCollidingWithPlayer: true,
                 rect: {
                   left: 2,
                   top: 5,
@@ -1051,7 +1186,6 @@
                   width: 14
                 },
                 score: 50,
-                power: 3
               });
             }
           }
@@ -1077,8 +1211,9 @@
               type: 6,
               animeCount: 0,
               animePtn: 0,
-              power: 3,
-              hitCheck: true,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
+
               rect: {
                 left: 0,
                 top: 0,
@@ -1090,9 +1225,36 @@
               moveCount: 0,
               isRightUP: isRightUP
             });
+            this.enemy06Count++;
           }
         },
-        createEnemyShot(enemy, type) {
+        createEnemy07() {
+          if (this.enemyList.filter(enemy => enemy.type === 7).length < this.maxEnemy07) {
+            this.enemyList.push({
+              position: { x: 64, y: -16 },
+              speed: 1.17,
+              direction: 90,
+              type: 7,
+              animeCount: 0,
+              animePtn: 0,
+              isHitCheck: true,
+              isCollidingWithPlayer: true,
+
+              rect: {
+                left: 0,
+                top: 0,
+                height: 14,
+                width: 14
+              },
+              score: 100,
+              power: 3,
+              moveCount: 0,
+              directionIndex: 0
+            });
+            this.enemy07Count++;
+          }
+        },
+        createEnemyShot(enemy, type, addX, addY) {
           const baseAngle = 90 * Math.PI / 180;
 
           const offsetDeg = this.attackAngles[this.attackAngleIndex];
@@ -1105,13 +1267,14 @@
           const vy = Math.sin(angle) * speed;
 
           this.enemyList.push({
-            position: { x: (enemy.position.x + 4), y: enemy.position.y },
+            position: { x: (enemy.position.x + addX), y: enemy.position.y + addY },
             vx: vx,
             vy: vy,
             type: type,
             animeCount: 0,
             animePtn: 0,
-            hitCheck: false,
+            isHitCheck: false,
+            isCollidingWithPlayer: true,
             rect: {
               left: 4,
               top: 2,
@@ -1121,6 +1284,31 @@
           });
         },
 
+        setNextStage() {
+          this.nextStageWaitCount = 60;
+          this.stage++;
+          if (this.stage == 5) {
+            this.stage = 1;
+            this.lapCount++;
+            this.enemyInit();
+          }
+        },
+        enemyInit() {
+          this.enemy02Count = 0;
+          this.enemy04Count = 0;
+          this.enemy06Count = 0;
+          this.enemy07Count = 0;
+
+          this.maxEnemy02 = 6 + this.lapCount;
+          this.maxEnemy04 = 4 + this.lapCount;
+          this.maxEnemy05 = 12 + this.lapCount;
+          this.maxEnemy06 = 3 + this.lapCount;
+
+          this.enemy02MaxCount = 6 + this.lapCount;
+          this.enemy04MaxCount = 7 + this.lapCount;
+          this.enemy06MaxCount = 4 + this.lapCount;
+          this.enemy07MaxCount = 1;
+        },
         startGame() {
           this.score = 0;
           this.playerLeft = 3;
@@ -1130,15 +1318,12 @@
           this.invincibleTimer = 0;
           this.isPlayerVisible = true;
           this.attackAngleIndex = 0;
-          this.enemy02Count = 0;
-          this.enemy04Count = 0;
-          this.enemy06Count = 0;
-          this.enemy02MaxCount = 5;
-          this.enemy04MaxCount = 5;
-          this.enemy06MaxCount = 5;
-          this.stage = 1; //debug
-        },
+          this.nextStageWaitCount = 0;
+          this.lapCount = 0;
+          this.stage = 4;
 
+          this.enemyInit();
+        },
         updateScore() {
           this.spriteList.push({
             x: 1,
@@ -1155,6 +1340,7 @@
         },
         gameMain() {
           this.spriteList = [];
+          this.spriteTopList = [];
 
           this.updateScore()
 
@@ -1238,6 +1424,7 @@
                   this.shotQueue[i].delay--;
                 }
               }
+
               this.createEnemy();
               this.moveEnemy();
               this.movePlayerShots();
@@ -1261,25 +1448,30 @@
             rect: { left: 0, top: 0, width: 16, height: 8 }
           });
 
-          this.enemyList.forEach((enemy, index) => {
+          for (let index = this.enemyList.length - 1; index >= 0; index--) {
+            let enemy = this.enemyList[index];
+            if (!enemy.isCollidingWithPlayer) continue;
+
             const enemyBox = this.getBoundingBox(enemy);
             if (this.isColliding(playerBox, enemyBox)) {
               this.enemyList.splice(index, 1);
               for (let i = 0; i < 4; i++) {
                 this.createBang(this.playerPosition.x + 6, this.playerPosition.y);
               }
-              this.reducePlayerLives();
+              if (this.invincibleTimer === 0) this.reducePlayerLives();
               this.invincibleTimer = 100;
               this.isPlayerVisible = true;
             }
-          });
+          }
         },
         checkCollisions() {
-          this.playerShotList.forEach((shot, shotIndex) => {
+          for (let shotIndex = this.playerShotList.length - 1; shotIndex >= 0; shotIndex--) {
+            let shot = this.playerShotList[shotIndex];
             const shotBox = this.getBoundingBox(shot);
 
-            this.enemyList.forEach((enemy, enemyIndex) => {
-              if (!enemy.hitCheck) return;
+            for (let enemyIndex = this.enemyList.length - 1; enemyIndex >= 0; enemyIndex--) {
+              let enemy = this.enemyList[enemyIndex];
+              if (!enemy.isHitCheck) continue;
 
               const enemyBox = this.getBoundingBox(enemy);
               if (this.isColliding(shotBox, enemyBox)) {
@@ -1294,8 +1486,8 @@
                   this.enemyList.splice(enemyIndex, 1);
                 }
               }
-            });
-          });
+            }
+          }
         },
         setGridCellSize() {
           const gameField = document.getElementById('game-field');
@@ -1335,6 +1527,18 @@
                 star.x = Math.random() * 160;
               }
             });
+          } else if (type === 4) {
+            this.stars.forEach(star => {
+              star.x -= this.playerMoveX * star.speed;
+              if (star.x < 0) star.x += 160;
+              if (star.x > 160) star.x -= 160;
+
+              star.y -= 2 * star.speed;
+              if (star.y < 0) {
+                star.y = 100;
+                star.x = Math.random() * 160;
+              }
+            });
             this.playerMoveX = 0;
           }
           this.stars.forEach(star => {
@@ -1364,11 +1568,13 @@
         this.spriteMap.set('enemy04BCells', this.enemy04BCells);
         this.spriteMap.set('enemy05Cells', this.enemy05Cells);
         this.spriteMap.set('enemy06Cells', this.enemy06Cells);
+        this.spriteMap.set('enemy07ACells', this.enemy07ACells);
+        this.spriteMap.set('enemy07BCells', this.enemy07BCells);
         this.spriteMap.set('enemyShot', this.enemyShot);
-        this.spriteMap.set('enemyShotB1', this.enemyShotB1);
-        this.spriteMap.set('enemyShotB2', this.enemyShotB2);
-        this.spriteMap.set('enemyShotB3', this.enemyShotB3);
-        this.spriteMap.set('enemyShotB4', this.enemyShotB4);
+        this.spriteMap.set('enemyShotB01', this.enemyShotB01);
+        this.spriteMap.set('enemyShotB02', this.enemyShotB02);
+        this.spriteMap.set('enemyShotB03', this.enemyShotB03);
+        this.spriteMap.set('enemyShotB04', this.enemyShotB04);
         this.spriteMap.set('bang01', this.bang01);
         this.spriteMap.set('bang02', this.bang02);
         this.spriteMap.set('bang03', this.bang03);
