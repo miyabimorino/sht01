@@ -93,15 +93,6 @@
           </div>
         </div>
         <div id="game-text">
-          <div v-if="gameStatus === 'play'">
-            <p>スコア: {{ score }}</p>
-            <p>残機: {{ playerLeft }}</p>
-          </div>
-
-          <div v-if="gameStatus === 'gameover'">
-            <p style="color:red; font-size:20px;">GAME OVER</p>
-            <p>クリックでリトライ</p>
-          </div>
         </div>
       </div>
     </div>
@@ -260,19 +251,19 @@
           { x: 0, y: 13, colorCode: 7 }, { x: 1, y: 13, colorCode: 7 }, { x: 2, y: 13, colorCode: 7 }, { x: 3, y: 13, colorCode: 1 }, { x: 4, y: 13, colorCode: 1 }, { x: 5, y: 13, colorCode: 1 }, { x: 6, y: 13, colorCode: 1 }, { x: 7, y: 13, colorCode: 1 }, { x: 8, y: 13, colorCode: 1 }, { x: 9, y: 13, colorCode: 7 }, { x: 10, y: 13, colorCode: 7 }, { x: 11, y: 13, colorCode: 1 }, { x: 12, y: 13, colorCode: 1 }, { x: 13, y: 13, colorCode: 1 }, { x: 14, y: 13, colorCode: 1 }, { x: 15, y: 13, colorCode: 1 }, { x: 16, y: 13, colorCode: 1 }, { x: 17, y: 13, colorCode: 1 }, { x: 18, y: 13, colorCode: 1 }, { x: 19, y: 13, colorCode: 1 }, { x: 20, y: 13, colorCode: 1 }, { x: 21, y: 13, colorCode: 5 }, { x: 22, y: 13, colorCode: 5 }, { x: 23, y: 13, colorCode: 5 },
           { x: 0, y: 14, colorCode: 0 }, { x: 1, y: 14, colorCode: 0 }, { x: 2, y: 14, colorCode: 0 }, { x: 3, y: 14, colorCode: 0 }, { x: 4, y: 14, colorCode: 7 }, { x: 5, y: 14, colorCode: 7 }, { x: 6, y: 14, colorCode: 5 }, { x: 7, y: 14, colorCode: 5 }, { x: 8, y: 14, colorCode: 5 }, { x: 9, y: 14, colorCode: 7 }, { x: 10, y: 14, colorCode: 7 }, { x: 11, y: 14, colorCode: 7 }, { x: 12, y: 14, colorCode: 7 }, { x: 13, y: 14, colorCode: 7 }, { x: 14, y: 14, colorCode: 7 }, { x: 15, y: 14, colorCode: 1 }, { x: 16, y: 14, colorCode: 5 }, { x: 17, y: 14, colorCode: 5 }, { x: 18, y: 14, colorCode: 5 }, { x: 19, y: 14, colorCode: 5 }, { x: 20, y: 14, colorCode: 0 }, { x: 21, y: 14, colorCode: 0 }, { x: 22, y: 14, colorCode: 0 }, { x: 23, y: 14, colorCode: 0 },
           { x: 0, y: 15, colorCode: 7 }, { x: 1, y: 15, colorCode: 7 }, { x: 2, y: 15, colorCode: 7 }, { x: 3, y: 15, colorCode: 5 }, { x: 4, y: 15, colorCode: 7 }, { x: 5, y: 15, colorCode: 7 }, { x: 6, y: 15, colorCode: 5 }, { x: 7, y: 15, colorCode: 5 }, { x: 8, y: 15, colorCode: 5 }, { x: 9, y: 15, colorCode: 7 }, { x: 10, y: 15, colorCode: 7 }, { x: 11, y: 15, colorCode: 7 }, { x: 12, y: 15, colorCode: 7 }, { x: 13, y: 15, colorCode: 7 }, { x: 14, y: 15, colorCode: 7 }, { x: 15, y: 15, colorCode: 7 }, { x: 16, y: 15, colorCode: 5 }, { x: 17, y: 15, colorCode: 5 }, { x: 18, y: 15, colorCode: 1 }, { x: 19, y: 15, colorCode: 1 }, { x: 20, y: 15, colorCode: 4 }, { x: 21, y: 15, colorCode: 6 }, { x: 22, y: 15, colorCode: 6 }, { x: 23, y: 15, colorCode: 6 },
-          { x: 0, y: 16, colorCode: 5 }, { x: 1, y: 16, colorCode: 5 }, { x: 2, y: 16, colorCode: 5 }, { x: 3, y: 16, colorCode: 5 }, { x: 4, y: 16, colorCode: 2 }, { x: 5, y: 16, colorCode: 7 }, { x: 6, y: 16, colorCode: 7 }, { x: 7, y: 16, colorCode: 5 }, { x: 8, y: 16, colorCode: 5 }, { x: 9, y: 16, colorCode: 5 }, { x: 10, y: 16, colorCode: 2 }, { x: 11, y: 16, colorCode: 2 }, { x: 12, y: 16, colorCode: 2 }, { x: 13, y: 16, colorCode: 2 }, { x: 14, y: 16, colorCode: 7 }, { x: 15, y: 16, colorCode: 7 }, { x: 16, y: 16, colorCode: 7 }, { x: 17, y: 16, colorCode: 5 }, { x: 18, y: 16, colorCode: 1 }, { x: 19, y: 16, colorCode: 1 }, { x: 20, y: 16, colorCode: 4 }, { x: 21, y: 16, colorCode: 4 }, { x: 22, y: 16, colorCode: 4 }, { x: 23, y: 16, colorCode: 4 },
-          { x: 2, y: 17, colorCode: 5 }, { x: 3, y: 17, colorCode: 5 }, { x: 4, y: 17, colorCode: 2 }, { x: 5, y: 17, colorCode: 2 }, { x: 6, y: 17, colorCode: 7 }, { x: 7, y: 17, colorCode: 5 }, { x: 8, y: 17, colorCode: 2 }, { x: 9, y: 17, colorCode: 2 }, { x: 10, y: 17, colorCode: 2 }, { x: 11, y: 17, colorCode: 2 }, { x: 12, y: 17, colorCode: 2 }, { x: 13, y: 17, colorCode: 2 }, { x: 14, y: 17, colorCode: 2 }, { x: 15, y: 17, colorCode: 2 }, { x: 16, y: 17, colorCode: 7 }, { x: 17, y: 17, colorCode: 5 }, { x: 18, y: 17, colorCode: 1 }, { x: 19, y: 17, colorCode: 2 }, { x: 20, y: 17, colorCode: 4 }, { x: 21, y: 17, colorCode: 4 },
-          { x: 4, y: 18, colorCode: 2 }, { x: 5, y: 18, colorCode: 2 }, { x: 6, y: 18, colorCode: 2 }, { x: 7, y: 18, colorCode: 2 }, { x: 8, y: 18, colorCode: 2 }, { x: 9, y: 18, colorCode: 2 }, { x: 10, y: 18, colorCode: 2 }, { x: 11, y: 18, colorCode: 2 }, { x: 12, y: 18, colorCode: 2 }, { x: 13, y: 18, colorCode: 2 }, { x: 14, y: 18, colorCode: 2 }, { x: 15, y: 18, colorCode: 2 }, { x: 16, y: 18, colorCode: 2 }, { x: 17, y: 18, colorCode: 2 }, { x: 18, y: 18, colorCode: 2 }, { x: 19, y: 18, colorCode: 2 },
-          { x: 4, y: 19, colorCode: 2 }, { x: 5, y: 19, colorCode: 2 }, { x: 6, y: 19, colorCode: 2 }, { x: 7, y: 19, colorCode: 2 }, { x: 8, y: 19, colorCode: 2 }, { x: 9, y: 19, colorCode: 2 }, { x: 10, y: 19, colorCode: 2 }, { x: 11, y: 19, colorCode: 2 }, { x: 12, y: 19, colorCode: 2 }, { x: 13, y: 19, colorCode: 2 }, { x: 14, y: 19, colorCode: 2 }, { x: 15, y: 19, colorCode: 2 }, { x: 16, y: 19, colorCode: 2 }, { x: 17, y: 19, colorCode: 2 }, { x: 18, y: 19, colorCode: 2 }, { x: 19, y: 19, colorCode: 2 },
-          { x: 4, y: 20, colorCode: 2 }, { x: 5, y: 20, colorCode: 2 }, { x: 6, y: 20, colorCode: 2 }, { x: 7, y: 20, colorCode: 2 }, { x: 8, y: 20, colorCode: 2 }, { x: 9, y: 20, colorCode: 2 }, { x: 10, y: 20, colorCode: 2 }, { x: 11, y: 20, colorCode: 2 }, { x: 12, y: 20, colorCode: 2 }, { x: 13, y: 20, colorCode: 2 }, { x: 14, y: 20, colorCode: 2 }, { x: 15, y: 20, colorCode: 2 }, { x: 16, y: 20, colorCode: 2 }, { x: 17, y: 20, colorCode: 2 }, { x: 18, y: 20, colorCode: 2 }, { x: 19, y: 20, colorCode: 2 },
-          { x: 5, y: 21, colorCode: 2 }, { x: 6, y: 21, colorCode: 2 }, { x: 7, y: 21, colorCode: 2 }, { x: 8, y: 21, colorCode: 2 }, { x: 9, y: 21, colorCode: 2 }, { x: 10, y: 21, colorCode: 2 }, { x: 11, y: 21, colorCode: 2 }, { x: 12, y: 21, colorCode: 2 }, { x: 13, y: 21, colorCode: 2 }, { x: 14, y: 21, colorCode: 2 }, { x: 15, y: 21, colorCode: 2 }, { x: 16, y: 21, colorCode: 2 }, { x: 17, y: 21, colorCode: 2 }, { x: 18, y: 21, colorCode: 2 },
-          { x: 6, y: 22, colorCode: 2 }, { x: 7, y: 22, colorCode: 2 }, { x: 8, y: 22, colorCode: 2 }, { x: 9, y: 22, colorCode: 2 }, { x: 10, y: 22, colorCode: 2 }, { x: 11, y: 22, colorCode: 2 }, { x: 12, y: 22, colorCode: 2 }, { x: 13, y: 22, colorCode: 2 }, { x: 14, y: 22, colorCode: 2 }, { x: 15, y: 22, colorCode: 2 }, { x: 16, y: 22, colorCode: 2 }, { x: 17, y: 22, colorCode: 2 },
+          { x: 0, y: 16, colorCode: 5 }, { x: 1, y: 16, colorCode: 5 }, { x: 2, y: 16, colorCode: 5 }, { x: 3, y: 16, colorCode: 5 }, { x: 4, y: 16, colorCode: 0 }, { x: 5, y: 16, colorCode: 7 }, { x: 6, y: 16, colorCode: 7 }, { x: 7, y: 16, colorCode: 5 }, { x: 8, y: 16, colorCode: 5 }, { x: 9, y: 16, colorCode: 5 }, { x: 10, y: 16, colorCode: 2 }, { x: 11, y: 16, colorCode: 2 }, { x: 12, y: 16, colorCode: 2 }, { x: 13, y: 16, colorCode: 2 }, { x: 14, y: 16, colorCode: 7 }, { x: 15, y: 16, colorCode: 7 }, { x: 16, y: 16, colorCode: 7 }, { x: 17, y: 16, colorCode: 5 }, { x: 18, y: 16, colorCode: 1 }, { x: 19, y: 16, colorCode: 1 }, { x: 20, y: 16, colorCode: 4 }, { x: 21, y: 16, colorCode: 4 }, { x: 22, y: 16, colorCode: 4 }, { x: 23, y: 16, colorCode: 4 },
+          { x: 2, y: 17, colorCode: 5 }, { x: 3, y: 17, colorCode: 5 }, { x: 4, y: 17, colorCode: 0 }, { x: 5, y: 17, colorCode: 0 }, { x: 6, y: 17, colorCode: 7 }, { x: 7, y: 17, colorCode: 5 }, { x: 8, y: 17, colorCode: 2 }, { x: 9, y: 17, colorCode: 2 }, { x: 10, y: 17, colorCode: 2 }, { x: 11, y: 17, colorCode: 2 }, { x: 12, y: 17, colorCode: 2 }, { x: 13, y: 17, colorCode: 2 }, { x: 14, y: 17, colorCode: 2 }, { x: 15, y: 17, colorCode: 2 }, { x: 16, y: 17, colorCode: 7 }, { x: 17, y: 17, colorCode: 5 }, { x: 18, y: 17, colorCode: 1 }, { x: 19, y: 17, colorCode: 0 }, { x: 20, y: 17, colorCode: 4 }, { x: 21, y: 17, colorCode: 4 },
+          { x: 4, y: 18, colorCode: 0 }, { x: 5, y: 18, colorCode: 0 }, { x: 6, y: 18, colorCode: 0 }, { x: 7, y: 18, colorCode: 0 }, { x: 8, y: 18, colorCode: 2 }, { x: 9, y: 18, colorCode: 2 }, { x: 10, y: 18, colorCode: 2 }, { x: 11, y: 18, colorCode: 2 }, { x: 12, y: 18, colorCode: 2 }, { x: 13, y: 18, colorCode: 2 }, { x: 14, y: 18, colorCode: 2 }, { x: 15, y: 18, colorCode: 2 }, { x: 16, y: 18, colorCode: 0 }, { x: 17, y: 18, colorCode: 0 }, { x: 18, y: 18, colorCode: 0 }, { x: 19, y: 18, colorCode: 0 },
+          { x: 7, y: 19, colorCode: 0 }, { x: 8, y: 19, colorCode: 0 }, { x: 9, y: 19, colorCode: 2 }, { x: 10, y: 19, colorCode: 2 }, { x: 11, y: 19, colorCode: 2 }, { x: 12, y: 19, colorCode: 2 }, { x: 13, y: 19, colorCode: 2 }, { x: 14, y: 19, colorCode: 2 }, { x: 15, y: 19, colorCode: 0 }, { x: 16, y: 19, colorCode: 0 },
+          { x: 7, y: 20, colorCode: 0 }, { x: 8, y: 20, colorCode: 0 }, { x: 9, y: 20, colorCode: 2 }, { x: 10, y: 20, colorCode: 2 }, { x: 11, y: 20, colorCode: 2 }, { x: 12, y: 20, colorCode: 2 }, { x: 13, y: 20, colorCode: 2 }, { x: 14, y: 20, colorCode: 2 }, { x: 15, y: 20, colorCode: 0 }, { x: 16, y: 20, colorCode: 0 },
+          { x: 7, y: 21, colorCode: 0 }, { x: 8, y: 21, colorCode: 0 }, { x: 9, y: 21, colorCode: 2 }, { x: 10, y: 21, colorCode: 2 }, { x: 11, y: 21, colorCode: 2 }, { x: 12, y: 21, colorCode: 2 }, { x: 13, y: 21, colorCode: 2 }, { x: 14, y: 21, colorCode: 2 }, { x: 15, y: 21, colorCode: 0 }, { x: 16, y: 21, colorCode: 0 },
+          { x: 9, y: 22, colorCode: 2 }, { x: 10, y: 22, colorCode: 2 }, { x: 11, y: 22, colorCode: 2 }, { x: 12, y: 22, colorCode: 2 }, { x: 13, y: 22, colorCode: 2 }, { x: 14, y: 22, colorCode: 2 },
         ],
         enemy07BCells: [
-          { x: 4, y: 0, colorCode: 0 }, { x: 5, y: 0, colorCode: 0 }, { x: 6, y: 0, colorCode: 2 }, { x: 7, y: 0, colorCode: 2 }, { x: 8, y: 0, colorCode: 2 }, { x: 9, y: 0, colorCode: 2 }, { x: 10, y: 0, colorCode: 2 }, { x: 11, y: 0, colorCode: 2 }, { x: 12, y: 0, colorCode: 2 }, { x: 13, y: 0, colorCode: 2 }, { x: 14, y: 0, colorCode: 2 }, { x: 15, y: 0, colorCode: 2 }, { x: 16, y: 0, colorCode: 2 }, { x: 17, y: 0, colorCode: 2 }, { x: 18, y: 0, colorCode: 0 }, { x: 19, y: 0, colorCode: 0 },
-          { x: 3, y: 1, colorCode: 0 }, { x: 4, y: 1, colorCode: 0 }, { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 2 }, { x: 7, y: 1, colorCode: 2 }, { x: 8, y: 1, colorCode: 2 }, { x: 9, y: 1, colorCode: 2 }, { x: 10, y: 1, colorCode: 2 }, { x: 11, y: 1, colorCode: 2 }, { x: 12, y: 1, colorCode: 2 }, { x: 13, y: 1, colorCode: 2 }, { x: 14, y: 1, colorCode: 2 }, { x: 15, y: 1, colorCode: 2 }, { x: 16, y: 1, colorCode: 2 }, { x: 17, y: 1, colorCode: 2 }, { x: 18, y: 1, colorCode: 5 }, { x: 19, y: 1, colorCode: 0 }, { x: 20, y: 1, colorCode: 0 },
-          { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 2 }, { x: 7, y: 2, colorCode: 2 }, { x: 8, y: 2, colorCode: 2 }, { x: 9, y: 2, colorCode: 2 }, { x: 10, y: 2, colorCode: 2 }, { x: 11, y: 2, colorCode: 2 }, { x: 12, y: 2, colorCode: 2 }, { x: 13, y: 2, colorCode: 2 }, { x: 14, y: 2, colorCode: 2 }, { x: 15, y: 2, colorCode: 2 }, { x: 16, y: 2, colorCode: 2 }, { x: 17, y: 2, colorCode: 2 }, { x: 18, y: 2, colorCode: 5 }, { x: 19, y: 2, colorCode: 5 }, { x: 20, y: 2, colorCode: 5 },
-          { x: 3, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 6, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 2 }, { x: 8, y: 3, colorCode: 2 }, { x: 9, y: 3, colorCode: 2 }, { x: 10, y: 3, colorCode: 2 }, { x: 11, y: 3, colorCode: 2 }, { x: 12, y: 3, colorCode: 2 }, { x: 13, y: 3, colorCode: 2 }, { x: 14, y: 3, colorCode: 2 }, { x: 15, y: 3, colorCode: 2 }, { x: 16, y: 3, colorCode: 2 }, { x: 17, y: 3, colorCode: 7 }, { x: 18, y: 3, colorCode: 5 }, { x: 19, y: 3, colorCode: 5 }, { x: 20, y: 3, colorCode: 5 },
+          { x: 4, y: 0, colorCode: 0 }, { x: 5, y: 0, colorCode: 0 }, { x: 6, y: 0, colorCode: 0 }, { x: 7, y: 0, colorCode: 0 }, { x: 8, y: 0, colorCode: 0 }, { x: 9, y: 0, colorCode: 2 }, { x: 10, y: 0, colorCode: 2 }, { x: 11, y: 0, colorCode: 2 }, { x: 12, y: 0, colorCode: 2 }, { x: 13, y: 0, colorCode: 2 }, { x: 14, y: 0, colorCode: 2 }, { x: 15, y: 0, colorCode: 0 }, { x: 16, y: 0, colorCode: 0 }, { x: 17, y: 0, colorCode: 0 }, { x: 18, y: 0, colorCode: 0 }, { x: 19, y: 0, colorCode: 0 },
+          { x: 3, y: 1, colorCode: 0 }, { x: 4, y: 1, colorCode: 0 }, { x: 5, y: 1, colorCode: 7 }, { x: 6, y: 1, colorCode: 0 }, { x: 7, y: 1, colorCode: 0 }, { x: 8, y: 1, colorCode: 0 }, { x: 9, y: 1, colorCode: 2 }, { x: 10, y: 1, colorCode: 2 }, { x: 11, y: 1, colorCode: 2 }, { x: 12, y: 1, colorCode: 2 }, { x: 13, y: 1, colorCode: 2 }, { x: 14, y: 1, colorCode: 2 }, { x: 15, y: 1, colorCode: 0 }, { x: 16, y: 1, colorCode: 0 }, { x: 17, y: 1, colorCode: 0 }, { x: 18, y: 1, colorCode: 5 }, { x: 19, y: 1, colorCode: 0 }, { x: 20, y: 1, colorCode: 0 },
+          { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 0 }, { x: 7, y: 2, colorCode: 0 }, { x: 8, y: 2, colorCode: 0 }, { x: 9, y: 2, colorCode: 2 }, { x: 10, y: 2, colorCode: 2 }, { x: 11, y: 2, colorCode: 2 }, { x: 12, y: 2, colorCode: 2 }, { x: 13, y: 2, colorCode: 2 }, { x: 14, y: 2, colorCode: 2 }, { x: 15, y: 2, colorCode: 0 }, { x: 16, y: 2, colorCode: 0 }, { x: 17, y: 2, colorCode: 0 }, { x: 18, y: 2, colorCode: 5 }, { x: 19, y: 2, colorCode: 5 }, { x: 20, y: 2, colorCode: 5 },
+          { x: 3, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 6, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 0 }, { x: 8, y: 3, colorCode: 0 }, { x: 9, y: 3, colorCode: 0 }, { x: 10, y: 3, colorCode: 2 }, { x: 11, y: 3, colorCode: 2 }, { x: 12, y: 3, colorCode: 2 }, { x: 13, y: 3, colorCode: 2 }, { x: 14, y: 3, colorCode: 0 }, { x: 15, y: 3, colorCode: 0 }, { x: 16, y: 3, colorCode: 0 }, { x: 17, y: 3, colorCode: 7 }, { x: 18, y: 3, colorCode: 5 }, { x: 19, y: 3, colorCode: 5 }, { x: 20, y: 3, colorCode: 5 },
           { x: 3, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 7 }, { x: 6, y: 4, colorCode: 7 }, { x: 7, y: 4, colorCode: 7 }, { x: 8, y: 4, colorCode: 7 }, { x: 9, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 11, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 7 }, { x: 13, y: 4, colorCode: 7 }, { x: 14, y: 4, colorCode: 7 }, { x: 15, y: 4, colorCode: 7 }, { x: 16, y: 4, colorCode: 7 }, { x: 17, y: 4, colorCode: 7 }, { x: 18, y: 4, colorCode: 5 }, { x: 19, y: 4, colorCode: 5 }, { x: 20, y: 4, colorCode: 5 },
           { x: 4, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 7 }, { x: 6, y: 5, colorCode: 7 }, { x: 7, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 7 }, { x: 9, y: 5, colorCode: 7 }, { x: 10, y: 5, colorCode: 7 }, { x: 11, y: 5, colorCode: 7 }, { x: 12, y: 5, colorCode: 7 }, { x: 13, y: 5, colorCode: 7 }, { x: 14, y: 5, colorCode: 7 }, { x: 15, y: 5, colorCode: 7 }, { x: 16, y: 5, colorCode: 7 }, { x: 17, y: 5, colorCode: 5 }, { x: 18, y: 5, colorCode: 5 }, { x: 19, y: 5, colorCode: 5 },
           { x: 3, y: 6, colorCode: 7 }, { x: 4, y: 6, colorCode: 1 }, { x: 5, y: 6, colorCode: 0 }, { x: 6, y: 6, colorCode: 7 }, { x: 7, y: 6, colorCode: 7 }, { x: 8, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 0 }, { x: 10, y: 6, colorCode: 0 }, { x: 11, y: 6, colorCode: 0 }, { x: 12, y: 6, colorCode: 0 }, { x: 13, y: 6, colorCode: 0 }, { x: 14, y: 6, colorCode: 0 }, { x: 15, y: 6, colorCode: 7 }, { x: 16, y: 6, colorCode: 7 }, { x: 17, y: 6, colorCode: 5 }, { x: 18, y: 6, colorCode: 0 }, { x: 19, y: 6, colorCode: 1 },
@@ -431,14 +422,14 @@
           { x: 0, y: 5, colorCode: 7 }, { x: 1, y: 5, colorCode: 7 }, { x: 5, y: 5, colorCode: 7 }, { x: 6, y: 5, colorCode: 7 }, { x: 8, y: 5, colorCode: 7 }, { x: 9, y: 5, colorCode: 7 }, { x: 13, y: 5, colorCode: 7 }, { x: 14, y: 5, colorCode: 7 }, { x: 18, y: 5, colorCode: 7 }, { x: 19, y: 5, colorCode: 7 }, { x: 20, y: 5, colorCode: 7 }, { x: 24, y: 5, colorCode: 7 }, { x: 25, y: 5, colorCode: 7 }, { x: 28, y: 5, colorCode: 7 }, { x: 29, y: 5, colorCode: 7 }, { x: 32, y: 5, colorCode: 7 }, { x: 33, y: 5, colorCode: 7 }, { x: 37, y: 5, colorCode: 7 }, { x: 38, y: 5, colorCode: 7 }, { x: 48, y: 5, colorCode: 7 }, { x: 49, y: 5, colorCode: 7 }, { x: 53, y: 5, colorCode: 7 }, { x: 54, y: 5, colorCode: 7 }, { x: 56, y: 5, colorCode: 7 }, { x: 57, y: 5, colorCode: 7 }, { x: 61, y: 5, colorCode: 7 }, { x: 62, y: 5, colorCode: 7 }, { x: 64, y: 5, colorCode: 7 }, { x: 65, y: 5, colorCode: 7 }, { x: 69, y: 5, colorCode: 7 }, { x: 70, y: 5, colorCode: 7 }, { x: 72, y: 5, colorCode: 7 }, { x: 73, y: 5, colorCode: 7 }, { x: 77, y: 5, colorCode: 7 }, { x: 78, y: 5, colorCode: 7 }, { x: 82, y: 5, colorCode: 7 }, { x: 83, y: 5, colorCode: 7 }, { x: 84, y: 5, colorCode: 7 },
           { x: 0, y: 6, colorCode: 7 }, { x: 1, y: 6, colorCode: 7 }, { x: 5, y: 6, colorCode: 7 }, { x: 6, y: 6, colorCode: 7 }, { x: 9, y: 6, colorCode: 7 }, { x: 10, y: 6, colorCode: 7 }, { x: 11, y: 6, colorCode: 7 }, { x: 12, y: 6, colorCode: 7 }, { x: 13, y: 6, colorCode: 7 }, { x: 18, y: 6, colorCode: 7 }, { x: 19, y: 6, colorCode: 7 }, { x: 20, y: 6, colorCode: 7 }, { x: 24, y: 6, colorCode: 7 }, { x: 25, y: 6, colorCode: 7 }, { x: 29, y: 6, colorCode: 7 }, { x: 30, y: 6, colorCode: 7 }, { x: 33, y: 6, colorCode: 7 }, { x: 34, y: 6, colorCode: 7 }, { x: 35, y: 6, colorCode: 7 }, { x: 36, y: 6, colorCode: 7 }, { x: 37, y: 6, colorCode: 7 }, { x: 49, y: 6, colorCode: 7 }, { x: 50, y: 6, colorCode: 7 }, { x: 51, y: 6, colorCode: 7 }, { x: 52, y: 6, colorCode: 7 }, { x: 53, y: 6, colorCode: 7 }, { x: 56, y: 6, colorCode: 7 }, { x: 57, y: 6, colorCode: 7 }, { x: 61, y: 6, colorCode: 7 }, { x: 62, y: 6, colorCode: 7 }, { x: 65, y: 6, colorCode: 7 }, { x: 66, y: 6, colorCode: 7 }, { x: 67, y: 6, colorCode: 7 }, { x: 68, y: 6, colorCode: 7 }, { x: 69, y: 6, colorCode: 7 }, { x: 73, y: 6, colorCode: 7 }, { x: 74, y: 6, colorCode: 7 }, { x: 75, y: 6, colorCode: 7 }, { x: 76, y: 6, colorCode: 7 }, { x: 77, y: 6, colorCode: 7 }, { x: 82, y: 6, colorCode: 7 }, { x: 83, y: 6, colorCode: 7 }, { x: 84, y: 6, colorCode: 7 },
         ],
-        scoreFont: [
+        fontScore: [
           { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 }, { x: 4, y: 0, colorCode: 7 }, { x: 5, y: 0, colorCode: 7 }, { x: 6, y: 0, colorCode: 7 }, { x: 8, y: 0, colorCode: 7 }, { x: 9, y: 0, colorCode: 7 }, { x: 10, y: 0, colorCode: 7 }, { x: 12, y: 0, colorCode: 7 }, { x: 13, y: 0, colorCode: 7 }, { x: 14, y: 0, colorCode: 7 }, { x: 16, y: 0, colorCode: 7 }, { x: 17, y: 0, colorCode: 7 }, { x: 18, y: 0, colorCode: 7 },
           { x: 0, y: 1, colorCode: 7 }, { x: 4, y: 1, colorCode: 7 }, { x: 8, y: 1, colorCode: 7 }, { x: 10, y: 1, colorCode: 7 }, { x: 12, y: 1, colorCode: 7 }, { x: 14, y: 1, colorCode: 7 }, { x: 16, y: 1, colorCode: 7 }, { x: 20, y: 1, colorCode: 7 },
           { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 8, y: 2, colorCode: 7 }, { x: 10, y: 2, colorCode: 7 }, { x: 12, y: 2, colorCode: 7 }, { x: 13, y: 2, colorCode: 7 }, { x: 14, y: 2, colorCode: 7 }, { x: 16, y: 2, colorCode: 7 }, { x: 17, y: 2, colorCode: 7 }, { x: 18, y: 2, colorCode: 7 },
           { x: 2, y: 3, colorCode: 7 }, { x: 4, y: 3, colorCode: 7 }, { x: 8, y: 3, colorCode: 7 }, { x: 10, y: 3, colorCode: 7 }, { x: 12, y: 3, colorCode: 7 }, { x: 13, y: 3, colorCode: 7 }, { x: 16, y: 3, colorCode: 7 }, { x: 20, y: 3, colorCode: 7 },
           { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 7 }, { x: 6, y: 4, colorCode: 7 }, { x: 8, y: 4, colorCode: 7 }, { x: 9, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 7 }, { x: 14, y: 4, colorCode: 7 }, { x: 16, y: 4, colorCode: 7 }, { x: 17, y: 4, colorCode: 7 }, { x: 18, y: 4, colorCode: 7 },
         ],
-        hiScoreFont: [
+        fontHiScore: [
           { x: 0, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 }, { x: 4, y: 0, colorCode: 7 }, { x: 9, y: 0, colorCode: 7 }, { x: 10, y: 0, colorCode: 7 }, { x: 11, y: 0, colorCode: 7 }, { x: 13, y: 0, colorCode: 7 }, { x: 14, y: 0, colorCode: 7 }, { x: 15, y: 0, colorCode: 7 }, { x: 17, y: 0, colorCode: 7 }, { x: 18, y: 0, colorCode: 7 }, { x: 19, y: 0, colorCode: 7 }, { x: 21, y: 0, colorCode: 7 }, { x: 22, y: 0, colorCode: 7 }, { x: 23, y: 0, colorCode: 7 }, { x: 25, y: 0, colorCode: 7 }, { x: 26, y: 0, colorCode: 7 }, { x: 27, y: 0, colorCode: 7 },
           { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 }, { x: 4, y: 1, colorCode: 7 }, { x: 9, y: 1, colorCode: 7 }, { x: 13, y: 1, colorCode: 7 }, { x: 17, y: 1, colorCode: 7 }, { x: 19, y: 1, colorCode: 7 }, { x: 21, y: 1, colorCode: 7 }, { x: 23, y: 1, colorCode: 7 }, { x: 25, y: 1, colorCode: 7 }, { x: 29, y: 1, colorCode: 7 },
           { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 }, { x: 9, y: 2, colorCode: 7 }, { x: 10, y: 2, colorCode: 7 }, { x: 11, y: 2, colorCode: 7 }, { x: 13, y: 2, colorCode: 7 }, { x: 17, y: 2, colorCode: 7 }, { x: 19, y: 2, colorCode: 7 }, { x: 21, y: 2, colorCode: 7 }, { x: 22, y: 2, colorCode: 7 }, { x: 23, y: 2, colorCode: 7 }, { x: 25, y: 2, colorCode: 7 }, { x: 26, y: 2, colorCode: 7 }, { x: 27, y: 2, colorCode: 7 },
@@ -472,6 +463,84 @@
           { x: 3, y: 2, colorCode: 7 }, { x: 4, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 }, { x: 11, y: 2, colorCode: 7 }, { x: 13, y: 2, colorCode: 7 }, { x: 15, y: 2, colorCode: 7 }, { x: 16, y: 2, colorCode: 7 }, { x: 17, y: 2, colorCode: 7 }, { x: 20, y: 2, colorCode: 7 }, { x: 22, y: 2, colorCode: 7 }, { x: 24, y: 2, colorCode: 7 }, { x: 27, y: 2, colorCode: 2 }, { x: 28, y: 2, colorCode: 2 }, { x: 29, y: 2, colorCode: 2 }, { x: 31, y: 2, colorCode: 2 }, { x: 32, y: 2, colorCode: 2 }, { x: 33, y: 2, colorCode: 2 }, { x: 35, y: 2, colorCode: 2 }, { x: 37, y: 2, colorCode: 2 }, { x: 40, y: 2, colorCode: 7 }, { x: 41, y: 2, colorCode: 7 }, { x: 42, y: 2, colorCode: 7 }, { x: 45, y: 2, colorCode: 7 }, { x: 48, y: 2, colorCode: 7 }, { x: 49, y: 2, colorCode: 7 }, { x: 50, y: 2, colorCode: 7 },
           { x: 1, y: 3, colorCode: 7 }, { x: 3, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 7, y: 3, colorCode: 7 }, { x: 11, y: 3, colorCode: 7 }, { x: 13, y: 3, colorCode: 7 }, { x: 15, y: 3, colorCode: 7 }, { x: 27, y: 3, colorCode: 2 }, { x: 33, y: 3, colorCode: 2 }, { x: 35, y: 3, colorCode: 2 }, { x: 37, y: 3, colorCode: 2 }, { x: 40, y: 3, colorCode: 7 }, { x: 45, y: 3, colorCode: 7 }, { x: 50, y: 3, colorCode: 7 },
           { x: 3, y: 4, colorCode: 7 }, { x: 4, y: 4, colorCode: 7 }, { x: 7, y: 4, colorCode: 7 }, { x: 8, y: 4, colorCode: 7 }, { x: 9, y: 4, colorCode: 7 }, { x: 11, y: 4, colorCode: 7 }, { x: 12, y: 4, colorCode: 7 }, { x: 13, y: 4, colorCode: 7 }, { x: 15, y: 4, colorCode: 7 }, { x: 16, y: 4, colorCode: 7 }, { x: 17, y: 4, colorCode: 7 }, { x: 27, y: 4, colorCode: 2 }, { x: 28, y: 4, colorCode: 2 }, { x: 29, y: 4, colorCode: 2 }, { x: 31, y: 4, colorCode: 2 }, { x: 32, y: 4, colorCode: 2 }, { x: 33, y: 4, colorCode: 2 }, { x: 35, y: 4, colorCode: 2 }, { x: 36, y: 4, colorCode: 2 }, { x: 37, y: 4, colorCode: 2 }, { x: 40, y: 4, colorCode: 7 }, { x: 45, y: 4, colorCode: 7 }, { x: 48, y: 4, colorCode: 7 }, { x: 49, y: 4, colorCode: 7 }, { x: 50, y: 4, colorCode: 7 },
+        ],
+        font0: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 2, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font1: [
+          { x: 1, y: 0, colorCode: 7 },
+          { x: 1, y: 1, colorCode: 7 },
+          { x: 1, y: 2, colorCode: 7 },
+          { x: 1, y: 3, colorCode: 7 },
+          { x: 1, y: 4, colorCode: 7 },
+        ],
+        font2: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 2, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font3: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 2, y: 1, colorCode: 7 },
+          { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 2, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font4: [
+          { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 1, y: 3, colorCode: 7 }, { x: 2, y: 3, colorCode: 7 },
+          { x: 2, y: 4, colorCode: 7 },
+        ],
+        font5: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 2, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font6: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 2, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font7: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 },
+          { x: 2, y: 2, colorCode: 7 },
+          { x: 2, y: 3, colorCode: 7 },
+          { x: 2, y: 4, colorCode: 7 },
+        ],
+        font8: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 2, y: 3, colorCode: 7 },
+          { x: 0, y: 4, colorCode: 7 }, { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 },
+        ],
+        font9: [
+          { x: 0, y: 0, colorCode: 7 }, { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 2, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 1, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 },
+          { x: 2, y: 3, colorCode: 7 },
+          { x: 2, y: 4, colorCode: 7 },
+        ],
+        fontGameOver: [
+          { x: 1, y: 0, colorCode: 7 }, { x: 2, y: 0, colorCode: 7 }, { x: 3, y: 0, colorCode: 7 }, { x: 6, y: 0, colorCode: 7 }, { x: 7, y: 0, colorCode: 7 }, { x: 10, y: 0, colorCode: 7 }, { x: 14, y: 0, colorCode: 7 }, { x: 16, y: 0, colorCode: 7 }, { x: 17, y: 0, colorCode: 7 }, { x: 18, y: 0, colorCode: 7 }, { x: 19, y: 0, colorCode: 7 }, { x: 25, y: 0, colorCode: 7 }, { x: 26, y: 0, colorCode: 7 }, { x: 29, y: 0, colorCode: 7 }, { x: 33, y: 0, colorCode: 7 }, { x: 35, y: 0, colorCode: 7 }, { x: 36, y: 0, colorCode: 7 }, { x: 37, y: 0, colorCode: 7 }, { x: 38, y: 0, colorCode: 7 }, { x: 40, y: 0, colorCode: 7 }, { x: 41, y: 0, colorCode: 7 }, { x: 42, y: 0, colorCode: 7 },
+          { x: 0, y: 1, colorCode: 7 }, { x: 5, y: 1, colorCode: 7 }, { x: 8, y: 1, colorCode: 7 }, { x: 10, y: 1, colorCode: 7 }, { x: 11, y: 1, colorCode: 7 }, { x: 13, y: 1, colorCode: 7 }, { x: 14, y: 1, colorCode: 7 }, { x: 16, y: 1, colorCode: 7 }, { x: 24, y: 1, colorCode: 7 }, { x: 27, y: 1, colorCode: 7 }, { x: 29, y: 1, colorCode: 7 }, { x: 33, y: 1, colorCode: 7 }, { x: 35, y: 1, colorCode: 7 }, { x: 40, y: 1, colorCode: 7 }, { x: 43, y: 1, colorCode: 7 },
+          { x: 0, y: 2, colorCode: 7 }, { x: 2, y: 2, colorCode: 7 }, { x: 3, y: 2, colorCode: 7 }, { x: 5, y: 2, colorCode: 7 }, { x: 6, y: 2, colorCode: 7 }, { x: 7, y: 2, colorCode: 7 }, { x: 8, y: 2, colorCode: 7 }, { x: 10, y: 2, colorCode: 7 }, { x: 12, y: 2, colorCode: 7 }, { x: 14, y: 2, colorCode: 7 }, { x: 16, y: 2, colorCode: 7 }, { x: 17, y: 2, colorCode: 7 }, { x: 18, y: 2, colorCode: 7 }, { x: 20, y: 2, colorCode: 7 }, { x: 21, y: 2, colorCode: 7 }, { x: 22, y: 2, colorCode: 7 }, { x: 24, y: 2, colorCode: 7 }, { x: 27, y: 2, colorCode: 7 }, { x: 30, y: 2, colorCode: 7 }, { x: 32, y: 2, colorCode: 7 }, { x: 35, y: 2, colorCode: 7 }, { x: 36, y: 2, colorCode: 7 }, { x: 37, y: 2, colorCode: 7 }, { x: 40, y: 2, colorCode: 7 }, { x: 41, y: 2, colorCode: 7 }, { x: 42, y: 2, colorCode: 7 }, { x: 43, y: 2, colorCode: 7 },
+          { x: 0, y: 3, colorCode: 7 }, { x: 3, y: 3, colorCode: 7 }, { x: 5, y: 3, colorCode: 7 }, { x: 8, y: 3, colorCode: 7 }, { x: 10, y: 3, colorCode: 7 }, { x: 14, y: 3, colorCode: 7 }, { x: 16, y: 3, colorCode: 7 }, { x: 24, y: 3, colorCode: 7 }, { x: 27, y: 3, colorCode: 7 }, { x: 30, y: 3, colorCode: 7 }, { x: 32, y: 3, colorCode: 7 }, { x: 35, y: 3, colorCode: 7 }, { x: 40, y: 3, colorCode: 7 }, { x: 42, y: 3, colorCode: 7 },
+          { x: 1, y: 4, colorCode: 7 }, { x: 2, y: 4, colorCode: 7 }, { x: 3, y: 4, colorCode: 7 }, { x: 5, y: 4, colorCode: 7 }, { x: 8, y: 4, colorCode: 7 }, { x: 10, y: 4, colorCode: 7 }, { x: 14, y: 4, colorCode: 7 }, { x: 16, y: 4, colorCode: 7 }, { x: 17, y: 4, colorCode: 7 }, { x: 18, y: 4, colorCode: 7 }, { x: 19, y: 4, colorCode: 7 }, { x: 25, y: 4, colorCode: 7 }, { x: 26, y: 4, colorCode: 7 }, { x: 31, y: 4, colorCode: 7 }, { x: 35, y: 4, colorCode: 7 }, { x: 36, y: 4, colorCode: 7 }, { x: 37, y: 4, colorCode: 7 }, { x: 38, y: 4, colorCode: 7 }, { x: 40, y: 4, colorCode: 7 }, { x: 43, y: 4, colorCode: 7 },
+
         ],
 
         spriteMap: new Map(),
@@ -507,6 +576,7 @@
         playerShotList: [],
 
         score: 0,
+        hiscore: 0,
         playerLeft: 3,
 
         stage: 1,
@@ -875,7 +945,6 @@
           }
         },
         moveEnemy07(enemy, index) {
-
           const directionTable = [
             90, 90, 90,
             120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60, 90,
@@ -885,8 +954,8 @@
             120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60, 90,
             60, 30, 0, 330, 300, 270, 240, 210, 180, 150, 120,
             90, 90,
-            270, 270, 270, 270];
-          let kuti_cnt = 18;
+            270, 270, 270, 270, 270, 270];
+          let kuti_cnt = 16;
 
           enemy.moveCount++;
 
@@ -902,7 +971,7 @@
             enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
           }
 
-          if (enemy.position.y < -32) {
+          if (enemy.position.y < -48) {
             this.enemyList.splice(index, 1);
           } else {
             this.spriteList.push(
@@ -918,7 +987,7 @@
                 y: enemy.position.y + kuti_cnt,
                 sprite: 'enemy07BCells'
               }
-            );            
+            );
           }
         },
         moveEnemyShot(enemy, index) {
@@ -980,7 +1049,6 @@
             isCollidingWithPlayer: false,
           });
         },
-
         createEnemy() {
           if (this.nextStageWaitCount > 0) {
             this.nextStageWaitCount--;
@@ -1238,16 +1306,16 @@
               animeCount: 0,
               animePtn: 0,
               isHitCheck: true,
-              isCollidingWithPlayer: true,
+              isCollidingWithPlayer: false,
 
               rect: {
-                left: 0,
+                left: 2,
                 top: 0,
-                height: 14,
-                width: 14
+                height: 32,
+                width: 20
               },
               score: 100,
-              power: 3,
+              power: 40,
               moveCount: 0,
               directionIndex: 0
             });
@@ -1321,22 +1389,24 @@
           this.nextStageWaitCount = 0;
           this.lapCount = 0;
           this.stage = 4;
+          this.playerPosition.x = 75;
 
           this.enemyInit();
         },
         updateScore() {
-          this.spriteList.push({
+          if (this.score > this.hiscore) { this.hiscore = this.score; }
+          this.spriteTopList.push({
             x: 1,
             y: 1,
-            sprite: 'scoreFont'
+            sprite: 'fontScore'
           });
-
-          this.spriteList.push({
+          this.drawNumber(this.score, 23, 1, 6);
+          this.spriteTopList.push({
             x: 80,
             y: 1,
-            sprite: 'hiScoreFont'
+            sprite: 'fontHiScore'
           });
-
+          this.drawNumber(this.hiscore, 112, 1, 6);
         },
         gameMain() {
           this.spriteList = [];
@@ -1439,7 +1509,6 @@
           this.gameStatus = "gameover";
           titleY = 100;
         },
-
         checkPlayerHit() {
           if (this.invincibleTimer > 0) return;
 
@@ -1549,6 +1618,18 @@
             });
           });
         },
+        drawNumber(value, startX, startY, digit) {
+          const str = String(value).padStart(digit, '0');
+
+          for (let i = 0; i < str.length; i++) {
+            const n = str.charAt(i);
+            this.spriteTopList.push({
+              sprite: `font${n}`,
+              x: startX + i * 4,
+              y: startY
+            });
+          }
+        },
       },
       created() {
         this.spriteMap.set('player', this.player);
@@ -1585,12 +1666,23 @@
         this.spriteMap.set('bang08', this.bang08);
         this.spriteMap.set('star', this.star);
         this.spriteMap.set('title', this.title);
-        this.spriteMap.set('scoreFont', this.scoreFont);
-        this.spriteMap.set('hiScoreFont', this.hiScoreFont);
+        this.spriteMap.set('fontScore', this.fontScore);
+        this.spriteMap.set('fontHiScore', this.fontHiScore);
         this.spriteMap.set('ptsUfo', this.ptsUfo);
         this.spriteMap.set('ptsCicada', this.ptsCicada);
         this.spriteMap.set('ptsMeteo', this.ptsMeteo);
         this.spriteMap.set('ptsBlue', this.ptsBlue);
+        this.spriteMap.set('font0', this.font0);
+        this.spriteMap.set('font1', this.font1);
+        this.spriteMap.set('font2', this.font2);
+        this.spriteMap.set('font3', this.font3);
+        this.spriteMap.set('font4', this.font4);
+        this.spriteMap.set('font5', this.font5);
+        this.spriteMap.set('font6', this.font6);
+        this.spriteMap.set('font7', this.font7);
+        this.spriteMap.set('font8', this.font8);
+        this.spriteMap.set('font9', this.font9);
+        this.spriteMap.set('fontGameOver', this.fontGameOver);
 
         window.addEventListener('resize', this.setGridCellSize);
         this.setGridCellSize();
