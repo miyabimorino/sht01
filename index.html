@@ -543,6 +543,9 @@
 
         ],
 
+        gridCellSize: 4,
+        currentWidth: 0,
+        currentHeight: 0,
         spriteMap: new Map(),
         spriteList: [],
         spriteTopList: [],
@@ -582,11 +585,6 @@
         stage: 1,
         timer: 0,
 
-        gridCellSize: 4,
-
-        currentWidth: 0,
-        currentHeight: 0,
-
         invincibleTimer: 0,
         isPlayerVisible: true,
 
@@ -600,14 +598,18 @@
         touchStartTime: 0,
         playerStartX: 0,
 
+        gameStatus: "title",
+        nextStageWaitCount: 0,
+        lapCount: 0,
+
         stars: [],
 
         titleY: 100,
         titleX: 160,
 
-        gameStatus: "title",
-        nextStageWaitCount: 0,
-        lapCount: 0,
+        audioCtx: null,
+        soundBuffers: new Map(),
+        soundEnabled: true,
       },
       methods: {
         handleTouchStart(e) {
@@ -1036,6 +1038,7 @@
               width: 6
             }
           });
+          this.fireShot();
         },
         createBang(xPos, yPos) {
           this.enemyList.push({
@@ -1048,6 +1051,7 @@
             isHitCheck: false,
             isCollidingWithPlayer: false,
           });
+          this.destroyEnemy();
         },
         createEnemy() {
           if (this.nextStageWaitCount > 0) {
@@ -1526,6 +1530,7 @@
               this.enemyList.splice(index, 1);
               for (let i = 0; i < 4; i++) {
                 this.createBang(this.playerPosition.x + 6, this.playerPosition.y);
+                this.playerHit();
               }
               if (this.invincibleTimer === 0) this.reducePlayerLives();
               this.invincibleTimer = 100;
@@ -1630,6 +1635,48 @@
             });
           }
         },
+
+        initAudio() {
+          this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        },
+        async loadSound(name, url) {
+          const res = await fetch(url);
+          const buf = await res.arrayBuffer();
+          const audioBuf = await this.audioCtx.decodeAudioData(buf);
+          this.soundBuffers.set(name, audioBuf);
+        },
+        async loadSounds() {
+          await this.loadSound('shot', 'res/shot.wav');
+          await this.loadSound('hit', 'res/hit.wav');
+          await this.loadSound('bang', 'res/bang.wav');
+        },
+        playSound(name, volume = 0.5, playbackRate = 1.0) {
+          if (!this.soundEnabled) return;
+
+          const buf = this.soundBuffers.get(name);
+          if (!buf) return;
+
+          const src = this.audioCtx.createBufferSource();
+          const gain = this.audioCtx.createGain();
+
+          src.buffer = buf;
+          src.playbackRate.value = playbackRate;
+          gain.gain.value = volume;
+
+          src.connect(gain);
+          gain.connect(this.audioCtx.destination);
+
+          src.start(0);
+        },
+        fireShot() {
+          this.playSound('shot', 0.3);
+        },
+        destroyEnemy() {
+          this.playSound('bang', 0.6, 1.0 + Math.random() * 0.2);
+        },
+        playerHit() {
+          this.playSound('hit', 0.5);
+        },
       },
       created() {
         this.spriteMap.set('player', this.player);
@@ -1695,6 +1742,9 @@
             speed: Math.random()
           });
         }
+
+        this.initAudio();
+        this.loadSounds();
 
         setInterval(this.gameMain, 25);
       },
