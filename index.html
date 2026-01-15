@@ -47,6 +47,8 @@
       overflow: hidden;
       cursor: none;
       image-rendering: pixelated;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     #game-text {
@@ -1594,7 +1596,7 @@
 
           for (let i = 0; i < this.playerLeft - 1; i++) {
             this.spriteList.push({
-              x: i*8,
+              x: i * 8,
               y: 95,
               sprite: 'playerLeftMark'
             });
@@ -1888,6 +1890,21 @@
 
         setInterval(this.gameMain, 25);
       },
+      mounted() {
+        const field = this.$refs[gameField];
+
+        field.addEventListener('touchstart', e => {
+          e.preventDefault();
+        }, { passive: false });
+
+        field.addEventListener('touchend', e => {
+          e.preventDefault();
+        }, { passive: false });
+
+        field.addEventListener('contextmenu', e => {
+          e.preventDefault();
+        });
+      }
     });
   </script>
 </body>
