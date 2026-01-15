@@ -1669,9 +1669,9 @@
               this.soundBuffers.set(name, audioBuf);
             },
             async loadSounds() {
-              await this.loadSound('shot', 'res/shot.wav');
-              await this.loadSound('hit', 'res/hit.wav');
-              await this.loadSound('bang', 'res/bang.wav');
+              await this.loadSound('shot', 'https://miyabimorino.github.io/sht01/res/shot.wav');
+              await this.loadSound('hit', 'https://miyabimorino.github.io/sht01/res/hit.wav');
+              await this.loadSound('bang', 'https://miyabimorino.github.io/sht01/res/bang.wav');
             },
             async playSound(name, volume = 0.5, playbackRate = 1.0) {
               if (!this.soundEnabled) return;
@@ -1696,7 +1696,7 @@
             },
             async ensureAudioContext() {
               if (!this.audioCtx) {
-                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                return;
               }
               if (this.audioCtx.state === 'suspended') {
                 return this.audioCtx.resume();
