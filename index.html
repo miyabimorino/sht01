@@ -1402,7 +1402,7 @@
           this.enemyInit();
 
           this.initAudio();
-          this.loadSounds();          
+          this.loadSounds();
         },
         updateScore() {
           if (this.score > this.hiscore) { this.hiscore = this.score; }
@@ -1679,8 +1679,11 @@
           src.start(0);
         },
         async ensureAudioContext() {
+          if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
           if (this.audioCtx.state === 'suspended') {
-            await this.audioCtx.resume();
+            return this.audioCtx.resume();
           }
         },
         async fireShot() {
