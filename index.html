@@ -113,14 +113,13 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
+    <div id="touch-overlay" ref="touch-overlay" @contextmenu.prevent @touchstart.prevent @touchend.prevent@touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
       @touchend.prevent="handleTouchEnd($event)">
       <div id="game-container">
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div id="game-field" ref="game-field" @contextmenu.prevent @touchstart.prevent @touchend.prevent
-          @mousemove="movePlayer" @click="handleClick">
+        <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <div v-for="sprite in spriteList">
             <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
              left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
@@ -1882,7 +1881,7 @@
         setInterval(this.gameMain, 25);
       },
       mounted() {
-        const field = this.$refs['game-field'];
+        const field = this.$refs['touch-overlay'];
 
         field.addEventListener('touchstart', e => {
           e.preventDefault();
@@ -1894,7 +1893,7 @@
 
         field.addEventListener('contextmenu', e => {
           e.preventDefault();
-        });
+        }, { passive: false });
       }
     });
   </script>
