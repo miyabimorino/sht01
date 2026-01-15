@@ -110,11 +110,11 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" ref="touch-overlay" @touchend.prevent@touchstart="handleTouchStart($event)"
-      @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
-      <div id="game-container">
+    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
+      @touchend.prevent="handleTouchEnd($event)">
+     <div id="game-container">
         <div id="game-title">
-          ASTRO SHOOT(TEST)
+          ASTRO SHOOT
         </div>
         <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <div v-for="sprite in spriteList">
@@ -1583,7 +1583,7 @@
 
           for (let i = 0; i < this.playerLeft - 1; i++) {
             this.spriteList.push({
-              x: i*8,
+              x: i * 8,
               y: 95,
               sprite: 'playerLeftMark'
             });
