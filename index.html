@@ -1677,9 +1677,9 @@
               this.soundBuffers.set(name, audioBuf);
             },
             async loadSounds() {
-              await this.loadSound('shot', 'https://miyabimorino.github.io/sht01/res/shot.wav');
-              await this.loadSound('hit', 'https://miyabimorino.github.io/sht01/res/hit.wav');
-              await this.loadSound('bang', 'https://miyabimorino.github.io/sht01/res/bang.wav');
+              await this.loadSound('shot', 'res/shot.wav');
+              await this.loadSound('hit', 'res/hit.wav');
+              await this.loadSound('bang', 'res/bang.wav');
             },
             async playSound(name, volume = 0.5, playbackRate = 1.0) {
               if (!this.soundEnabled) return;
@@ -1710,22 +1710,10 @@
                 return this.audioCtx.resume();
               }
             },
-            fireShot() {
-              if (!this.audioCtx || !this.soundEnabled) return;
-
-              if (this.audioCtx.state === "suspended") {
-                this.audioCtx.resume();
-              }
-
-              const buffer = this.soundBuffers.get("shot");
-              if (!buffer) return;
-
-              const src = this.audioCtx.createBufferSource();
-              src.buffer = buffer;
-              src.connect(this.audioCtx.destination);
-              src.start();
+            async fireShot() {
+              await this.ensureAudioContext();
+              this.playSound('shot');
             },
-
             async destroyEnemy() {
               await this.ensureAudioContext();
               this.playSound('bang', 0.6, 1.0 + Math.random() * 0.2);
