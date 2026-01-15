@@ -119,8 +119,8 @@
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div id="game-field" ref="game-field" @contextmenu.prevent @touchstart.prevent @mousemove="movePlayer"
-          @click="handleClick">
+        <div id="game-field" ref="game-field" @contextmenu.prevent @touchstart.prevent @touchend.prevent
+          @mousemove="movePlayer" @click="handleClick">
           <div v-for="sprite in spriteList">
             <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
              left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
