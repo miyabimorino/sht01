@@ -47,8 +47,8 @@
       overflow: hidden;
       cursor: none;
       image-rendering: pixelated;
-      -webkit-touch-callout: none;
-      -webkit-tap-highlight-color: transparent;
+<<<<<<< HEAD
+=======
     }
 
     #game-text {
@@ -60,6 +60,7 @@
       font-family: monospace;
       z-index: 10;
       pointer-events: none;
+>>>>>>> parent of d05229d (Rev.0.2)
     }
 
     #game-howto {
@@ -123,8 +124,8 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
-      @touchend.prevent="handleTouchEnd($event)">
+    <div id="touch-overlay" ref="touch-overlay" @touchend.prevent@touchstart="handleTouchStart($event)"
+      @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
       <div id="game-container">
         <div id="game-title">
           ASTRO SHOOT
@@ -151,7 +152,7 @@
             </div>
           </div>
         </div>
-        <div id="game-howto">
+        <div id="game-howto" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           <div class="howto-title">HOW TO PLAY</div>
           <div class="howto-block">
             <div class="howto-label">PC</div>
@@ -171,7 +172,7 @@
             </div>
           </div>
         </div>
-        <div id="game-notice">
+        <div id="game-notice" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           ※ 個人制作のゲームプログラムです。
           動作は環境により異なる場合があります。自己責任でお楽しみください。
         </div>
@@ -1596,7 +1597,7 @@
 
           for (let i = 0; i < this.playerLeft - 1; i++) {
             this.spriteList.push({
-              x: i * 8,
+              x: i*8,
               y: 95,
               sprite: 'playerLeftMark'
             });
@@ -1890,21 +1891,6 @@
 
         setInterval(this.gameMain, 25);
       },
-      mounted() {
-        const field = this.$refs[gameField];
-
-        field.addEventListener('touchstart', e => {
-          e.preventDefault();
-        }, { passive: false });
-
-        field.addEventListener('touchend', e => {
-          e.preventDefault();
-        }, { passive: false });
-
-        field.addEventListener('contextmenu', e => {
-          e.preventDefault();
-        });
-      }
     });
   </script>
 </body>
