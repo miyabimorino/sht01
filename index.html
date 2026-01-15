@@ -623,8 +623,6 @@
             audioCtx: null,
             soundBuffers: new Map(),
             soundEnabled: true,
-
-            audioUnlocked: false,
           },
           methods: {
             handleTouchStart(e) {
@@ -1793,29 +1791,6 @@
             }
 
             setInterval(this.gameMain, 25);
-          },
-          mounted() {
-            const unlock = async () => {
-              if (this.audioUnlocked) return;
-
-              await this.ensureAudioContext();
-
-              const osc = this.audioCtx.createOscillator();
-              const gain = this.audioCtx.createGain();
-              gain.gain.value = 0.001;
-
-              osc.connect(gain).connect(this.audioCtx.destination);
-              osc.start();
-              osc.stop(this.audioCtx.currentTime + 0.01);
-
-              this.audioUnlocked = true;
-
-              document.removeEventListener('touchstart', unlock);
-              document.removeEventListener('mousedown', unlock);
-            };
-
-            document.addEventListener('touchstart', unlock, { once: true });
-            document.addEventListener('mousedown', unlock, { once: true });
           },
         });
       </script>
