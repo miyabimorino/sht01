@@ -51,17 +51,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    #game-text {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      color: white;
-      font-size: 16px;
-      font-family: monospace;
-      z-index: 10;
-      pointer-events: none;
-    }
-
     #game-howto {
       margin-top: 12px;
       padding: 8px;
@@ -129,7 +118,7 @@
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div id="game-field" @mousemove="movePlayer" @click="handleClick">
+        <div id="game-field" ref="game-field" @mousemove="movePlayer" @click="handleClick">
           <div v-for="sprite in spriteList">
             <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
              left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
@@ -1891,7 +1880,7 @@
         setInterval(this.gameMain, 25);
       },
       mounted() {
-        const field = this.$refs[gameField];
+        const field = this.$refs['game-field'];
 
         field.addEventListener('touchstart', e => {
           e.preventDefault();
