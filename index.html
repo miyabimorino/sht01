@@ -664,8 +664,11 @@
                 this.loadSounds();
               }
 
-              if (this.audioCtx.state === "suspended") {
-                this.audioCtx.resume();
+              // Android/iOSではここでの明示的なresumeが不可欠
+              if (this.audioCtx && this.audioCtx.state === "suspended") {
+                this.audioCtx.resume().then(() => {
+                  console.log("AudioContext resumed successfully");
+                });
               }
               if (this.gameStatus === "title") {
                 this.startGame();
@@ -1658,7 +1661,14 @@
             },
 
             initAudio() {
-              this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              window.AudioContext = window.AudioContext || window.webkitAudioContext;
+              this.audioCtx = new AudioContext();
+
+              const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+              const source = this.audioCtx.createBufferSource();
+              source.buffer = buffer;
+              source.connect(this.audioCtx.destination);
+              source.start(0);
             },
             async loadSound(name, url) {
               const res = await fetch(url);
