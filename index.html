@@ -1650,8 +1650,11 @@
           await this.loadSound('hit', 'res/hit.wav');
           await this.loadSound('bang', 'res/bang.wav');
         },
-        playSound(name, volume = 0.5, playbackRate = 1.0) {
+        async playSound(name, volume = 0.5, playbackRate = 1.0) {
           if (!this.soundEnabled) return;
+          if (this.audioCtx.state !== 'running') {
+            await this.audioCtx.resume();
+          }
 
           const buf = this.soundBuffers.get(name);
           if (!buf) return;
@@ -1668,13 +1671,21 @@
 
           src.start(0);
         },
-        fireShot() {
+        async ensureAudioContext() {
+          if (this.audioCtx.state === 'suspended') {
+            await this.audioCtx.resume();
+          }
+        },
+        async fireShot() {
+          await this.ensureAudioContext();
           this.playSound('shot', 0.3);
         },
-        destroyEnemy() {
+        async destroyEnemy() {
+          await this.ensureAudioContext();          
           this.playSound('bang', 0.6, 1.0 + Math.random() * 0.2);
         },
-        playerHit() {
+        async playerHit() {
+          await this.ensureAudioContext();
           this.playSound('hit', 0.5);
         },
       },
