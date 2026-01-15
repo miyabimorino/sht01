@@ -47,9 +47,6 @@
       overflow: hidden;
       cursor: none;
       image-rendering: pixelated;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
     }
 
     #game-howto {
@@ -113,8 +110,8 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" ref="touch-overlay" @contextmenu.prevent @touchstart.prevent @touchend.prevent@touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
-      @touchend.prevent="handleTouchEnd($event)">
+    <div id="touch-overlay" ref="touch-overlay" @touchend.prevent@touchstart="handleTouchStart($event)"
+      @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
       <div id="game-container">
         <div id="game-title">
           ASTRO SHOOT
@@ -141,7 +138,7 @@
             </div>
           </div>
         </div>
-        <div id="game-howto">
+        <div id="game-howto" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           <div class="howto-title">HOW TO PLAY</div>
           <div class="howto-block">
             <div class="howto-label">PC</div>
@@ -161,7 +158,7 @@
             </div>
           </div>
         </div>
-        <div id="game-notice">
+        <div id="game-notice" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           ※ 個人制作のゲームプログラムです。
           動作は環境により異なる場合があります。自己責任でお楽しみください。
         </div>
@@ -1880,21 +1877,6 @@
 
         setInterval(this.gameMain, 25);
       },
-      mounted() {
-        const field = this.$refs['touch-overlay'];
-
-        field.addEventListener('touchstart', e => {
-          e.preventDefault();
-        }, { passive: false });
-
-        field.addEventListener('touchend', e => {
-          e.preventDefault();
-        }, { passive: false });
-
-        field.addEventListener('contextmenu', e => {
-          e.preventDefault();
-        }, { passive: false });
-      }
     });
   </script>
 </body>
