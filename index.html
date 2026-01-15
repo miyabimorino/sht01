@@ -110,11 +110,11 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" @contextmenu.prevent @touchstart.prevent @touchend.prevent @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
+    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
       @touchend.prevent="handleTouchEnd($event)">
      <div id="game-container">
         <div id="game-title">
-          ASTRO SHOOT(TEST3)
+          ASTRO SHOOT
         </div>
         <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <div v-for="sprite in spriteList">
