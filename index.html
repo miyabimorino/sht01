@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>シューティングゲーム</title>
+  <title>ASTRO SHOOT</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     #touch-overlay {
@@ -23,6 +23,16 @@
       max-width: 640px;
       max-height: 400px;
       margin: 0 auto;
+    }
+
+    #game-title {
+      position: relative;
+      width: 640px;
+      height: 100px;
+      margin: auto;
+      background-color: black;
+      overflow: hidden;
+      cursor: none;
     }
 
     #game-field {
@@ -66,6 +76,9 @@
 </head>
 
 <body>
+  <div id="game-title">
+    ASTRO SHOOT
+  <div>
   <div id="app">
     <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
       @touchend.prevent="handleTouchEnd($event)">
@@ -1400,9 +1413,6 @@
           this.playerPosition.x = 75;
 
           this.enemyInit();
-
-          this.initAudio();
-          this.loadSounds();
         },
         updateScore() {
           if (this.score > this.hiscore) { this.hiscore = this.score; }
@@ -1767,6 +1777,8 @@
         setInterval(this.gameMain, 25);
       },
       mounted() {
+        this.initAudio();
+        this.loadSounds();
         const unlock = async () => {
           if (this.audioUnlocked) return;
 
