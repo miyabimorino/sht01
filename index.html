@@ -1763,9 +1763,9 @@
           this.soundBuffers.set(name, audioBuf);
         },
         async loadSounds() {
-          await this.loadSound('shot', 'res/shot.wav');
-          await this.loadSound('hit', 'res/hit.wav');
-          await this.loadSound('bang', 'res/bang.wav');
+          await this.loadSound('shot', 'res/shot.mp3');
+          await this.loadSound('hit', 'res/hit.mp3');
+          await this.loadSound('bang', 'res/bang.mp3');
         },
         async playSound(name, volume = 0.5, playbackRate = 1.0) {
           if (!this.soundEnabled) return;
