@@ -49,6 +49,13 @@
       image-rendering: pixelated;
     }
 
+    #game-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+
     #game-howto {
       margin-top: 12px;
       padding: 8px;
@@ -117,26 +124,7 @@
           ASTRO SHOOT
         </div>
         <div id="game-field" @mousemove="movePlayer" @click="handleClick">
-          <div v-for="sprite in spriteList">
-            <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
-             left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
-             top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px',
-             backgroundColor: getColor(cell.colorCode),
-             width: `${gridCellSize}px`,
-             height: `${gridCellSize}px`
-           }">
-            </div>
-          </div>
-          <div v-for="sprite in spriteTopList">
-            <div v-for="cell in spriteMap.get(sprite.sprite)" :key="cell.x + '-' + cell.y" class="grid-cell" :style="{
-             left: cell.x * gridCellSize + sprite.x * gridCellSize + 'px',
-             top:  cell.y * gridCellSize + sprite.y * gridCellSize + 'px',
-             backgroundColor: getColor(cell.colorCode),
-             width: `${gridCellSize}px`,
-             height: `${gridCellSize}px`
-           }">
-            </div>
-          </div>
+          <canvas id="game-canvas" ref="gameCanvas" width="160" height="100"></canvas>
         </div>
         <div id="game-howto" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           <div class="howto-title">HOW TO PLAY</div>
@@ -684,6 +672,7 @@
         audioCtx: null,
         soundBuffers: new Map(),
         soundEnabled: true,
+        canvasCtx: null,
       },
       methods: {
         handleTouchStart(e) {
@@ -696,7 +685,7 @@
         setTouchPosition(e) {
           const t = e.touches[0];
           const dx = t.clientX - this.touchStartX;
-          const gx = Math.round(dx / this.gridCellSize);
+          const gx = dx / this.gridCellSize;
 
           const playerPrevX = this.playerPosition.x;
           this.playerPosition.x = this.playerStartX + gx;
@@ -755,6 +744,42 @@
             default: return "black";
           }
         },
+        initCanvas() {
+          const canvas = this.$refs.gameCanvas;
+          if (!canvas) return;
+
+          canvas.width = 160;
+          canvas.height = 100;
+          this.canvasCtx = canvas.getContext('2d');
+          this.canvasCtx.imageSmoothingEnabled = false;
+        },
+        renderSpriteLayer(spriteLayer) {
+          if (!this.canvasCtx) return;
+
+          for (const sprite of spriteLayer) {
+            const cells = this.spriteMap.get(sprite.sprite);
+            if (!cells) continue;
+            const drawX = Math.round(sprite.x);
+            const drawY = Math.round(sprite.y);
+
+            for (const cell of cells) {
+              this.canvasCtx.fillStyle = this.getColor(cell.colorCode);
+              this.canvasCtx.fillRect(
+                drawX + cell.x,
+                drawY + cell.y,
+                1,
+                1
+              );
+            }
+          }
+        },
+        renderScene() {
+          if (!this.canvasCtx) return;
+
+          this.canvasCtx.clearRect(0, 0, 160, 100);
+          this.renderSpriteLayer(this.spriteList);
+          this.renderSpriteLayer(this.spriteTopList);
+        },
 
         getBoundingBox(entity) {
           return {
@@ -783,8 +808,9 @@
           const playerPrevX = this.playerPosition.x;
 
           const fieldRect = e.currentTarget.getBoundingClientRect();
-          this.playerPosition.x = (e.clientX - fieldRect.left) / 4 - 16;
+          this.playerPosition.x = (e.clientX - fieldRect.left) / this.gridCellSize - 16;
           if (this.playerPosition.x < 0) { this.playerPosition.x = 0; }
+          if (this.playerPosition.x > 144) { this.playerPosition.x = 144; }
 
           this.playerMoveX = this.playerPosition.x - playerPrevX;
         },
@@ -1622,6 +1648,8 @@
               this.gameOver();
               break;
           }
+
+          this.renderScene();
         },
         checkPlayerHit() {
           if (this.invincibleTimer > 0) return;
@@ -1675,13 +1703,13 @@
         },
         setGridCellSize() {
           const gameField = document.getElementById('game-field');
+          if (!gameField) return;
           const gameFieldRect = gameField.getBoundingClientRect();
-          const baseWidth = 640;
+          const baseWidth = 160;
           this.currentWidth = gameFieldRect.width;
           this.currentHeight = gameFieldRect.height;
 
-          this.gridCellSize = (this.currentWidth / baseWidth) * 4;
-          this.gridCellSize = Math.round(this.gridCellSize);
+          this.gridCellSize = this.currentWidth / baseWidth;
         },
         updateStars(type) {
           if (type === 1) {
@@ -1863,9 +1891,6 @@
         this.spriteMap.set('fontGameOver', this.fontGameOver);
         this.spriteMap.set('playerLeftMark', this.playerLeftMark);
 
-        window.addEventListener('resize', this.setGridCellSize);
-        this.setGridCellSize();
-
         this.stars = [];
         for (let i = 0; i < 30; i++) {
           this.stars.push({
@@ -1874,7 +1899,12 @@
             speed: Math.random()
           });
         }
-
+      },
+      mounted() {
+        this.initCanvas();
+        window.addEventListener('resize', this.setGridCellSize);
+        this.setGridCellSize();
+        this.gameMain();
         setInterval(this.gameMain, 25);
       },
     });
