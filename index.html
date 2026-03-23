@@ -119,7 +119,7 @@
   <div id="app">
     <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
       @touchend.prevent="handleTouchEnd($event)">
-     <div id="game-container">
+      <div id="game-container">
         <div id="game-title">
           ASTRO SHOOT
         </div>
@@ -688,15 +688,8 @@
           const gx = dx / this.gridCellSize;
 
           const playerPrevX = this.playerPosition.x;
-          this.playerPosition.x = this.playerStartX + gx;
+          this.playerPosition.x = this.clampPlayerX(this.playerStartX + gx);
           this.playerMoveX = this.playerPosition.x - playerPrevX;
-
-          if (this.playerPosition.x < 0) {
-            this.playerPosition.x = 0;
-          }
-          if (this.playerPosition.x > 144) {
-            this.playerPosition.x = 144;
-          }
         },
         handleTouchEnd(e) {
           const t = e.changedTouches[0];
@@ -780,6 +773,58 @@
           this.renderSpriteLayer(this.spriteList);
           this.renderSpriteLayer(this.spriteTopList);
         },
+        addSprite(sprite, x, y) {
+          this.spriteList.push({ sprite, x, y });
+        },
+        addTopSprite(sprite, x, y) {
+          this.spriteTopList.push({ sprite, x, y });
+        },
+        clampPlayerX(x) {
+          return Math.max(0, Math.min(144, x));
+        },
+        addEnemy(enemyConfig) {
+          this.enemyList.push({
+            animeCount: 0,
+            animePtn: 0,
+            isHitCheck: true,
+            isCollidingWithPlayer: true,
+            ...enemyConfig
+          });
+        },
+        removeEnemy(index) {
+          this.enemyList.splice(index, 1);
+        },
+        moveByDirection(entity, speed = entity.speed) {
+          entity.position.x += Math.cos(entity.direction * Math.PI / 180) * speed;
+          entity.position.y += Math.sin(entity.direction * Math.PI / 180) * speed;
+        },
+        advanceLoopAnimation(entity, countMask, patternMask) {
+          entity.animeCount++;
+          entity.animeCount &= countMask;
+
+          if (entity.animeCount === 0) {
+            entity.animePtn++;
+            entity.animePtn &= patternMask;
+          }
+        },
+        advanceAnimation(entity, countMask) {
+          entity.animeCount++;
+          entity.animeCount &= countMask;
+
+          if (entity.animeCount === 0) {
+            entity.animePtn++;
+          }
+        },
+        isOutOfBounds(position, bounds) {
+          if (bounds.left !== undefined && position.x < bounds.left) return true;
+          if (bounds.right !== undefined && position.x > bounds.right) return true;
+          if (bounds.top !== undefined && position.y < bounds.top) return true;
+          if (bounds.bottom !== undefined && position.y > bounds.bottom) return true;
+          return false;
+        },
+        resolveSprite(patterns, animePtn) {
+          return patterns[animePtn] ?? patterns[0];
+        },
 
         getBoundingBox(entity) {
           return {
@@ -808,9 +853,7 @@
           const playerPrevX = this.playerPosition.x;
 
           const fieldRect = e.currentTarget.getBoundingClientRect();
-          this.playerPosition.x = (e.clientX - fieldRect.left) / this.gridCellSize - 16;
-          if (this.playerPosition.x < 0) { this.playerPosition.x = 0; }
-          if (this.playerPosition.x > 144) { this.playerPosition.x = 144; }
+          this.playerPosition.x = this.clampPlayerX((e.clientX - fieldRect.left) / this.gridCellSize - 16);
 
           this.playerMoveX = this.playerPosition.x - playerPrevX;
         },
@@ -832,38 +875,20 @@
               }
 
               const spritePtnList = ['playerShot04', 'playerShot03', 'playerShot02', 'playerShot01'];
-              this.spriteTopList.push(
-                {
-                  x: shot.position.x,
-                  y: shot.position.y,
-                  sprite: spritePtnList[shot.animePtn]
-                }
-              );
+              this.addTopSprite(spritePtnList[shot.animePtn], shot.position.x, shot.position.y);
             }
           }
         },
         moveBang(enemy, index, dt) {
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
-
-          enemy.animeCount++;
-          enemy.animeCount &= 1;
-          if (enemy.animeCount === 0) {
-            enemy.animePtn++;
-          }
+          this.moveByDirection(enemy);
+          this.advanceAnimation(enemy, 1);
           if (enemy.animePtn === 8) {
-            this.enemyList.splice(index, 1);
+            this.removeEnemy(index);
           } else {
             const spritePtnList = [
               'bang01', 'bang02', 'bang03', 'bang04', 'bang05', 'bang06', 'bang07', 'bang08',
             ];
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: spritePtnList[enemy.animePtn]
-              }
-            );
+            this.addSprite(this.resolveSprite(spritePtnList, enemy.animePtn), enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy() {
@@ -884,35 +909,14 @@
         },
         moveEnemy01(enemy, index) {
           enemy.position.x += enemy.direction * enemy.speed;
-          if (enemy.position.x < -16 || enemy.position.x > 160) {
-            this.enemyList.splice(index, 1);
-          }
-          else {
-            enemy.animeCount++;
-            enemy.animeCount &= 7;
-
-            if (enemy.animeCount === 0) {
-              enemy.animePtn++;
-              enemy.animePtn &= 1;
-            }
-
-            let ptn = '';
-            if (enemy.direction === -1) {
-              if (enemy.animePtn === 0) { ptn = 'enemy01LeftACells'; }
-              else { ptn = 'enemy01LeftBCells'; }
-            }
-            else {
-              if (enemy.animePtn === 0) { ptn = 'enemy01RightACells'; }
-              else { ptn = 'enemy01RightBCells'; }
-            }
-
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: ptn
-              }
-            );
+          if (this.isOutOfBounds(enemy.position, { left: -16, right: 160 })) {
+            this.removeEnemy(index);
+          } else {
+            this.advanceLoopAnimation(enemy, 7, 1);
+            const patterns = enemy.direction === -1
+              ? ['enemy01LeftACells', 'enemy01LeftBCells']
+              : ['enemy01RightACells', 'enemy01RightBCells'];
+            this.addSprite(this.resolveSprite(patterns, enemy.animePtn), enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy02(enemy, index) {
@@ -922,55 +926,20 @@
             this.createEnemyShot(enemy, 10, 4, 4);
           }
 
-          if (enemy.position.x < -32 || enemy.position.x > 160) {
-            this.enemyList.splice(index, 1);
-          }
-          else {
-            enemy.animeCount++;
-            enemy.animeCount &= 7;
-
-            if (enemy.animeCount === 0) {
-              enemy.animePtn++;
-              enemy.animePtn &= 1;
-            }
-            let ptn = '';
-            if (enemy.animePtn === 0) { ptn = 'enemy02ACells'; }
-            else { ptn = 'enemy02BCells'; }
-
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: ptn
-              }
-            );
+          if (this.isOutOfBounds(enemy.position, { left: -32, right: 160 })) {
+            this.removeEnemy(index);
+          } else {
+            this.advanceLoopAnimation(enemy, 7, 1);
+            this.addSprite(this.resolveSprite(['enemy02ACells', 'enemy02BCells'], enemy.animePtn), enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy03(enemy, index) {
           enemy.position.y += enemy.direction * enemy.speed;
-          if (enemy.position.y > 100) {
-            this.enemyList.splice(index, 1);
-          }
-          else {
-            enemy.animeCount++;
-            enemy.animeCount &= 7;
-
-            if (enemy.animeCount === 0) {
-              enemy.animePtn++;
-              enemy.animePtn &= 1;
-            }
-
-            let ptn = '';
-            if (enemy.animePtn === 0) { ptn = 'enemy03ACells'; }
-            else { ptn = 'enemy03BCells'; }
-
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: ptn
-              }
-            );
+          if (this.isOutOfBounds(enemy.position, { bottom: 100 })) {
+            this.removeEnemy(index);
+          } else {
+            this.advanceLoopAnimation(enemy, 7, 1);
+            this.addSprite(this.resolveSprite(['enemy03ACells', 'enemy03BCells'], enemy.animePtn), enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy04(enemy, index) {
@@ -981,45 +950,20 @@
           const omega = 2 * Math.PI / enemy.period;
           enemy.position.x = enemy.baseX + amplitude * Math.sin(omega * enemy.frameCount);
 
-          if (enemy.position.y > 100) {
-            this.enemyList.splice(index, 1);
-          }
-          else {
-            enemy.animeCount++;
-            enemy.animeCount &= 7;
-
-            if (enemy.animeCount === 0) {
-              enemy.animePtn++;
-              enemy.animePtn &= 1;
-            }
-
-            let ptn = '';
-            if (enemy.animePtn === 0) { ptn = 'enemy04ACells'; }
-            else { ptn = 'enemy04BCells'; }
-
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: ptn
-              }
-            );
+          if (this.isOutOfBounds(enemy.position, { bottom: 100 })) {
+            this.removeEnemy(index);
+          } else {
+            this.advanceLoopAnimation(enemy, 7, 1);
+            this.addSprite(this.resolveSprite(['enemy04ACells', 'enemy04BCells'], enemy.animePtn), enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy05(enemy, index) {
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+          this.moveByDirection(enemy);
 
-          if (enemy.position.y > 100) {
-            this.enemyList.splice(index, 1);
+          if (this.isOutOfBounds(enemy.position, { bottom: 100 })) {
+            this.removeEnemy(index);
           } else {
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: 'enemy05Cells'
-              }
-            );
+            this.addSprite('enemy05Cells', enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy06(enemy, index) {
@@ -1035,24 +979,17 @@
               enemy.direction += 5;
             }
           }
-          enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * speed);
-          enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * speed);
+          this.moveByDirection(enemy, speed);
 
           if (Math.random() < this.shotFrequency) {
             this.createEnemyShot(enemy, 11, 6, 10);
           }
 
-          if (enemy.position.x < 0 || enemy.position.x > 160 || enemy.position.y > 100 || enemy.position.y < -16) {
-            this.enemyList.splice(index, 1);
+          if (this.isOutOfBounds(enemy.position, { left: 0, right: 160, top: -16, bottom: 100 })) {
+            this.removeEnemy(index);
           } else {
 
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: 'enemy06Cells'
-              }
-            );
+            this.addSprite('enemy06Cells', enemy.position.x, enemy.position.y);
           }
         },
         moveEnemy07(enemy, index) {
@@ -1078,54 +1015,32 @@
             enemy.moveCount = 0;
             this.createEnemyShot(enemy, 11, 10, 10);
           } else {
-            enemy.position.x = enemy.position.x + (Math.cos(enemy.direction * Math.PI / 180) * enemy.speed);
-            enemy.position.y = enemy.position.y + (Math.sin(enemy.direction * Math.PI / 180) * enemy.speed);
+            this.moveByDirection(enemy);
           }
 
-          if (enemy.position.y < -48) {
-            this.enemyList.splice(index, 1);
+          if (this.isOutOfBounds(enemy.position, { top: -48 })) {
+            this.removeEnemy(index);
           } else {
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y,
-                sprite: 'enemy07ACells'
-              }
-            );
-            this.spriteList.push(
-              {
-                x: enemy.position.x,
-                y: enemy.position.y + kuti_cnt,
-                sprite: 'enemy07BCells'
-              }
-            );
+            this.addSprite('enemy07ACells', enemy.position.x, enemy.position.y);
+            this.addSprite('enemy07BCells', enemy.position.x, enemy.position.y + kuti_cnt);
           }
         },
         moveEnemyShot(enemy, index) {
           enemy.position.x += enemy.vx;
           enemy.position.y += enemy.vy;
 
-          if (enemy.x < 0 || enemy.x > 160 || enemy.y > 100) {
-            this.enemyList.splice(i, 1);
+          if (this.isOutOfBounds(enemy.position, { left: 0, right: 160, bottom: 100 })) {
+            this.removeEnemy(index);
           } else {
-            enemy.animeCount++;
-            enemy.animeCount &= 3;
-            if (enemy.animeCount === 0) {
-              enemy.animePtn++;
-              if (enemy.animePtn === 4) { enemy.animePtn = 0; }
-            }
+            this.advanceLoopAnimation(enemy, 3, 3);
             const spritePtnList = [
               'enemyShotB01', 'enemyShotB02', 'enemyShotB03', 'enemyShotB04'
             ];
 
             let ptn = 'enemyShot';
-            if (enemy.type === 11) { ptn = spritePtnList[enemy.animePtn]; }
+            if (enemy.type === 11) { ptn = this.resolveSprite(spritePtnList, enemy.animePtn); }
 
-            this.spriteTopList.push({
-              x: enemy.position.x,
-              y: enemy.position.y,
-              sprite: ptn
-            });
+            this.addTopSprite(ptn, enemy.position.x, enemy.position.y);
           }
         },
 
@@ -1150,13 +1065,11 @@
           this.fireShot();
         },
         createBang(xPos, yPos) {
-          this.enemyList.push({
+          this.addEnemy({
             position: { x: xPos, y: yPos },
             speed: Math.random() * 1,
             direction: Math.random() * 180 + 180,
             type: 99,
-            animeCount: 0,
-            animePtn: 0,
             isHitCheck: false,
             isCollidingWithPlayer: false,
           });
@@ -1227,16 +1140,12 @@
             const direction = rightToLeftPositions.includes(yPos) ? -1 : 1;
             const xPos = direction === 1 ? -16 : 160;
 
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: xPos, y: yPos },
               speed: 0.5 + Math.random(),
               direction: direction,
               type: 1,
-              animeCount: 0,
-              animePtn: 0,
               power: -1,
-              isHitCheck: true,
-              isCollidingWithPlayer: true,
               rect: {
                 left: 2,
                 top: 0,
@@ -1254,15 +1163,11 @@
             const direction = Math.random() < 0.5 ? -1 : 1;
             const xPos = direction === 1 ? -32 : 160;
 
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: xPos, y: yPos },
               speed: 0.25 + Math.random(),
               direction: direction,
               type: 2,
-              animeCount: 0,
-              animePtn: 0,
-              isHitCheck: true,
-              isCollidingWithPlayer: true,
               power: 2,
               rect: {
                 left: 2,
@@ -1280,17 +1185,12 @@
             const xPos = Math.floor(Math.random() * 19) * 8 + 2;
             const yPos = -16;
 
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: xPos, y: yPos },
               speed: 0.75 + Math.random(),
               direction: 1,
               type: 3,
-              animeCount: 0,
-              animePtn: 0,
               power: -1,
-              isHitCheck: true,
-              isCollidingWithPlayer: true,
-
               rect: {
                 left: 2,
                 top: 6,
@@ -1306,17 +1206,12 @@
             const xPos = Math.floor(Math.random() * 10) * 16 + 4;
             const yPos = -16;
 
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: xPos, y: yPos },
               speed: 0.25 + Math.random() * 2,
               direction: 1,
               type: 4,
-              animeCount: 0,
-              animePtn: 0,
               power: 2,
-              isHitCheck: true,
-              isCollidingWithPlayer: true,
-
               rect: {
                 left: 3,
                 top: 0,
@@ -1350,16 +1245,12 @@
               const yAdd = Math.sin(direc * Math.PI / 180) * 4;
               direc += Math.random() * 6 * 40;
 
-              this.enemyList.push({
+              this.addEnemy({
                 position: { x: xPos + xAdd, y: yPos + yAdd },
                 speed: setSpeed,
                 direction: direction,
                 type: 5,
-                animeCount: 0,
-                animePtn: 0,
                 power: 3,
-                isHitCheck: true,
-                isCollidingWithPlayer: true,
                 rect: {
                   left: 2,
                   top: 5,
@@ -1385,16 +1276,11 @@
               isRightUP = true;
             }
 
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: xPos, y: yPos },
               speed: 1.25 + Math.random(),
               direction: direction,
               type: 6,
-              animeCount: 0,
-              animePtn: 0,
-              isHitCheck: true,
-              isCollidingWithPlayer: true,
-
               rect: {
                 left: 0,
                 top: 0,
@@ -1411,16 +1297,12 @@
         },
         createEnemy07() {
           if (this.enemyList.filter(enemy => enemy.type === 7).length < this.maxEnemy07) {
-            this.enemyList.push({
+            this.addEnemy({
               position: { x: 64, y: -16 },
               speed: 1.17,
               direction: 90,
               type: 7,
-              animeCount: 0,
-              animePtn: 0,
-              isHitCheck: true,
               isCollidingWithPlayer: false,
-
               rect: {
                 left: 2,
                 top: 0,
@@ -1447,13 +1329,11 @@
           const vx = Math.cos(angle) * speed;
           const vy = Math.sin(angle) * speed;
 
-          this.enemyList.push({
+          this.addEnemy({
             position: { x: (enemy.position.x + addX), y: enemy.position.y + addY },
             vx: vx,
             vy: vy,
             type: type,
-            animeCount: 0,
-            animePtn: 0,
             isHitCheck: false,
             isCollidingWithPlayer: true,
             rect: {
@@ -1509,17 +1389,9 @@
         },
         updateScore() {
           if (this.score > this.hiscore) { this.hiscore = this.score; }
-          this.spriteTopList.push({
-            x: 1,
-            y: 1,
-            sprite: 'fontScore'
-          });
+          this.addTopSprite('fontScore', 1, 1);
           this.drawNumber(this.score, 23, 1, 6);
-          this.spriteTopList.push({
-            x: 80,
-            y: 1,
-            sprite: 'fontHiScore'
-          });
+          this.addTopSprite('fontHiScore', 80, 1);
           this.drawNumber(this.hiscore, 112, 1, 6);
         },
         gameTitle() {
@@ -1556,23 +1428,11 @@
               }
             ];
             dispList.forEach((disp) => {
-              this.spriteList.push({
-                x: this.titleX,
-                y: disp.y,
-                sprite: disp.ptn
-              });
-              this.spriteList.push({
-                x: this.titleX + 20,
-                y: disp.ptsY,
-                sprite: disp.ptsPtn
-              });
+              this.addSprite(disp.ptn, this.titleX, disp.y);
+              this.addSprite(disp.ptsPtn, this.titleX + 20, disp.ptsY);
             });
           }
-          this.spriteList.push({
-            x: 44,
-            y: this.titleY,
-            sprite: 'title'
-          });
+          this.addSprite('title', 44, this.titleY);
         },
         gamePlay() {
           this.updateStars(this.stage);
@@ -1585,11 +1445,7 @@
           }
 
           if (this.isPlayerVisible) {
-            this.spriteList.push({
-              x: this.playerPosition.x,
-              y: this.playerPosition.y,
-              sprite: 'player'
-            });
+            this.addSprite('player', this.playerPosition.x, this.playerPosition.y);
           }
 
           for (let i = this.shotQueue.length - 1; i >= 0; i--) {
@@ -1608,22 +1464,14 @@
           this.checkCollisions();
 
           for (let i = 0; i < this.playerLeft - 1; i++) {
-            this.spriteList.push({
-              x: i * 8,
-              y: 95,
-              sprite: 'playerLeftMark'
-            });
+            this.addSprite('playerLeftMark', i * 8, 95);
           }
 
         },
         gameOver() {
           this.updateStars(this.stage);
           this.moveEnemy();
-          this.spriteList.push({
-            x: 60,
-            y: 50,
-            sprite: "fontGameOver"
-          });
+          this.addSprite('fontGameOver', 60, 50);
           this.gameOverTime++;
           if (this.gameOverTime > 100) {
             this.gameStatus = "title";
@@ -1754,11 +1602,7 @@
             this.playerMoveX = 0;
           }
           this.stars.forEach(star => {
-            this.spriteList.push({
-              x: star.x,
-              y: star.y,
-              sprite: 'star'
-            });
+            this.addSprite('star', star.x, star.y);
           });
         },
         drawNumber(value, startX, startY, digit) {
@@ -1766,11 +1610,7 @@
 
           for (let i = 0; i < str.length; i++) {
             const n = str.charAt(i);
-            this.spriteTopList.push({
-              sprite: `font${n}`,
-              x: startX + i * 4,
-              y: startY
-            });
+            this.addTopSprite(`font${n}`, startX + i * 4, startY);
           }
         },
 
