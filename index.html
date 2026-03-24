@@ -97,17 +97,11 @@
       line-height: 1.4;
     }
 
-    .grid-cell {
-      position: absolute;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     @media (max-width: 768px) {
       #game-field {
-        width: min(90vw, calc(90vh * (640 / 400)));
-        height: min(calc(90vw * (400 / 640)), 90vh);
+        width: min(90vw, calc(90vh * 1.6));
+        height: auto;
+        aspect-ratio: 640 / 400;
         cursor: auto;
       }
     }
