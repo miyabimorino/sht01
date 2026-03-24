@@ -56,6 +56,22 @@
       image-rendering: pixelated;
     }
 
+    #attack-mode {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #665a9c;
+    }
+
+    .attack-mode-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
     #game-howto {
       margin-top: 12px;
       padding: 8px;
@@ -119,6 +135,17 @@
         </div>
         <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <canvas id="game-canvas" ref="gameCanvas" width="160" height="100"></canvas>
+        </div>
+        <div id="attack-mode">
+          <span>ショット連射</span>
+          <label class="attack-mode-option">
+            <input type="radio" value="manual" v-model="attackMode">
+            手動
+          </label>
+          <label class="attack-mode-option">
+            <input type="radio" value="auto" v-model="attackMode">
+            自動
+          </label>
         </div>
         <div id="game-howto" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
           <div class="howto-title">HOW TO PLAY</div>
@@ -629,6 +656,9 @@
         shotSpeed: 1,
         shotFrequency: 0.01,
         shotQueue: [],
+        attackMode: "auto",
+        autoShotInterval: 24,
+        autoShotTimer: 0,
 
         enemyList: [],
         playerShotList: [],
@@ -710,12 +740,18 @@
           if (this.gameStatus === "title") {
             this.startGame();
           } else if (this.gameStatus === "play") {
-            if (this.shotQueue.length > 0) return;
-            for (let i = 0; i < 3; i++) {
-              this.shotQueue.push({
-                delay: i * 8
-              });
+            if (this.attackMode === "manual") {
+              this.queuePlayerBurst();
             }
+          }
+        },
+        queuePlayerBurst() {
+          if (this.shotQueue.length > 0) return;
+
+          for (let i = 0; i < 3; i++) {
+            this.shotQueue.push({
+              delay: i * 8
+            });
           }
         },
         getColor(colorCode) {
@@ -1369,10 +1405,12 @@
           this.playerLeft = 3;
           this.enemyList = [];
           this.playerShotList = [];
+          this.shotQueue = [];
           this.gameStatus = "play";
           this.invincibleTimer = 0;
           this.isPlayerVisible = true;
           this.attackAngleIndex = 0;
+          this.autoShotTimer = this.autoShotInterval;
           this.nextStageWaitCount = 0;
           this.lapCount = 0;
           this.stage = 1;
@@ -1440,6 +1478,15 @@
 
           if (this.isPlayerVisible) {
             this.addSprite('player', this.playerPosition.x, this.playerPosition.y);
+          }
+
+          if (this.attackMode === "auto") {
+            if (this.autoShotTimer <= 0) {
+              this.queuePlayerBurst();
+              this.autoShotTimer = this.autoShotInterval;
+            } else {
+              this.autoShotTimer--;
+            }
           }
 
           for (let i = this.shotQueue.length - 1; i >= 0; i--) {
