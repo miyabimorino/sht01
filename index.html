@@ -122,7 +122,6 @@
       }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 </head>
 
 <body>
@@ -659,6 +658,7 @@
         attackMode: "auto",
         autoShotInterval: 24,
         autoShotTimer: 0,
+        enemyTypeCounts: {},
 
         enemyList: [],
         playerShotList: [],
@@ -813,16 +813,26 @@
           return Math.max(0, Math.min(144, x));
         },
         addEnemy(enemyConfig) {
-          this.enemyList.push({
+          const enemy = {
             animeCount: 0,
             animePtn: 0,
             isHitCheck: true,
             isCollidingWithPlayer: true,
             ...enemyConfig
-          });
+          };
+          this.enemyList.push(enemy);
+          this.enemyTypeCounts[enemy.type] = (this.enemyTypeCounts[enemy.type] || 0) + 1;
         },
         removeEnemy(index) {
+          const enemy = this.enemyList[index];
+          if (enemy) {
+            const currentCount = this.enemyTypeCounts[enemy.type] || 0;
+            this.enemyTypeCounts[enemy.type] = Math.max(0, currentCount - 1);
+          }
           this.enemyList.splice(index, 1);
+        },
+        getEnemyCount(type) {
+          return this.enemyTypeCounts[type] || 0;
         },
         moveByDirection(entity, speed = entity.speed) {
           entity.position.x += Math.cos(entity.direction * Math.PI / 180) * speed;
@@ -1121,7 +1131,7 @@
                 if ((this.timer & 7) === 0) { this.createEnemy02(); }
               }
               else {
-                if (this.enemyList.filter(e => e.type === 2).length === 0) {
+                if (this.getEnemyCount(2) === 0) {
                   this.setNextStage();
                 }
               }
@@ -1132,7 +1142,7 @@
                 if ((this.timer & 3) === 0) { this.createEnemy04(); }
               }
               else {
-                if (this.enemyList.filter(e => e.type === 4).length === 0) {
+                if (this.getEnemyCount(4) === 0) {
                   this.setNextStage();
                 }
               }
@@ -1143,7 +1153,7 @@
                 if ((this.timer & 3) === 0) { this.createEnemy06(); }
               }
               else {
-                if (this.enemyList.filter(e => e.type === 6).length === 0) {
+                if (this.getEnemyCount(6) === 0) {
                   this.setNextStage();
                 }
               }
@@ -1153,7 +1163,7 @@
                 this.createEnemy07();
               }
               else {
-                if (this.enemyList.filter(e => e.type === 7).length === 0) {
+                if (this.getEnemyCount(7) === 0) {
                   this.setNextStage();
                   this.enemyInit();
                 }
@@ -1163,7 +1173,7 @@
           }
         },
         createEnemy01() {
-          if (this.enemyList.filter(enemy => enemy.type === 1).length < this.maxEnemy01) {
+          if (this.getEnemyCount(1) < this.maxEnemy01) {
             const possibleYPositions = [12, 20, 36, 44, 60, 68];
             const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
             const rightToLeftPositions = [12, 36, 60];
@@ -1187,7 +1197,7 @@
           }
         },
         createEnemy02() {
-          if (this.enemyList.filter(enemy => enemy.type === 2).length < this.maxEnemy02) {
+          if (this.getEnemyCount(2) < this.maxEnemy02) {
             const possibleYPositions = [4, 28, 52];
             const yPos = possibleYPositions[Math.floor(Math.random() * possibleYPositions.length)];
             const direction = Math.random() < 0.5 ? -1 : 1;
@@ -1211,7 +1221,7 @@
           }
         },
         createEnemy03() {
-          if (this.enemyList.filter(enemy => enemy.type === 3).length < this.maxEnemy03) {
+          if (this.getEnemyCount(3) < this.maxEnemy03) {
             const xPos = Math.floor(Math.random() * 19) * 8 + 2;
             const yPos = -16;
 
@@ -1232,7 +1242,7 @@
           }
         },
         createEnemy04() {
-          if (this.enemyList.filter(enemy => enemy.type === 4).length < this.maxEnemy04) {
+          if (this.getEnemyCount(4) < this.maxEnemy04) {
             const xPos = Math.floor(Math.random() * 10) * 16 + 4;
             const yPos = -16;
 
@@ -1257,7 +1267,7 @@
           }
         },
         createEnemy05() {
-          if (this.enemyList.filter(enemy => enemy.type === 5).length < this.maxEnemy05) {
+          if (this.getEnemyCount(5) < this.maxEnemy05) {
             const xPos = Math.floor(Math.random() * 10) * 16 + 4;
             const yPos = -16;
 
@@ -1270,7 +1280,7 @@
 
             const setSpeed = 0.25 + Math.random();
             let direc = Math.random() * 20 * 18;
-            for (i = 0; i < 4; i++) {
+            for (let i = 0; i < 4; i++) {
               const xAdd = Math.cos(direc * Math.PI / 180) * 4;
               const yAdd = Math.sin(direc * Math.PI / 180) * 4;
               direc += Math.random() * 6 * 40;
@@ -1293,7 +1303,7 @@
           }
         },
         createEnemy06() {
-          if (this.enemyList.filter(enemy => enemy.type === 6).length < this.maxEnemy06) {
+          if (this.getEnemyCount(6) < this.maxEnemy06) {
             const xPos = Math.floor(Math.random() * 10) * 16 + 4;
             const yPos = -16;
 
@@ -1326,7 +1336,7 @@
           }
         },
         createEnemy07() {
-          if (this.enemyList.filter(enemy => enemy.type === 7).length < this.maxEnemy07) {
+          if (this.getEnemyCount(7) < this.maxEnemy07) {
             this.addEnemy({
               position: { x: 64, y: -16 },
               speed: 1.17,
@@ -1403,6 +1413,7 @@
         startGame() {
           this.score = 0;
           this.playerLeft = 3;
+          this.enemyTypeCounts = {};
           this.enemyList = [];
           this.playerShotList = [];
           this.shotQueue = [];
@@ -1554,7 +1565,7 @@
 
             const enemyBox = this.getBoundingBox(enemy);
             if (this.isColliding(playerBox, enemyBox)) {
-              this.enemyList.splice(index, 1);
+              this.removeEnemy(index);
               for (let i = 0; i < 4; i++) {
                 this.createBang(this.playerPosition.x + 6, this.playerPosition.y);
                 this.playerHit();
@@ -1584,7 +1595,7 @@
                     this.createBang(enemy.position.x, enemy.position.y);
                   }
                   this.score += enemy.score;
-                  this.enemyList.splice(enemyIndex, 1);
+                  this.removeEnemy(enemyIndex);
                 }
               }
             }
