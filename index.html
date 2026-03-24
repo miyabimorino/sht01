@@ -6,16 +6,6 @@
   <title>ASTRO SHOOT</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    #touch-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: transparent;
-      touch-action: none;
-    }
-
     #game-container {
       position: relative;
       width: 90vw;
@@ -126,13 +116,13 @@
 
 <body>
   <div id="app">
-    <div id="touch-overlay" @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
-      @touchend.prevent="handleTouchEnd($event)">
+    <div>
       <div id="game-container">
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div id="game-field" @mousemove="movePlayer" @click="handleClick">
+        <div id="game-field" @mousemove="movePlayer" @click="handleClick" @touchstart="handleTouchStart($event)"
+          @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
           <canvas id="game-canvas" ref="gameCanvas" width="160" height="100"></canvas>
         </div>
         <div id="attack-mode">
