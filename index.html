@@ -121,11 +121,12 @@
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div id="game-field" @mousemove="movePlayer" @click="handleClick" @touchstart="handleTouchStart($event)"
-          @touchmove.prevent="setTouchPosition($event)" @touchend.prevent="handleTouchEnd($event)">
+        <div @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
+          @touchend.prevent="handleTouchEnd($event)">
+        <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <canvas id="game-canvas" ref="gameCanvas" width="160" height="100"></canvas>
         </div>
-        <div id="attack-mode">
+        <div id="attack-mode" @touchstart.stop @touchmove.stop @touchend.stop>
           <span>ショット連射</span>
           <label class="attack-mode-option">
             <input type="radio" value="manual" v-model="attackMode">
@@ -672,6 +673,7 @@
         touchStartY: 0,
         touchStartTime: 0,
         playerStartX: 0,
+        isTouchControlActive: false,
 
         gameStatus: "title",
         nextStageWaitCount: 0,
@@ -689,14 +691,25 @@
         canvasCtx: null,
       },
       methods: {
+        isTouchControlTarget(target) {
+          return !target.closest('#attack-mode');
+        },
         handleTouchStart(e) {
+          if (!this.isTouchControlTarget(e.target)) {
+            this.isTouchControlActive = false;
+            return;
+          }
+
           const t = e.touches[0];
+          this.isTouchControlActive = true;
           this.touchStartX = t.clientX;
           this.touchStartY = t.clientY;
           this.playerStartX = this.playerPosition.x;
           this.touchStartTime = Date.now();
         },
         setTouchPosition(e) {
+          if (!this.isTouchControlActive) return;
+
           const t = e.touches[0];
           const dx = t.clientX - this.touchStartX;
           const gx = dx / this.gridCellSize;
@@ -706,6 +719,8 @@
           this.playerMoveX = this.playerPosition.x - playerPrevX;
         },
         handleTouchEnd(e) {
+          if (!this.isTouchControlActive) return;
+
           const t = e.changedTouches[0];
           const dt = Date.now() - this.touchStartTime;
           const dx = Math.abs(t.clientX - this.touchStartX);
@@ -714,6 +729,7 @@
           if (dt < 300 && dx < 10 && dy < 10) {
             this.handleClick();
           }
+          this.isTouchControlActive = false;
         },
         handleClick() {
           if (!this.audioCtx) {
