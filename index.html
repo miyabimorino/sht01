@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -121,12 +121,12 @@
         <div id="game-title">
           ASTRO SHOOT
         </div>
-        <div @touchstart="handleTouchStart($event)" @touchmove.prevent="setTouchPosition($event)"
-          @touchend.prevent="handleTouchEnd($event)">
+        <div @touchstart="handleTouchStart($event)" @touchmove="setTouchPosition($event)"
+          @touchend="handleTouchEnd($event)">
         <div id="game-field" @mousemove="movePlayer" @click="handleClick">
           <canvas id="game-canvas" ref="gameCanvas" width="160" height="100"></canvas>
         </div>
-        <div id="attack-mode" @touchstart.stop @touchmove.stop @touchend.stop>
+        <div id="attack-mode">
           <span>ショット連射</span>
           <label class="attack-mode-option">
             <input type="radio" value="manual" v-model="attackMode">
@@ -137,29 +137,30 @@
             自動
           </label>
         </div>
-        <div id="game-howto" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
+        <div id="game-howto" @contextmenu.prevent>
           <div class="howto-title">HOW TO PLAY</div>
           <div class="howto-block">
             <div class="howto-label">PC</div>
             <div class="howto-text">
               ・ゲーム画面をクリックするとゲームが始まります<br>
-              ・移動：ゲーム画面内でマウス移動<br>
-              ・ショット連射：マウス左クリック<br>
+              ・プレイ中にクリックするとショットを発射します<br>
+              ・マウス移動で自機を左右に動かします<br>
             </div>
           </div>
           <div class="howto-block">
             <div class="howto-label">スマートフォン</div>
             <div class="howto-text">
-              ・タップするとゲームが始まります<br>
-              ・移動：スワイプ<br>
-              ・ショット連射：タップ<br>
-              ※ゲーム画面外の方が操作が楽です
+              ・ゲーム画面をタップするとゲームが始まります<br>
+              ・プレイ中にタップするとショットを発射します<br>
+              ・ゲーム画面や説明文の上をスワイプして自機を左右に動かせます<br>
+              ・ショット連射は自動／手動を切り替えできます
             </div>
           </div>
         </div>
-        <div id="game-notice" @contextmenu.prevent @touchstart.prevent @touchend.prevent>
-          ※ 個人制作のゲームプログラムです。
-          動作は環境により異なる場合があります。自己責任でお楽しみください。
+        <div id="game-notice" @contextmenu.prevent>
+          ・ゲーム画面や説明文の付近を操作する想定です。
+          誤操作を避けるため、連射トグル上のタッチはゲーム操作に使われません。
+        </div>
         </div>
       </div>
     </div>
@@ -660,12 +661,15 @@
 
         stage: 1,
         timer: 0,
+        spawnCounter: 0,
 
         invincibleTimer: 0,
         isPlayerVisible: true,
 
         attackAngles: [8, -8, 16, -16, 24, -24, 32, -32, 4, -4],
         attackAngleIndex: 0,
+        frameStep: 1,
+        lastFrameTime: 0,
 
         playerMoveX: 0,
 
@@ -710,6 +714,7 @@
         setTouchPosition(e) {
           if (!this.isTouchControlActive) return;
 
+          e.preventDefault();
           const t = e.touches[0];
           const dx = t.clientX - this.touchStartX;
           const gx = dx / this.gridCellSize;
@@ -737,18 +742,21 @@
             this.loadSounds();
           }
 
-          // Android/iOSではここでの明示的なresumeが不可欠
+          // モバイルではユーザー操作後に AudioContext を再開する
           if (this.audioCtx && this.audioCtx.state === "suspended") {
             this.audioCtx.resume().then(() => {
               console.log("AudioContext resumed successfully");
             });
           }
-          if (this.gameStatus === "title") {
-            this.startGame();
-          } else if (this.gameStatus === "play") {
-            if (this.attackMode === "manual") {
-              this.queuePlayerBurst();
-            }
+          switch (this.gameStatus) {
+            case "title":
+              this.startGame();
+              break;
+            case "play":
+              if (this.attackMode === "manual") {
+                this.queuePlayerBurst();
+              }
+              break;
           }
         },
         queuePlayerBurst() {
@@ -841,23 +849,25 @@
           return this.enemyTypeCounts[type] || 0;
         },
         moveByDirection(entity, speed = entity.speed) {
-          entity.position.x += Math.cos(entity.direction * Math.PI / 180) * speed;
-          entity.position.y += Math.sin(entity.direction * Math.PI / 180) * speed;
+          entity.position.x += Math.cos(entity.direction * Math.PI / 180) * speed * this.frameStep;
+          entity.position.y += Math.sin(entity.direction * Math.PI / 180) * speed * this.frameStep;
         },
         advanceLoopAnimation(entity, countMask, patternMask) {
-          entity.animeCount++;
-          entity.animeCount &= countMask;
+          const frameThreshold = countMask + 1;
+          const patternCount = patternMask + 1;
+          entity.animeCount += this.frameStep;
 
-          if (entity.animeCount === 0) {
-            entity.animePtn++;
-            entity.animePtn &= patternMask;
+          while (entity.animeCount >= frameThreshold) {
+            entity.animeCount -= frameThreshold;
+            entity.animePtn = (entity.animePtn + 1) % patternCount;
           }
         },
         advanceAnimation(entity, countMask) {
-          entity.animeCount++;
-          entity.animeCount &= countMask;
+          const frameThreshold = countMask + 1;
+          entity.animeCount += this.frameStep;
 
-          if (entity.animeCount === 0) {
+          while (entity.animeCount >= frameThreshold) {
+            entity.animeCount -= frameThreshold;
             entity.animePtn++;
           }
         },
@@ -907,15 +917,15 @@
           for (let index = this.playerShotList.length - 1; index >= 0; index--) {
             let shot = this.playerShotList[index];
 
-            shot.position.y -= shot.speed;
+            shot.position.y -= shot.speed * this.frameStep;
             if (shot.position.y < -8) {
               this.playerShotList.splice(index, 1);
             }
             else {
               if (shot.animePtn !== 3) {
-                shot.animeCount++;
-                shot.animeCount &= 7;
-                if (shot.animeCount === 0) {
+                shot.animeCount += this.frameStep;
+                while (shot.animeCount >= 8) {
+                  shot.animeCount -= 8;
                   shot.animePtn++;
                 }
               }
@@ -941,20 +951,40 @@
           for (let index = this.enemyList.length - 1; index >= 0; index--) {
             let enemy = this.enemyList[index];
 
-            if (enemy.type === 1) { this.moveEnemy01(enemy, index); }
-            else if (enemy.type === 2) { this.moveEnemy02(enemy, index); }
-            else if (enemy.type === 3) { this.moveEnemy03(enemy, index); }
-            else if (enemy.type === 4) { this.moveEnemy04(enemy, index); }
-            else if (enemy.type === 5) { this.moveEnemy05(enemy, index); }
-            else if (enemy.type === 6) { this.moveEnemy06(enemy, index); }
-            else if (enemy.type === 7) { this.moveEnemy07(enemy, index); }
-            else if (enemy.type === 10) { this.moveEnemyShot(enemy, index); }
-            else if (enemy.type === 11) { this.moveEnemyShot(enemy, index); }
-            else if (enemy.type === 99) { this.moveBang(enemy, index); }
-          };
+            switch (enemy.type) {
+              case 1:
+                this.moveEnemy01(enemy, index);
+                break;
+              case 2:
+                this.moveEnemy02(enemy, index);
+                break;
+              case 3:
+                this.moveEnemy03(enemy, index);
+                break;
+              case 4:
+                this.moveEnemy04(enemy, index);
+                break;
+              case 5:
+                this.moveEnemy05(enemy, index);
+                break;
+              case 6:
+                this.moveEnemy06(enemy, index);
+                break;
+              case 7:
+                this.moveEnemy07(enemy, index);
+                break;
+              case 10:
+              case 11:
+                this.moveEnemyShot(enemy, index);
+                break;
+              case 99:
+                this.moveBang(enemy, index);
+                break;
+            }
+          }
         },
         moveEnemy01(enemy, index) {
-          enemy.position.x += enemy.direction * enemy.speed;
+          enemy.position.x += enemy.direction * enemy.speed * this.frameStep;
           if (this.isOutOfBounds(enemy.position, { left: -16, right: 160 })) {
             this.removeEnemy(index);
           } else {
@@ -966,7 +996,7 @@
           }
         },
         moveEnemy02(enemy, index) {
-          enemy.position.x += enemy.direction * enemy.speed;
+          enemy.position.x += enemy.direction * enemy.speed * this.frameStep;
 
           if (Math.random() < this.shotFrequency) {
             this.createEnemyShot(enemy, 10, 4, 4);
@@ -980,7 +1010,7 @@
           }
         },
         moveEnemy03(enemy, index) {
-          enemy.position.y += enemy.direction * enemy.speed;
+          enemy.position.y += enemy.direction * enemy.speed * this.frameStep;
           if (this.isOutOfBounds(enemy.position, { bottom: 100 })) {
             this.removeEnemy(index);
           } else {
@@ -989,8 +1019,8 @@
           }
         },
         moveEnemy04(enemy, index) {
-          enemy.position.y += enemy.direction * enemy.speed;
-          enemy.frameCount += 0.5;
+          enemy.position.y += enemy.direction * enemy.speed * this.frameStep;
+          enemy.frameCount += 0.5 * this.frameStep;
 
           const amplitude = 30;
           const omega = 2 * Math.PI / enemy.period;
@@ -1013,7 +1043,7 @@
           }
         },
         moveEnemy06(enemy, index) {
-          enemy.moveCount++;
+          enemy.moveCount += this.frameStep;
 
           let speed = enemy.speed;
           if (enemy.moveCount > 35 && enemy.moveCount < 65) {
@@ -1051,11 +1081,11 @@
             270, 270, 270, 270, 270, 270];
           let kuti_cnt = 16;
 
-          enemy.moveCount++;
+          enemy.moveCount += this.frameStep;
 
           if (enemy.moveCount > 13 && enemy.moveCount < 18) {
             kuti_cnt += (enemy.moveCount - 13) * 1.8
-          } else if (enemy.moveCount == 18) {
+          } else if (enemy.moveCount >= 18) {
             enemy.direction = directionTable[enemy.directionIndex];
             enemy.directionIndex++;
             enemy.moveCount = 0;
@@ -1072,8 +1102,8 @@
           }
         },
         moveEnemyShot(enemy, index) {
-          enemy.position.x += enemy.vx;
-          enemy.position.y += enemy.vy;
+          enemy.position.x += enemy.vx * this.frameStep;
+          enemy.position.y += enemy.vy * this.frameStep;
 
           if (this.isOutOfBounds(enemy.position, { left: 0, right: 160, bottom: 100 })) {
             this.removeEnemy(index);
@@ -1084,7 +1114,11 @@
             ];
 
             let ptn = 'enemyShot';
-            if (enemy.type === 11) { ptn = this.resolveSprite(spritePtnList, enemy.animePtn); }
+            switch (enemy.type) {
+              case 11:
+                ptn = this.resolveSprite(spritePtnList, enemy.animePtn);
+                break;
+            }
 
             this.addTopSprite(ptn, enemy.position.x, enemy.position.y);
           }
@@ -1123,59 +1157,62 @@
         },
         createEnemy() {
           if (this.nextStageWaitCount > 0) {
-            this.nextStageWaitCount--;
+            this.nextStageWaitCount = Math.max(0, this.nextStageWaitCount - this.frameStep);
             return;
           }
 
-          this.timer++;
-          this.timer = this.timer & 15;
+          this.timer += this.frameStep;
+          while (this.timer >= 1) {
+            this.timer -= 1;
+            this.spawnCounter = (this.spawnCounter + 1) & 15;
+            const timer = this.spawnCounter;
 
-          switch (this.stage) {
-            case 1:
-              if (this.enemy02Count < this.enemy02MaxCount) {
-                if ((this.timer & 3) === 0) { this.createEnemy01(); }
-                if ((this.timer & 7) === 0) { this.createEnemy02(); }
-              }
-              else {
-                if (this.getEnemyCount(2) === 0) {
-                  this.setNextStage();
+            switch (this.stage) {
+              case 1:
+                if (this.enemy02Count < this.enemy02MaxCount) {
+                  if ((timer & 3) === 0) { this.createEnemy01(); }
+                  if ((timer & 7) === 0) { this.createEnemy02(); }
                 }
-              }
-              break;
-            case 2:
-              if (this.enemy04Count < this.enemy04MaxCount) {
-                if ((this.timer & 1) === 0) { this.createEnemy03(); }
-                if ((this.timer & 3) === 0) { this.createEnemy04(); }
-              }
-              else {
-                if (this.getEnemyCount(4) === 0) {
-                  this.setNextStage();
+                else {
+                  if (this.getEnemyCount(2) === 0) {
+                    this.setNextStage();
+                  }
                 }
-              }
-              break;
-            case 3:
-              if (this.enemy06Count < this.enemy06MaxCount) {
-                if ((this.timer & 7) === 0) { this.createEnemy05(); }
-                if ((this.timer & 3) === 0) { this.createEnemy06(); }
-              }
-              else {
-                if (this.getEnemyCount(6) === 0) {
-                  this.setNextStage();
+                break;
+              case 2:
+                if (this.enemy04Count < this.enemy04MaxCount) {
+                  if ((timer & 1) === 0) { this.createEnemy03(); }
+                  if ((timer & 3) === 0) { this.createEnemy04(); }
                 }
-              }
-              break;
-            case 4:
-              if (this.enemy07Count < this.enemy07MaxCount) {
-                this.createEnemy07();
-              }
-              else {
-                if (this.getEnemyCount(7) === 0) {
-                  this.setNextStage();
-                  this.enemyInit();
+                else {
+                  if (this.getEnemyCount(4) === 0) {
+                    this.setNextStage();
+                  }
                 }
-              }
-              break;
-
+                break;
+              case 3:
+                if (this.enemy06Count < this.enemy06MaxCount) {
+                  if ((timer & 7) === 0) { this.createEnemy05(); }
+                  if ((timer & 3) === 0) { this.createEnemy06(); }
+                }
+                else {
+                  if (this.getEnemyCount(6) === 0) {
+                    this.setNextStage();
+                  }
+                }
+                break;
+              case 4:
+                if (this.enemy07Count < this.enemy07MaxCount) {
+                  this.createEnemy07();
+                }
+                else {
+                  if (this.getEnemyCount(7) === 0) {
+                    this.setNextStage();
+                    this.enemyInit();
+                  }
+                }
+                break;
+            }
           }
         },
         createEnemy01() {
@@ -1429,6 +1466,8 @@
           this.attackAngleIndex = 0;
           this.autoShotTimer = this.autoShotInterval;
           this.nextStageWaitCount = 0;
+          this.timer = 0;
+          this.spawnCounter = 0;
           this.lapCount = 0;
           this.stage = 1;
           this.playerPosition.x = 75;
@@ -1446,9 +1485,9 @@
         gameTitle() {
           this.updateStars(2);
 
-          if (this.titleY > 20) { this.titleY--; }
+          if (this.titleY > 20) { this.titleY = Math.max(20, this.titleY - this.frameStep); }
           else {
-            if (this.titleX > 30) { this.titleX--; }
+            if (this.titleX > 30) { this.titleX = Math.max(30, this.titleX - this.frameStep); }
 
             const dispList = [
               {
@@ -1487,8 +1526,8 @@
           this.updateStars(this.stage);
 
           if (this.invincibleTimer > 0) {
-            this.invincibleTimer--;
-            this.isPlayerVisible = (this.invincibleTimer % 4 < 2);
+            this.invincibleTimer = Math.max(0, this.invincibleTimer - this.frameStep);
+            this.isPlayerVisible = (Math.floor(this.invincibleTimer) % 4 < 2);
           } else {
             this.isPlayerVisible = true;
           }
@@ -1502,7 +1541,7 @@
               this.queuePlayerBurst();
               this.autoShotTimer = this.autoShotInterval;
             } else {
-              this.autoShotTimer--;
+              this.autoShotTimer -= this.frameStep;
             }
           }
 
@@ -1511,7 +1550,7 @@
               this.createPlayerShot();
               this.shotQueue.splice(i, 1);
             } else {
-              this.shotQueue[i].delay--;
+              this.shotQueue[i].delay -= this.frameStep;
             }
           }
 
@@ -1530,7 +1569,7 @@
           this.updateStars(this.stage);
           this.moveEnemy();
           this.addSprite('fontGameOver', 60, 50);
-          this.gameOverTime++;
+          this.gameOverTime += this.frameStep;
           if (this.gameOverTime > 100) {
             this.gameStatus = "title";
             this.titleY = 100;
@@ -1618,46 +1657,51 @@
           this.gridCellSize = this.currentWidth / baseWidth;
         },
         updateStars(type) {
-          if (type === 1) {
-            this.stars.forEach(star => {
-              star.x -= this.playerMoveX * star.speed;
-              if (star.x < 0) star.x += 160;
-              if (star.x > 160) star.x -= 160;
-            });
-            this.playerMoveX = 0;
-          } else if (type === 2) {
-            this.stars.forEach(star => {
-              star.y += 1 * star.speed;
-              if (star.y > 100) {
-                star.y = 0;
-                star.x = Math.random() * 160;
-              }
-            });
-          } else if (type === 3) {
-            this.stars.forEach(star => {
-              star.x -= this.playerMoveX * star.speed;
-              if (star.x < 0) star.x += 160;
-              if (star.x > 160) star.x -= 160;
+          switch (type) {
+            case 1:
+              this.stars.forEach(star => {
+                star.x -= this.playerMoveX * star.speed;
+                if (star.x < 0) star.x += 160;
+                if (star.x > 160) star.x -= 160;
+              });
+              this.playerMoveX = 0;
+              break;
+            case 2:
+              this.stars.forEach(star => {
+                star.y += 1 * star.speed * this.frameStep;
+                if (star.y > 100) {
+                  star.y = 0;
+                  star.x = Math.random() * 160;
+                }
+              });
+              break;
+            case 3:
+              this.stars.forEach(star => {
+                star.x -= this.playerMoveX * star.speed;
+                if (star.x < 0) star.x += 160;
+                if (star.x > 160) star.x -= 160;
 
-              star.y += 3 * star.speed;
-              if (star.y > 100) {
-                star.y = 0;
-                star.x = Math.random() * 160;
-              }
-            });
-          } else if (type === 4) {
-            this.stars.forEach(star => {
-              star.x -= this.playerMoveX * star.speed;
-              if (star.x < 0) star.x += 160;
-              if (star.x > 160) star.x -= 160;
+                star.y += 3 * star.speed * this.frameStep;
+                if (star.y > 100) {
+                  star.y = 0;
+                  star.x = Math.random() * 160;
+                }
+              });
+              break;
+            case 4:
+              this.stars.forEach(star => {
+                star.x -= this.playerMoveX * star.speed;
+                if (star.x < 0) star.x += 160;
+                if (star.x > 160) star.x -= 160;
 
-              star.y -= 2 * star.speed;
-              if (star.y < 0) {
-                star.y = 100;
-                star.x = Math.random() * 160;
-              }
-            });
-            this.playerMoveX = 0;
+                star.y -= 2 * star.speed * this.frameStep;
+                if (star.y < 0) {
+                  star.y = 100;
+                  star.x = Math.random() * 160;
+                }
+              });
+              this.playerMoveX = 0;
+              break;
           }
           this.stars.forEach(star => {
             this.addSprite('star', star.x, star.y);
@@ -1734,6 +1778,19 @@
           await this.ensureAudioContext();
           this.playSound('hit', 0.5);
         },
+        gameLoop(timestamp) {
+          if (this.lastFrameTime === 0) {
+            this.lastFrameTime = timestamp;
+          }
+
+          const deltaMs = Math.min(100, timestamp - this.lastFrameTime);
+          this.lastFrameTime = timestamp;
+          const frame60 = deltaMs / (1000 / 60);
+          this.frameStep = Math.max(0.1, frame60 * (40 / 60));
+
+          this.gameMain();
+          requestAnimationFrame(this.gameLoop);
+        },
       },
       created() {
         this.spriteMap.set('player', this.player);
@@ -1803,7 +1860,7 @@
         window.addEventListener('resize', this.setGridCellSize);
         this.setGridCellSize();
         this.gameMain();
-        setInterval(this.gameMain, 25);
+        requestAnimationFrame(this.gameLoop);
       },
     });
   </script>
